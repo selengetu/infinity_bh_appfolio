@@ -1,0 +1,56 @@
+{
+    "metrics1": [
+        {
+            "label": "Total Unit",
+            "value": "367"
+        },
+        {
+            "label": "Occupancy Rate",
+            "value": "86.10%"
+        },
+        {
+            "label": "Total Rent",
+            "value": "$900,158"
+        },
+        {
+            "label": "Total Move-outs (Next 60 days)",
+            "value": "6"
+        }
+    ],
+    "metrics2": [
+        {
+            "label": "Total Vacancy",
+            "value": "57"
+        },
+        {
+            "label": "Rent Ready Units",
+            "value": "27"
+        },
+        {
+            "label": "Upcoming Move In",
+            "value": "6"
+        },
+        {
+            "label": "Avg Days Vacant",
+            "value": "81.7 days"
+        }
+    ],
+    "metrics3": [
+        {
+            "label": "Total Workorder",
+            "value": "19"
+        },
+        {
+            "label": "New work orders",
+            "value": "19"
+        },
+        {
+            "label": "Urgent Work Orders",
+            "value": "1"
+        },
+        {
+            "label": "Total Amounts",
+            "value": "$0.0"
+        }
+    ]
+}
