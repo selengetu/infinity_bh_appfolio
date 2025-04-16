@@ -23,13 +23,13 @@ logging.basicConfig(
 
 
 # Define paths and credentials
-CHROMEDRIVER_PATH = r"C:\Users\SelengeTulga\Documents\chromedriver.exe"
+CHROMEDRIVER_PATH = r"C:\Users\SelengeTulga\Documents\chromedriver64\chromedriver.exe"
 LOGIN_URL = os.getenv('APPFOLIO_LOGIN_URL')
 USERNAME = os.getenv('APPFOLIO_USERNAME')
 PASSWORD = os.getenv('APPFOLIO_PASSWORD')
 WORK_ORDER_URL = os.getenv('WORK_ORDER_URL')
 
-BASE_DOWNLOAD_FOLDER = r"C:\Users\SelengeTulga\Documents\GitHub\appfolio-dashboard\data"
+BASE_DOWNLOAD_FOLDER = r"C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data"
 
 # Define separate folders for each CSV type
 TENANT_FOLDER = os.path.join(BASE_DOWNLOAD_FOLDER, "tenant_data")
@@ -187,7 +187,7 @@ def download_csv(driver, page_url, file_prefix, file_type):
             
     # Click update and download CSV
     click_update_button(driver)
-    time.sleep(3)
+    time.sleep(30)
     open_dropdown_and_click_csv(driver)
     time.sleep(5)
     
@@ -283,15 +283,6 @@ def get_data_from_appfolio():
         time.sleep(3)  # Allow page to load
 
         tenant_csv = download_csv(driver, LOGIN_URL, "tenant_data", 1)
-
-       # Download Tenant Data
-        three_month_csv = download_csv(driver, LOGIN_URL, "t_rent", 2)
-
-        # Download Tenant Data
-        same_day_csv = download_csv(driver, LOGIN_URL, "same_day", 3)
-
-        # Download Tenant Data
-        beg_year_csv = download_csv(driver, LOGIN_URL, "beg_year", 4)
 
         # Download Work Order Data
         work_order_csv = download_csv(driver, WORK_ORDER_URL, "work_order", 1)

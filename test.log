@@ -508,3 +508,368 @@ Stacktrace:
 2025-04-16 09:26:10,568 - INFO - [INFO] Clicked login button
 2025-04-16 09:26:13,640 - INFO -  An error occurred: argument of type 'NoneType' is not iterable
 2025-04-16 09:26:15,859 - INFO - [ERROR] The process encountered an error.
+2025-04-16 09:33:26,487 - INFO - Started Appfolio data process
+2025-04-16 09:33:27,555 - INFO - [INFO] Opening login page...
+2025-04-16 09:33:29,800 - INFO - [INFO] Entered username
+2025-04-16 09:33:29,881 - INFO - [INFO] Entered password
+2025-04-16 09:33:30,722 - INFO - [INFO] Clicked login button
+2025-04-16 09:33:33,728 - INFO - [INFO] 2-Step Verification detected. Retrieving verification code...
+2025-04-16 09:33:34,678 - INFO - [INFO] Requested verification code.
+2025-04-16 09:33:40,620 - INFO - Entered verification code: 641857
+2025-04-16 09:33:42,291 - INFO - Successfully submitted the verification code!
+2025-04-16 09:33:45,292 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/rent_roll?customize=true and downloading CSV...
+2025-04-16 09:33:48,905 - INFO - Update button clicked successfully.
+2025-04-16 09:33:52,956 - INFO - An error occurred: Message: element click intercepted: Element <button type="button" aria-haspopup="true" aria-expanded="false" class="dropdown-div__button js-dropdown btn btn-secondary dropdown-toggle btn btn-secondary">...</button> is not clickable at point (1397, 27). Other element would receive the click: <div class="modal show" aria-modal="true" role="dialog" tabindex="-1" style="display: block;">...</div>
+  (Session info: chrome=135.0.7049.85)
+Stacktrace:
+	GetHandleVerifier [0x00007FF7711A5355+78597]
+	GetHandleVerifier [0x00007FF7711A53B0+78688]
+	(No symbol) [0x00007FF770F591AA]
+	(No symbol) [0x00007FF770FB7089]
+	(No symbol) [0x00007FF770FB4A42]
+	(No symbol) [0x00007FF770FB1AE1]
+	(No symbol) [0x00007FF770FB0A42]
+	(No symbol) [0x00007FF770FA2204]
+	(No symbol) [0x00007FF770FD70EA]
+	(No symbol) [0x00007FF770FA1AB6]
+	(No symbol) [0x00007FF770FD7300]
+	(No symbol) [0x00007FF770FFF2BB]
+	(No symbol) [0x00007FF770FD6EC3]
+	(No symbol) [0x00007FF770FA03F8]
+	(No symbol) [0x00007FF770FA1163]
+	GetHandleVerifier [0x00007FF77144EF0D+2870973]
+	GetHandleVerifier [0x00007FF7714496B8+2848360]
+	GetHandleVerifier [0x00007FF771466993+2967875]
+	GetHandleVerifier [0x00007FF7711C019A+188746]
+	GetHandleVerifier [0x00007FF7711C847F+222255]
+	GetHandleVerifier [0x00007FF7711AD2D4+111236]
+	GetHandleVerifier [0x00007FF7711AD482+111666]
+	GetHandleVerifier [0x00007FF7711935A9+5465]
+	BaseThreadInitThunk [0x00007FF96DB6E8D7+23]
+	RtlUserThreadStart [0x00007FF96FB5BF6C+44]
+
+2025-04-16 09:33:57,957 - INFO -  Waiting for CSV file to be downloaded...
+2025-04-16 09:33:57,958 - INFO -  Latest downloaded file: C:\Users\SelengeTulga\Documents\GitHub\appfolio-dashboard\data\vacancy_cleaned_20250321_115851.csv
+2025-04-16 09:33:57,959 - INFO - [SUCCESS] CSV file ready: C:\Users\SelengeTulga\Documents\GitHub\appfolio-dashboard\data\vacancy_cleaned_20250321_115851.csv
+2025-04-16 09:33:57,959 - INFO - [SUCCESS] CSV URL: file://C:\Users\SelengeTulga\Documents\GitHub\appfolio-dashboard\data\vacancy_cleaned_20250321_115851.csv
+2025-04-16 09:33:57,990 - INFO - CSV saved to: C:\Users\SelengeTulga\Documents\GitHub\appfolio-dashboard\data\tenant_data_cleaned_20250416_093357.csv
+2025-04-16 09:33:57,990 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/rent_roll?customize=true and downloading CSV...
+2025-04-16 09:34:01,751 - INFO - Update button clicked successfully.
+2025-04-16 09:34:05,799 - INFO - An error occurred: Message: element click intercepted: Element <button type="button" aria-haspopup="true" aria-expanded="false" class="dropdown-div__button js-dropdown btn btn-secondary dropdown-toggle btn btn-secondary">...</button> is not clickable at point (1397, 27). Other element would receive the click: <div class="modal show" aria-modal="true" role="dialog" tabindex="-1" style="display: block;">...</div>
+  (Session info: chrome=135.0.7049.85)
+Stacktrace:
+	GetHandleVerifier [0x00007FF7711A5355+78597]
+	GetHandleVerifier [0x00007FF7711A53B0+78688]
+	(No symbol) [0x00007FF770F591AA]
+	(No symbol) [0x00007FF770FB7089]
+	(No symbol) [0x00007FF770FB4A42]
+	(No symbol) [0x00007FF770FB1AE1]
+	(No symbol) [0x00007FF770FB0A42]
+	(No symbol) [0x00007FF770FA2204]
+	(No symbol) [0x00007FF770FD70EA]
+	(No symbol) [0x00007FF770FA1AB6]
+	(No symbol) [0x00007FF770FD7300]
+	(No symbol) [0x00007FF770FFF2BB]
+	(No symbol) [0x00007FF770FD6EC3]
+	(No symbol) [0x00007FF770FA03F8]
+	(No symbol) [0x00007FF770FA1163]
+	GetHandleVerifier [0x00007FF77144EF0D+2870973]
+	GetHandleVerifier [0x00007FF7714496B8+2848360]
+	GetHandleVerifier [0x00007FF771466993+2967875]
+	GetHandleVerifier [0x00007FF7711C019A+188746]
+	GetHandleVerifier [0x00007FF7711C847F+222255]
+	GetHandleVerifier [0x00007FF7711AD2D4+111236]
+	GetHandleVerifier [0x00007FF7711AD482+111666]
+	GetHandleVerifier [0x00007FF7711935A9+5465]
+	BaseThreadInitThunk [0x00007FF96DB6E8D7+23]
+	RtlUserThreadStart [0x00007FF96FB5BF6C+44]
+
+2025-04-16 09:34:10,800 - INFO -  Waiting for CSV file to be downloaded...
+2025-04-16 09:34:10,801 - INFO -  Latest downloaded file: C:\Users\SelengeTulga\Documents\GitHub\appfolio-dashboard\data\tenant_data_cleaned_20250416_093357.csv
+2025-04-16 09:34:10,802 - INFO - [SUCCESS] CSV file ready: C:\Users\SelengeTulga\Documents\GitHub\appfolio-dashboard\data\tenant_data_cleaned_20250416_093357.csv
+2025-04-16 09:34:10,802 - INFO - [SUCCESS] CSV URL: file://C:\Users\SelengeTulga\Documents\GitHub\appfolio-dashboard\data\tenant_data_cleaned_20250416_093357.csv
+2025-04-16 09:34:10,824 - INFO - CSV saved to: C:\Users\SelengeTulga\Documents\GitHub\appfolio-dashboard\data\t_rent_cleaned_20250416_093410.csv
+2025-04-16 09:34:10,824 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/rent_roll?customize=true and downloading CSV...
+2025-04-16 09:34:14,532 - INFO - Update button clicked successfully.
+2025-04-16 09:34:18,652 - INFO - An error occurred: Message: element click intercepted: Element <button type="button" aria-haspopup="true" aria-expanded="false" class="dropdown-div__button js-dropdown btn btn-secondary dropdown-toggle btn btn-secondary">...</button> is not clickable at point (1397, 27). Other element would receive the click: <div class="modal show" aria-modal="true" role="dialog" tabindex="-1" style="display: block;">...</div>
+  (Session info: chrome=135.0.7049.85)
+Stacktrace:
+	GetHandleVerifier [0x00007FF7711A5355+78597]
+	GetHandleVerifier [0x00007FF7711A53B0+78688]
+	(No symbol) [0x00007FF770F591AA]
+	(No symbol) [0x00007FF770FB7089]
+	(No symbol) [0x00007FF770FB4A42]
+	(No symbol) [0x00007FF770FB1AE1]
+	(No symbol) [0x00007FF770FB0A42]
+	(No symbol) [0x00007FF770FA2204]
+	(No symbol) [0x00007FF770FD70EA]
+	(No symbol) [0x00007FF770FA1AB6]
+	(No symbol) [0x00007FF770FD7300]
+	(No symbol) [0x00007FF770FFF2BB]
+	(No symbol) [0x00007FF770FD6EC3]
+	(No symbol) [0x00007FF770FA03F8]
+	(No symbol) [0x00007FF770FA1163]
+	GetHandleVerifier [0x00007FF77144EF0D+2870973]
+	GetHandleVerifier [0x00007FF7714496B8+2848360]
+	GetHandleVerifier [0x00007FF771466993+2967875]
+	GetHandleVerifier [0x00007FF7711C019A+188746]
+	GetHandleVerifier [0x00007FF7711C847F+222255]
+	GetHandleVerifier [0x00007FF7711AD2D4+111236]
+	GetHandleVerifier [0x00007FF7711AD482+111666]
+	GetHandleVerifier [0x00007FF7711935A9+5465]
+	BaseThreadInitThunk [0x00007FF96DB6E8D7+23]
+	RtlUserThreadStart [0x00007FF96FB5BF6C+44]
+
+2025-04-16 09:34:23,654 - INFO -  Waiting for CSV file to be downloaded...
+2025-04-16 09:34:23,655 - INFO -  Latest downloaded file: C:\Users\SelengeTulga\Documents\GitHub\appfolio-dashboard\data\t_rent_cleaned_20250416_093410.csv
+2025-04-16 09:34:23,655 - INFO - [SUCCESS] CSV file ready: C:\Users\SelengeTulga\Documents\GitHub\appfolio-dashboard\data\t_rent_cleaned_20250416_093410.csv
+2025-04-16 09:34:23,655 - INFO - [SUCCESS] CSV URL: file://C:\Users\SelengeTulga\Documents\GitHub\appfolio-dashboard\data\t_rent_cleaned_20250416_093410.csv
+2025-04-16 09:34:23,676 - INFO - CSV saved to: C:\Users\SelengeTulga\Documents\GitHub\appfolio-dashboard\data\same_day_cleaned_20250416_093423.csv
+2025-04-16 09:34:23,677 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/rent_roll?customize=true and downloading CSV...
+2025-04-16 09:34:27,296 - INFO - Update button clicked successfully.
+2025-04-16 09:34:31,397 - INFO - An error occurred: Message: element click intercepted: Element <button type="button" aria-haspopup="true" aria-expanded="false" class="dropdown-div__button js-dropdown btn btn-secondary dropdown-toggle btn btn-secondary">...</button> is not clickable at point (1397, 27). Other element would receive the click: <div class="modal show" aria-modal="true" role="dialog" tabindex="-1" style="display: block;">...</div>
+  (Session info: chrome=135.0.7049.85)
+Stacktrace:
+	GetHandleVerifier [0x00007FF7711A5355+78597]
+	GetHandleVerifier [0x00007FF7711A53B0+78688]
+	(No symbol) [0x00007FF770F591AA]
+	(No symbol) [0x00007FF770FB7089]
+	(No symbol) [0x00007FF770FB4A42]
+	(No symbol) [0x00007FF770FB1AE1]
+	(No symbol) [0x00007FF770FB0A42]
+	(No symbol) [0x00007FF770FA2204]
+	(No symbol) [0x00007FF770FD70EA]
+	(No symbol) [0x00007FF770FA1AB6]
+	(No symbol) [0x00007FF770FD7300]
+	(No symbol) [0x00007FF770FFF2BB]
+	(No symbol) [0x00007FF770FD6EC3]
+	(No symbol) [0x00007FF770FA03F8]
+	(No symbol) [0x00007FF770FA1163]
+	GetHandleVerifier [0x00007FF77144EF0D+2870973]
+	GetHandleVerifier [0x00007FF7714496B8+2848360]
+	GetHandleVerifier [0x00007FF771466993+2967875]
+	GetHandleVerifier [0x00007FF7711C019A+188746]
+	GetHandleVerifier [0x00007FF7711C847F+222255]
+	GetHandleVerifier [0x00007FF7711AD2D4+111236]
+	GetHandleVerifier [0x00007FF7711AD482+111666]
+	GetHandleVerifier [0x00007FF7711935A9+5465]
+	BaseThreadInitThunk [0x00007FF96DB6E8D7+23]
+	RtlUserThreadStart [0x00007FF96FB5BF6C+44]
+
+2025-04-16 09:34:36,398 - INFO -  Waiting for CSV file to be downloaded...
+2025-04-16 09:34:36,400 - INFO -  Latest downloaded file: C:\Users\SelengeTulga\Documents\GitHub\appfolio-dashboard\data\same_day_cleaned_20250416_093423.csv
+2025-04-16 09:34:36,400 - INFO - [SUCCESS] CSV file ready: C:\Users\SelengeTulga\Documents\GitHub\appfolio-dashboard\data\same_day_cleaned_20250416_093423.csv
+2025-04-16 09:34:36,400 - INFO - [SUCCESS] CSV URL: file://C:\Users\SelengeTulga\Documents\GitHub\appfolio-dashboard\data\same_day_cleaned_20250416_093423.csv
+2025-04-16 09:34:36,419 - INFO - CSV saved to: C:\Users\SelengeTulga\Documents\GitHub\appfolio-dashboard\data\beg_year_cleaned_20250416_093436.csv
+2025-04-16 09:34:36,420 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/work_order?customize=true and downloading CSV...
+2025-04-16 09:34:40,304 - INFO - Update button clicked successfully.
+2025-04-16 09:34:43,448 - INFO - Export CSV button clicked successfully.
+2025-04-16 09:34:43,449 - INFO - CSV export process initiated.
+2025-04-16 09:34:48,450 - INFO -  Waiting for CSV file to be downloaded...
+2025-04-16 09:34:48,451 - INFO -  Latest downloaded file: C:\Users\SelengeTulga\Documents\GitHub\appfolio-dashboard\data\work_order-20250416.csv
+2025-04-16 09:34:48,451 - INFO - [SUCCESS] CSV file ready: C:\Users\SelengeTulga\Documents\GitHub\appfolio-dashboard\data\work_order-20250416.csv
+2025-04-16 09:34:48,451 - INFO - [SUCCESS] CSV URL: file://C:\Users\SelengeTulga\Documents\GitHub\appfolio-dashboard\data\work_order-20250416.csv
+2025-04-16 09:34:48,478 - INFO - CSV saved to: C:\Users\SelengeTulga\Documents\GitHub\appfolio-dashboard\data\work_order_cleaned_20250416_093448.csv
+2025-04-16 09:34:50,689 - INFO - [SUCCESS] The entire process completed successfully.
+2025-04-16 09:38:35,469 - INFO - Started Appfolio data process
+2025-04-16 09:38:36,546 - INFO - [INFO] Opening login page...
+2025-04-16 09:38:38,703 - INFO - [INFO] Entered username
+2025-04-16 09:38:38,769 - INFO - [INFO] Entered password
+2025-04-16 09:38:38,844 - INFO - [INFO] Clicked login button
+2025-04-16 09:38:41,850 - INFO - [INFO] 2-Step Verification detected. Retrieving verification code...
+2025-04-16 09:38:42,177 - INFO - [INFO] Requested verification code.
+2025-04-16 09:38:45,745 - INFO - Entered verification code: 678937
+2025-04-16 09:38:47,713 - INFO - Successfully submitted the verification code!
+2025-04-16 09:38:50,714 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/rent_roll?customize=true and downloading CSV...
+2025-04-16 09:38:54,310 - INFO - Update button clicked successfully.
+2025-04-16 09:38:58,412 - INFO - An error occurred: Message: element click intercepted: Element <button type="button" aria-haspopup="true" aria-expanded="false" class="dropdown-div__button js-dropdown btn btn-secondary dropdown-toggle btn btn-secondary">...</button> is not clickable at point (1397, 27). Other element would receive the click: <div class="modal show" aria-modal="true" role="dialog" tabindex="-1" style="display: block;">...</div>
+  (Session info: chrome=135.0.7049.85)
+Stacktrace:
+	GetHandleVerifier [0x00007FF7711A5355+78597]
+	GetHandleVerifier [0x00007FF7711A53B0+78688]
+	(No symbol) [0x00007FF770F591AA]
+	(No symbol) [0x00007FF770FB7089]
+	(No symbol) [0x00007FF770FB4A42]
+	(No symbol) [0x00007FF770FB1AE1]
+	(No symbol) [0x00007FF770FB0A42]
+	(No symbol) [0x00007FF770FA2204]
+	(No symbol) [0x00007FF770FD70EA]
+	(No symbol) [0x00007FF770FA1AB6]
+	(No symbol) [0x00007FF770FD7300]
+	(No symbol) [0x00007FF770FFF2BB]
+	(No symbol) [0x00007FF770FD6EC3]
+	(No symbol) [0x00007FF770FA03F8]
+	(No symbol) [0x00007FF770FA1163]
+	GetHandleVerifier [0x00007FF77144EF0D+2870973]
+	GetHandleVerifier [0x00007FF7714496B8+2848360]
+	GetHandleVerifier [0x00007FF771466993+2967875]
+	GetHandleVerifier [0x00007FF7711C019A+188746]
+	GetHandleVerifier [0x00007FF7711C847F+222255]
+	GetHandleVerifier [0x00007FF7711AD2D4+111236]
+	GetHandleVerifier [0x00007FF7711AD482+111666]
+	GetHandleVerifier [0x00007FF7711935A9+5465]
+	BaseThreadInitThunk [0x00007FF96DB6E8D7+23]
+	RtlUserThreadStart [0x00007FF96FB5BF6C+44]
+
+2025-04-16 09:39:03,413 - INFO -  Waiting for CSV file to be downloaded...
+2025-04-16 09:39:33,423 - INFO -  An error occurred:  No CSV files found in the downloads folder after waiting.
+2025-04-16 09:39:35,651 - INFO - [ERROR] The process encountered an error.
+2025-04-16 09:42:44,430 - INFO - Started Appfolio data process
+2025-04-16 09:42:45,497 - INFO - [INFO] Opening login page...
+2025-04-16 09:42:47,660 - INFO - [INFO] Entered username
+2025-04-16 09:42:47,815 - INFO - [INFO] Entered password
+2025-04-16 09:42:48,761 - INFO - [INFO] Clicked login button
+2025-04-16 09:42:51,765 - INFO - [INFO] 2-Step Verification detected. Retrieving verification code...
+2025-04-16 09:42:52,135 - INFO - [INFO] Requested verification code.
+2025-04-16 09:42:52,377 - INFO - Too many requests. Waiting 10 seconds before retrying...
+2025-04-16 09:43:03,817 - INFO - Entered verification code: 476404
+2025-04-16 09:43:03,899 - INFO - Successfully submitted the verification code!
+2025-04-16 09:43:06,901 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/rent_roll?customize=true and downloading CSV...
+2025-04-16 09:43:10,669 - INFO - Update button clicked successfully.
+2025-04-16 09:43:14,797 - INFO - An error occurred: Message: element click intercepted: Element <button type="button" aria-haspopup="true" aria-expanded="false" class="dropdown-div__button js-dropdown btn btn-secondary dropdown-toggle btn btn-secondary">...</button> is not clickable at point (1397, 27). Other element would receive the click: <div class="modal show" aria-modal="true" role="dialog" tabindex="-1" style="display: block;">...</div>
+  (Session info: chrome=135.0.7049.85)
+Stacktrace:
+	GetHandleVerifier [0x00007FF7711A5355+78597]
+	GetHandleVerifier [0x00007FF7711A53B0+78688]
+	(No symbol) [0x00007FF770F591AA]
+	(No symbol) [0x00007FF770FB7089]
+	(No symbol) [0x00007FF770FB4A42]
+	(No symbol) [0x00007FF770FB1AE1]
+	(No symbol) [0x00007FF770FB0A42]
+	(No symbol) [0x00007FF770FA2204]
+	(No symbol) [0x00007FF770FD70EA]
+	(No symbol) [0x00007FF770FA1AB6]
+	(No symbol) [0x00007FF770FD7300]
+	(No symbol) [0x00007FF770FFF2BB]
+	(No symbol) [0x00007FF770FD6EC3]
+	(No symbol) [0x00007FF770FA03F8]
+	(No symbol) [0x00007FF770FA1163]
+	GetHandleVerifier [0x00007FF77144EF0D+2870973]
+	GetHandleVerifier [0x00007FF7714496B8+2848360]
+	GetHandleVerifier [0x00007FF771466993+2967875]
+	GetHandleVerifier [0x00007FF7711C019A+188746]
+	GetHandleVerifier [0x00007FF7711C847F+222255]
+	GetHandleVerifier [0x00007FF7711AD2D4+111236]
+	GetHandleVerifier [0x00007FF7711AD482+111666]
+	GetHandleVerifier [0x00007FF7711935A9+5465]
+	BaseThreadInitThunk [0x00007FF96DB6E8D7+23]
+	RtlUserThreadStart [0x00007FF96FB5BF6C+44]
+
+2025-04-16 09:43:19,798 - INFO -  Waiting for CSV file to be downloaded...
+2025-04-16 09:43:49,806 - INFO -  An error occurred:  No CSV files found in the downloads folder after waiting.
+2025-04-16 09:43:52,038 - INFO - [ERROR] The process encountered an error.
+2025-04-16 09:46:28,373 - INFO - Started Appfolio data process
+2025-04-16 09:46:29,471 - INFO - [INFO] Opening login page...
+2025-04-16 09:46:31,270 - INFO - [INFO] Entered username
+2025-04-16 09:46:31,348 - INFO - [INFO] Entered password
+2025-04-16 09:46:31,482 - INFO - [INFO] Clicked login button
+2025-04-16 09:46:34,488 - INFO - [INFO] 2-Step Verification detected. Retrieving verification code...
+2025-04-16 09:46:34,803 - INFO - [INFO] Requested verification code.
+2025-04-16 09:46:40,606 - INFO - Entered verification code: 085877
+2025-04-16 09:46:42,346 - INFO - Successfully submitted the verification code!
+2025-04-16 09:46:45,347 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/rent_roll?customize=true and downloading CSV...
+2025-04-16 09:46:48,979 - INFO - Update button clicked successfully.
+2025-04-16 09:46:56,084 - INFO - An error occurred: Message: element click intercepted: Element <button type="button" aria-haspopup="true" aria-expanded="false" class="dropdown-div__button js-dropdown btn btn-secondary dropdown-toggle btn btn-secondary">...</button> is not clickable at point (1397, 27). Other element would receive the click: <div class="modal show" aria-modal="true" role="dialog" tabindex="-1" style="display: block;">...</div>
+  (Session info: chrome=135.0.7049.85)
+Stacktrace:
+	GetHandleVerifier [0x00007FF7711A5355+78597]
+	GetHandleVerifier [0x00007FF7711A53B0+78688]
+	(No symbol) [0x00007FF770F591AA]
+	(No symbol) [0x00007FF770FB7089]
+	(No symbol) [0x00007FF770FB4A42]
+	(No symbol) [0x00007FF770FB1AE1]
+	(No symbol) [0x00007FF770FB0A42]
+	(No symbol) [0x00007FF770FA2204]
+	(No symbol) [0x00007FF770FD70EA]
+	(No symbol) [0x00007FF770FA1AB6]
+	(No symbol) [0x00007FF770FD7300]
+	(No symbol) [0x00007FF770FFF2BB]
+	(No symbol) [0x00007FF770FD6EC3]
+	(No symbol) [0x00007FF770FA03F8]
+	(No symbol) [0x00007FF770FA1163]
+	GetHandleVerifier [0x00007FF77144EF0D+2870973]
+	GetHandleVerifier [0x00007FF7714496B8+2848360]
+	GetHandleVerifier [0x00007FF771466993+2967875]
+	GetHandleVerifier [0x00007FF7711C019A+188746]
+	GetHandleVerifier [0x00007FF7711C847F+222255]
+	GetHandleVerifier [0x00007FF7711AD2D4+111236]
+	GetHandleVerifier [0x00007FF7711AD482+111666]
+	GetHandleVerifier [0x00007FF7711935A9+5465]
+	BaseThreadInitThunk [0x00007FF96DB6E8D7+23]
+	RtlUserThreadStart [0x00007FF96FB5BF6C+44]
+
+2025-04-16 09:47:01,084 - INFO -  Waiting for CSV file to be downloaded...
+2025-04-16 09:47:31,094 - INFO -  An error occurred:  No CSV files found in the downloads folder after waiting.
+2025-04-16 09:47:33,327 - INFO - [ERROR] The process encountered an error.
+2025-04-16 10:26:16,120 - INFO - Started Appfolio data process
+2025-04-16 10:27:09,997 - INFO - Started Appfolio data process
+2025-04-16 10:27:11,121 - INFO - [INFO] Opening login page...
+2025-04-16 10:27:13,008 - INFO - [INFO] Entered username
+2025-04-16 10:27:13,092 - INFO - [INFO] Entered password
+2025-04-16 10:27:13,876 - INFO - [INFO] Clicked login button
+2025-04-16 10:27:16,881 - INFO - [INFO] 2-Step Verification detected. Retrieving verification code...
+2025-04-16 10:27:17,192 - INFO - [INFO] Requested verification code.
+2025-04-16 10:27:20,953 - INFO - Entered verification code: 976035
+2025-04-16 10:27:21,065 - INFO - Successfully submitted the verification code!
+2025-04-16 10:27:24,066 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/rent_roll?customize=true and downloading CSV...
+2025-04-16 10:27:27,762 - INFO - Update button clicked successfully.
+2025-04-16 10:27:38,818 - INFO - An error occurred: Message: element click intercepted: Element <button type="button" aria-haspopup="true" aria-expanded="false" class="dropdown-div__button js-dropdown btn btn-secondary dropdown-toggle btn btn-secondary">...</button> is not clickable at point (1397, 27). Other element would receive the click: <div class="modal show" aria-modal="true" role="dialog" tabindex="-1" style="display: block;">...</div>
+  (Session info: chrome=135.0.7049.85)
+Stacktrace:
+	GetHandleVerifier [0x00007FF7711A5355+78597]
+	GetHandleVerifier [0x00007FF7711A53B0+78688]
+	(No symbol) [0x00007FF770F591AA]
+	(No symbol) [0x00007FF770FB7089]
+	(No symbol) [0x00007FF770FB4A42]
+	(No symbol) [0x00007FF770FB1AE1]
+	(No symbol) [0x00007FF770FB0A42]
+	(No symbol) [0x00007FF770FA2204]
+	(No symbol) [0x00007FF770FD70EA]
+	(No symbol) [0x00007FF770FA1AB6]
+	(No symbol) [0x00007FF770FD7300]
+	(No symbol) [0x00007FF770FFF2BB]
+	(No symbol) [0x00007FF770FD6EC3]
+	(No symbol) [0x00007FF770FA03F8]
+	(No symbol) [0x00007FF770FA1163]
+	GetHandleVerifier [0x00007FF77144EF0D+2870973]
+	GetHandleVerifier [0x00007FF7714496B8+2848360]
+	GetHandleVerifier [0x00007FF771466993+2967875]
+	GetHandleVerifier [0x00007FF7711C019A+188746]
+	GetHandleVerifier [0x00007FF7711C847F+222255]
+	GetHandleVerifier [0x00007FF7711AD2D4+111236]
+	GetHandleVerifier [0x00007FF7711AD482+111666]
+	GetHandleVerifier [0x00007FF7711935A9+5465]
+	BaseThreadInitThunk [0x00007FF96DB6E8D7+23]
+	RtlUserThreadStart [0x00007FF96FB5BF6C+44]
+
+2025-04-16 10:27:43,819 - INFO -  Waiting for CSV file to be downloaded...
+2025-04-16 10:28:13,828 - INFO -  An error occurred:  No CSV files found in the downloads folder after waiting.
+2025-04-16 10:28:16,015 - INFO - [ERROR] The process encountered an error.
+2025-04-16 10:28:32,906 - INFO - Started Appfolio data process
+2025-04-16 10:28:33,968 - INFO - [INFO] Opening login page...
+2025-04-16 10:28:35,725 - INFO - [INFO] Entered username
+2025-04-16 10:28:35,798 - INFO - [INFO] Entered password
+2025-04-16 10:28:36,802 - INFO - [INFO] Clicked login button
+2025-04-16 10:28:39,806 - INFO - [INFO] 2-Step Verification detected. Retrieving verification code...
+2025-04-16 10:28:40,137 - INFO - [INFO] Requested verification code.
+2025-04-16 10:28:45,904 - INFO - Entered verification code: 291546
+2025-04-16 10:28:47,705 - INFO - Successfully submitted the verification code!
+2025-04-16 10:28:50,706 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/rent_roll?customize=true and downloading CSV...
+2025-04-16 10:28:54,384 - INFO - Update button clicked successfully.
+2025-04-16 10:29:24,572 - INFO - Export CSV button clicked successfully.
+2025-04-16 10:29:24,572 - INFO - CSV export process initiated.
+2025-04-16 10:29:29,573 - INFO -  Waiting for CSV file to be downloaded...
+2025-04-16 10:29:29,573 - INFO -  Latest downloaded file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\rent_roll-20250416.csv
+2025-04-16 10:29:29,574 - INFO - [SUCCESS] CSV file ready: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\rent_roll-20250416.csv
+2025-04-16 10:29:29,574 - INFO - [SUCCESS] CSV URL: file://C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\rent_roll-20250416.csv
+2025-04-16 10:29:29,615 - INFO - CSV saved to: C:\Users\SelengeTulga\Documents\GitHub\appfolio-dashboard\data\tenant_data_cleaned_20250416_102929.csv
+2025-04-16 10:29:29,616 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/work_order?customize=true and downloading CSV...
+2025-04-16 10:29:33,501 - INFO - Update button clicked successfully.
+2025-04-16 10:30:03,681 - INFO - Export CSV button clicked successfully.
+2025-04-16 10:30:03,682 - INFO - CSV export process initiated.
+2025-04-16 10:30:08,683 - INFO -  Waiting for CSV file to be downloaded...
+2025-04-16 10:30:08,684 - INFO -  Latest downloaded file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\work_order-20250416.csv
+2025-04-16 10:30:08,685 - INFO - [SUCCESS] CSV file ready: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\work_order-20250416.csv
+2025-04-16 10:30:08,685 - INFO - [SUCCESS] CSV URL: file://C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\work_order-20250416.csv
+2025-04-16 10:30:08,713 - INFO - CSV saved to: C:\Users\SelengeTulga\Documents\GitHub\appfolio-dashboard\data\work_order_cleaned_20250416_103008.csv
+2025-04-16 10:30:10,964 - INFO - [SUCCESS] The entire process completed successfully.
