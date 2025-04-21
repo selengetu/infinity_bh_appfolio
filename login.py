@@ -2,7 +2,7 @@ import streamlit as st
 from utils import check_login  # Import the check_login function
 import dashboard  # Import the dashboard module
 # Set page layout
-
+st.set_page_config(page_title="Appfolio Dashboards", layout="wide")
 
 def main():
     # Initialize session state
@@ -14,11 +14,11 @@ def main():
     # Show login form
     if not st.session_state['logged_in']:
         # Create layout with 2 columns
-        col1, col2 = st.columns([3, 2])
+        col1, col2 = st.columns([1,1])
 
         # Left column with illustration
         with col1:
-            st.image("login_img.png", use_container_width=True)
+            st.image("login_img.png")
 
         # Right column with login form
         with col2:
@@ -27,16 +27,25 @@ def main():
             st.markdown("**Login to Get Started**")
 
             # Login form
-            email = st.text_input("Email Address", placeholder="Enter your email")
-            password = st.text_input("Password", type="password", placeholder="Enter your password")
+            email = st.text_input("Email Address", placeholder="Enter your email",  key="login_email")
+            password = st.text_input("Password", type="password", placeholder="Enter your password", key="login_password")
 
             if st.button("Login"):
                 user = check_login(email, password)
                 if user:
+                    # Handle tuple or dict formats safely
+                    if isinstance(user, dict):
+                        st.session_state.user = user
+                    elif isinstance(user, tuple) and len(user) >= 2:
+                        name = user[0]
+                        email = user[1]
+                        st.session_state.user = {"name": name, "email": email}
+                    else:
+                        st.error("Unexpected user format")
+                        return
+
                     st.session_state.logged_in = True
-                    st.session_state.user = user  # Store the entire user object
-                    #  IMPORTANT:  Do *not* call st.experimental_rerun() here.  Let the natural
-                    #  Streamlit flow handle the update.
+                    st.rerun()
                 else:
                     st.error("Invalid credentials")
 
@@ -49,6 +58,13 @@ def main():
 
     #  Show dashboard if logged in
     if st.session_state['logged_in']:
+        st.sidebar.success(f"Logged in as {st.session_state.user['email']}")
+        
+        if st.sidebar.button("Logout", key="logout_button"):
+            st.session_state.logged_in = False
+            st.session_state.user = None
+            st.rerun()
+
         dashboard.show_dashboard()  # Call the dashboard function
 
 if __name__ == "__main__":

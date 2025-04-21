@@ -3,9 +3,11 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 import time
 from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
 import pandas as pd
 import time
 import re
@@ -13,6 +15,7 @@ import requests
 from dotenv import load_dotenv
 import os
 import logging
+
 load_dotenv()
 
 logging.basicConfig(
@@ -25,23 +28,35 @@ logging.basicConfig(
 # Define paths and credentials
 CHROMEDRIVER_PATH = r"C:\Users\SelengeTulga\Documents\chromedriver64\chromedriver.exe"
 LOGIN_URL = os.getenv('APPFOLIO_LOGIN_URL')
+WORK_ORDER_URL = os.getenv('WORK_ORDER_URL')
+LEASING_FUNNEL_URL = os.getenv('LEASING_FUNNEL_URL')
+TENANT_URL = os.getenv('TENANT_URL')
+PURCHASE_ORDER_URL = os.getenv('PURCHASE_ORDER_URL')
+PROSPECT_SOURCE_URL = os.getenv('PROSPECT_SOURCE_URL')
 USERNAME = os.getenv('APPFOLIO_USERNAME')
 PASSWORD = os.getenv('APPFOLIO_PASSWORD')
-WORK_ORDER_URL = os.getenv('WORK_ORDER_URL')
 
 BASE_DOWNLOAD_FOLDER = r"C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data"
 
 # Define separate folders for each CSV type
 TENANT_FOLDER = os.path.join(BASE_DOWNLOAD_FOLDER, "tenant_data")
 WORK_ORDER_FOLDER = os.path.join(BASE_DOWNLOAD_FOLDER, "work_orders")
-VACANCY_FOLDER = os.path.join(BASE_DOWNLOAD_FOLDER, "vacancies")
+LEASING_FUNNEL_FOLDER = os.path.join(BASE_DOWNLOAD_FOLDER, "leasing_funnel")
+PROSPECT_SOURCE_FOLDER = os.path.join(BASE_DOWNLOAD_FOLDER, "prospect_source")
 
 today = datetime.today()
+ninety_days_ago = today - timedelta(days=90)
 
-# Calculate required dates
-three_months_ago = (today - timedelta(days=90)).strftime("%m/%d/%Y")  # Approximate 3 months ago
-same_day_last_year = (today.replace(year=today.year - 1)).strftime("%m/%d/%Y")  # Same day last year
-beginning_of_year = datetime(today.year, 1, 1).strftime("%m/%d/%Y")  # January 1st of current year
+formatted_today = today.strftime("%m/%d/%Y")
+formatted_ninety_days_ago = ninety_days_ago.strftime("%m/%d/%Y")
+
+def get_trailing_month_end_dates(today):
+    trailing_months = []
+    for i in range(1, 13):  # 1 to 12 months ago
+        first_day = (today.replace(day=1) - relativedelta(months=i))
+        last_day = (first_day + relativedelta(months=1)) - relativedelta(days=1)
+        trailing_months.append(last_day.strftime("%m-%d-%Y"))
+    return trailing_months
 
 # SimpleTexting API Key
 API_TOKEN = os.getenv('SIMPLE_TEXTING_API_TOKEN')
@@ -154,42 +169,130 @@ def get_latest_csv(downloads_folder, max_wait_time=30):
     
     raise FileNotFoundError(" No CSV files found in the downloads folder after waiting.")
 
-def clean_csv(file_path,file_prefix):
+def parse_property_name_with_string(value: str):
+    text = str(value).strip()
+    text = text.lstrip('->').strip()            # remove '->' and surrounding whitespace
+    if ' - ' in text:
+        # Split at the first " - " to separate name from address or other info
+        return text.split(' - ', 1)[0].strip()
+    else:
+        return text
+        
+def parse_property_name(full_str: str) -> str:
+    return full_str.split(' - ')[0].strip() if ' - ' in full_str else full_str.strip()
+
+def is_summary_like(row):
+    # Join row values into a string and check for summary patterns
+    text = " ".join(str(x) for x in row if pd.notna(x)).lower()
+    return (
+        "units" in text or
+        "occ" in text or
+        "%" in text or
+        len([x for x in row if pd.notna(x)]) <= 3
+    )
+
+def clean_csv(file_path,file_prefix, type):
+     
     df = pd.read_csv(file_path)
-    df = df.iloc[1:]
-    df = df.iloc[:-2]
+    df = df.copy()
+        # Add the new column for Property Name, initially empty
+    df['Property Name'] = pd.NA
+
+    if file_prefix == 'rentroll' or file_prefix == 'work_order' or file_prefix == 'purchase_order' or type == 2:
+        first_col = df.columns[0]
+        header_mask = df[first_col].astype(str).str.strip().str.startswith('->')
+
+        header_indices = header_mask[header_mask].index
+        # Check one row before each header to see if it’s a summary
+        summary_indices = []
+
+        for idx in header_indices:
+            if idx > 0 and is_summary_like(df.iloc[idx - 1]):
+                summary_indices.append(idx - 1)
+
+        df.loc[header_mask, 'Property Name'] = df.loc[header_mask, first_col].apply(parse_property_name_with_string)
+        df['Property Name'] = df['Property Name'].ffill()
+         
+        rows_to_drop = set(header_indices).union(summary_indices)
+        df = df.drop(index=rows_to_drop).reset_index(drop=True)
+        
+        df = df.iloc[:-2]
+
+    elif file_prefix == 'tenant_data' or file_prefix == 'purchase_order':
+        df['Property Name'] = df['Property'].apply(parse_property_name)
+        df = df.iloc[:-1]
+
+    elif file_prefix == 'prospect':
+        df = df.iloc[:-1]
     
+    elif file_prefix == 'leasing':
+        pass
+
+    else:         
+        print(file_prefix)
+        
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    output_path = f'C:\\Users\\SelengeTulga\\Documents\\GitHub\\appfolio-dashboard\\data\\{file_prefix}_cleaned_{timestamp}.csv'
+    output_path = f'C:\\Users\\SelengeTulga\\Documents\\GitHub\\infinity_bh_appfolio\\data\\{file_prefix}_cleaned_{timestamp}.csv'
     
     df.to_csv(output_path, index=False, encoding='utf-8-sig')
     print(f"CSV saved to: {output_path}")
-    logging.info(f"CSV saved to: {output_path}")
+    # logging.info(f"CSV saved to: {output_path}")
 
-def download_csv(driver, page_url, file_prefix, file_type):
-    """Navigate to a page, download CSV, and move it to the correct folder."""
+def download_csv(driver, page_url, type, file_prefix, target_date=None):
+    """Navigate to a page, download CSV for a specific date, and move it to the correct folder."""
     logging.info(f"Navigating to {page_url} and downloading CSV...")
     driver.get(page_url)
     time.sleep(3)
 
-    if file_type  != 1:
-        date_input = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "filters_as_of_to")))
+    if target_date:
+        date_input = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.ID, "filters_as_of_to"))
+        )
         date_input.clear()
+        date_input.send_keys(target_date)
+        logging.info(f"Set date to {target_date}")
+    
+    if file_prefix == 'tenant_data':
+        checkbox = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, 'input[name="filters[tenant_statuses][]"][value="all"]'))
+        )
+        checkbox.click()
 
-        date_values = {
-            2: three_months_ago,
-            3: same_day_last_year,
-            4: beginning_of_year
-        }
+    if file_prefix == 'work_order':
+        close_button = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, "button.btn-close"))
+        )
 
-        if file_type in date_values:
-            date_input.send_keys(date_values[file_type])
-            
+        # Click the button to remove the selected property
+        close_button.click()
+        date_from_input = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.ID, "filters_status_date_range_from"))
+        )
+        date_input = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.ID, "filters_status_date_range_to"))
+        )
+        date_from_input.clear()
+        date_input.clear()
+        date_from_input.send_keys(formatted_ninety_days_ago) 
+        date_input.send_keys(formatted_today) 
+
+    if file_prefix == 'leasing':
+        date_from_input = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.ID, "filters_received_on_from"))
+        )
+        date_input = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.ID, "filters_received_on_to"))
+        )
+        date_from_input.clear()
+        date_input.clear()
+        date_from_input.send_keys(formatted_ninety_days_ago) 
+        date_input.send_keys(formatted_today) 
+
     # Click update and download CSV
     click_update_button(driver)
-    time.sleep(30)
+    time.sleep(20)
     open_dropdown_and_click_csv(driver)
-    time.sleep(5)
+    time.sleep(30)
     
     # Retrieve latest CSV and move it to the correct folder
     latest_csv = get_latest_csv(BASE_DOWNLOAD_FOLDER)
@@ -198,13 +301,47 @@ def download_csv(driver, page_url, file_prefix, file_type):
         print(f"[SUCCESS] CSV URL: file://{os.path.abspath(latest_csv)}")
         logging.info(f"[SUCCESS] CSV file ready: {latest_csv}")
         logging.info(f"[SUCCESS] CSV URL: file://{os.path.abspath(latest_csv)}")
-        clean_csv(latest_csv, file_prefix)
-        success = True  # Mark as successful
+        clean_csv(latest_csv, file_prefix, type)
+
+        if os.path.exists(latest_csv):
+            os.remove(latest_csv)
+            print(f"[INFO] Deleted original file: {latest_csv}")
+            logging.info(f"Deleted original file: {latest_csv}")
+        return True
     else:
         print("[ERROR] No CSV file was found or generated.")
         logging.info("[ERROR] No CSV file was found or generated.")
+        return False
 
+def union_rentrolls():
+    today = datetime.today()
+    rentroll_dfs = []
 
+    for date_str in get_trailing_month_end_dates(today):
+        prefix = f"rentroll_{date_str}_cleaned"
+        
+        # Find matching file (you could also use glob)
+        matching_files = [f for f in os.listdir(BASE_DOWNLOAD_FOLDER) if f.startswith(prefix) and f.endswith(".csv")]
+
+        if not matching_files:
+            print(f"[SKIPPED] No file found for {prefix}")
+            continue
+
+        latest_file = max(matching_files)  # use most recent timestamped version if duplicates
+        file_path = os.path.join(BASE_DOWNLOAD_FOLDER, latest_file)
+        print(f"[INFO] Loading {file_path}")
+        df = pd.read_csv(file_path)
+
+        df['date_str'] = date_str
+        rentroll_dfs.append(df)
+
+    if rentroll_dfs:
+        combined_df = pd.concat(rentroll_dfs, ignore_index=True)
+        print(f"[SUCCESS] Combined {len(rentroll_dfs)} files, {len(combined_df)} rows total")
+        return combined_df
+    else:
+        print("[WARNING] No rentroll files found for trailing 12 months.")
+        return pd.DataFrame()
 
 def get_data_from_appfolio():
     logging.info("Started Appfolio data process")
@@ -282,12 +419,28 @@ def get_data_from_appfolio():
         
         time.sleep(3)  # Allow page to load
 
-        tenant_csv = download_csv(driver, LOGIN_URL, "tenant_data", 1)
+        # rentroll = download_csv(driver, LOGIN_URL, 1, 'rentroll', None)
+        # tenant = download_csv(driver, TENANT_URL, 1, 'tenant_data',None)
+        # work_order = download_csv(driver, WORK_ORDER_URL, 1, 'work_order',None)
+        # leasing = download_csv(driver, LEASING_FUNNEL_URL, 1, 'leasing',None) 
+        # prospect = download_csv(driver, PROSPECT_SOURCE_URL,1, 'prospect',None)
+        # purchase = download_csv(driver, PURCHASE_ORDER_URL, 1,'purchase_order',None)
+        month_end_dates = get_trailing_month_end_dates(today)
 
-        # Download Work Order Data
-        work_order_csv = download_csv(driver, WORK_ORDER_URL, "work_order", 1)
+        for date_str in month_end_dates:
+            prefix = f"rentroll_{date_str.replace('/', '-')}_cleaned_"
+            if any(fname.startswith(prefix) for fname in os.listdir(BASE_DOWNLOAD_FOLDER)):
+                print(f"[SKIPPED] Found existing file for {date_str}")
+                continue
 
+            success = download_csv(driver, LOGIN_URL, 2,  f"rentroll_{date_str.replace('/', '-')}", target_date=date_str)
+            if not success:
+                logging.warning(f"Download failed for {date_str}")
 
+        df_all_rentrolls = union_rentrolls()
+        output_path = os.path.join(BASE_DOWNLOAD_FOLDER, f"rentroll_12_months_combined_{datetime.today().strftime('%Y%m%d')}.csv")
+        df_all_rentrolls.to_csv(output_path, index=False, encoding='utf-8-sig')
+        print(f"[DONE] Saved combined file to: {output_path}")
         success = True  # Mark as successful
     except Exception as e:
         print(f" An error occurred: {e}")
@@ -305,5 +458,6 @@ def get_data_from_appfolio():
 
 
 if __name__ == "__main__":
-        get_data_from_appfolio()
-    
+    # filepath = r"C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\rent_roll-20250418.csv"
+    # clean_csv(filepath, 'rentroll')
+    get_data_from_appfolio()

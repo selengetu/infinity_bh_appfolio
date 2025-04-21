@@ -102,8 +102,8 @@ with tab1:
     # Filter rows where Status == 'Current' and count them
     current = dfs["Tenant Data"][dfs["Tenant Data"]["Status"] == "Current"].shape[0]
     unrented = dfs["Tenant Data"][dfs["Tenant Data"]["Status"] == "Notice-Unrented"].shape[0]
-    current_units = current+unrented
-    vacant_units = dfs["Tenant Data"][dfs["Tenant Data"]["Status"] == "Vacant-Rented"].shape[0]
+    vacant_units = dfs["Tenant Data"][dfs["Tenant Data"]["Status"] == "Notice-Rented"].shape[0]
+    current_units = current+unrented+vacant_units
     # Count total rows (all units)
     all_units = dfs["Tenant Data"].shape[0]
 
