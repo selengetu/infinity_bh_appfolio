@@ -146,6 +146,8 @@ def show_dashboard():
 
             fig = go.Figure()
 
+           
+
             # Line chart for Occupancy %
             fig.add_trace(
                 go.Scatter(
@@ -181,20 +183,20 @@ def show_dashboard():
             st.plotly_chart(fig, use_container_width=True)
         
         with col6:
-
+              
             trailing_12months = dfs["Rent Roll 12 Months"]  
             trailing_12months['date_str'] = pd.to_datetime(trailing_12months['date_str'], format='%m-%d-%Y')
             trailing_12months = trailing_12months.sort_values(by='date_str')
             summary = []
             for date, group in trailing_12months.groupby('date_str'):
                 total = len(group)
-                current = group[group['Status'] == 'Vacant-Rented'].shape[0]
-                notice = group[group['Status'] == 'Vacant-Unrented'].shape[0]
-                vacant = current +evict+ notice_un+notice
+                vacant_rented = group[group['Status'] == 'Vacant-Rented'].shape[0]
+                vacant_unrented = group[group['Status'] == 'Vacant-Unrented'].shape[0]
 
                 summary.append({
                     "Month": date.strftime("%b %Y"),
-                    "Occupancy %": vacant,
+                    "Vacant-Rented": vacant_rented,
+                    "Vacant-Unrented": vacant_unrented,
                     "Total Units": total
                 })
 
@@ -202,32 +204,33 @@ def show_dashboard():
 
             fig = go.Figure()
 
-            # Bar: Occupancy %
+            # Bar: Vacant-Rented
             fig.add_trace(
                 go.Bar(
                     x=df_occ["Month"],
-                    y=df_occ["Occupancy %"],
-                    name="Occupancy %",
-                    marker=dict(color=df_occ["Occupancy %"], colorscale="Blues"),
-                    text=df_occ["Occupancy %"],
-                    textposition="auto"
+                    y=df_occ["Vacant-Rented"],
+                    name="Vacant-Rented",
+                    marker=dict(color="lightblue")
+                )
+            )
+
+            # Bar: Vacant-Unrented (stacked on top)
+            fig.add_trace(
+                go.Bar(
+                    x=df_occ["Month"],
+                    y=df_occ["Vacant-Unrented"],
+                    name="Vacant-Unrented",
+                    marker=dict(color="steelblue")
                 )
             )
 
             # Layout
             fig.update_layout(
-                title="📊 Monthly Occupancy % and Total Units",
+                barmode='stack',
+                title="📊 Monthly Breakdown: Vacant-Rented vs Vacant-Unrented",
                 xaxis=dict(title="Month", title_font=dict(size=14), tickfont=dict(size=12)),
-                yaxis=dict(title="Occupancy %", title_font=dict(size=14), tickfont=dict(size=12), gridcolor="lightgray"),
-                yaxis2=dict(
-                    title="Total Units",
-                    overlaying="y",
-                    side="right",
-                    showgrid=False,
-                    title_font=dict(size=14),
-                    tickfont=dict(size=12),
-                ),
-                legend=dict(title="Metrics", font=dict(size=12)),
+                yaxis=dict(title="Unit Count", title_font=dict(size=14), tickfont=dict(size=12), gridcolor="lightgray"),
+                legend=dict(title="Vacancy Type", font=dict(size=12)),
                 width=1000, height=600,
                 margin=dict(l=50, r=50, t=50, b=50)
             )
@@ -238,8 +241,54 @@ def show_dashboard():
 
         # Use col2 and col5 for two separate charts
         with col7:
-                # Ensure Rent and Market Rent are numeric
-            dfs["Tenant Data"]["Rent"] = pd.to_numeric(dfs["Tenant Data"]["Rent"], errors="coerce")
+
+            statuses = [
+            "Current",
+            "Notice-Rented",
+            "Notice-Unrented",
+            "Evict",
+            "Vacant-Rented",
+            "Vacant-Unrented"
+            ]
+
+            rent_roll = dfs["Rent Roll"]
+            # Filter only relevant statuses
+            filtered = rent_roll[rent_roll["Status"].isin(statuses)]
+
+            # Group by Unit Type and Status
+            grouped = (
+                filtered
+                .groupby(["BD/BA", "Status"])
+                .size()
+                .reset_index(name="Count")
+            )
+
+            pivot_df = grouped.pivot_table(
+                index="BD/BA",
+                columns="Status",
+                values="Count",
+                fill_value=0
+            ).reset_index()
+
+            fig = px.bar(
+                grouped,
+                x="BD/BA",
+                y="Count",
+                color="Status",
+                barmode="stack",
+                color_discrete_sequence=px.colors.qualitative.Set2,
+                title="📊 Unit Type Breakdown by Status"
+            )
+
+            fig.update_layout(
+                xaxis_title="BD/BA",
+                yaxis_title="Number of Units",
+                legend_title="Status",
+                width=1000,
+                height=600
+            )
+
+            st.plotly_chart(fig, use_container_width=True)
 
           
 
@@ -286,11 +335,107 @@ def show_dashboard():
             else:
                 st.warning("⚠️ 'Status' column not found in dataset.")
 
-        col9 = st.columns(1)[0] 
+        col9, col10 = st.columns(2)
 
-        # Use col2 and col5 for two separate charts
         with col9:
-            pass
+            trailing_12months = dfs["Rent Roll 12 Months"]  
+            trailing_12months['date_str'] = pd.to_datetime(trailing_12months['date_str'], format='%m-%d-%Y')
+            trailing_12months = trailing_12months.sort_values(by='date_str')
+            summary = []
+            for date, group in trailing_12months.groupby('date_str'):
+                total = len(group)
+                evict = group[group['Status'] == 'Evict'].shape[0]
+                summary.append({
+                    "Month": date.strftime("%b %Y"),
+                    "Evict": evict
+                })
+
+            df_occ = pd.DataFrame(summary)
+
+            fig = go.Figure()
+
+            # Line chart for Occupancy %
+            fig.add_trace(
+                go.Scatter(
+                    x=df_occ["Month"],
+                    y=df_occ["Evict"],
+                    mode="lines+markers",
+                    name="Evict",
+                    line=dict(color="orange"),
+                    marker=dict(size=8),
+                    text=df_occ["Evict"],
+                    textposition="top center"
+                )
+            )
+
+            # Layout
+            fig.update_layout(
+                title="📊 Monthly Occupancy % and Total Units",
+                xaxis=dict(title="Month", title_font=dict(size=14), tickfont=dict(size=12)),
+                yaxis=dict(title="Evict", title_font=dict(size=14), tickfont=dict(size=12), gridcolor="lightgray"),
+               
+                legend=dict(title="Metrics", font=dict(size=12)),
+                width=1000, height=600,
+                margin=dict(l=50, r=50, t=50, b=50)
+            )
+
+            st.plotly_chart(fig, use_container_width=True)
+
+        with col10:
+           
+
+            df = dfs["Rent Roll"].copy()
+            df['Move-out'] = pd.to_datetime(df['Move-out'], errors='coerce')
+
+            today = datetime.today()
+
+            def categorize_moveout_days(row):
+                if pd.isna(row['Move-out']):
+                    return None
+                delta = (row['Move-out'] - today).days
+                if delta < 0:
+                    return None  # Already moved out
+                elif delta <= 30:
+                    return '0-30 Days'
+                elif delta <= 60:
+                    return '31-60 Days'
+                elif delta <= 90:
+                    return '61-90 Days'
+                elif delta <= 365:
+                    return '91-365 Days'
+                else:
+                    return None
+
+                    # Apply the categorization
+            df['Move Out Bucket'] = df.apply(lambda row: categorize_moveout_days(row), axis=1)
+
+            # Group by Room Type and Move Out Bucket
+            grouped = (
+                df[df['Move Out Bucket'].notna()]
+                .groupby(['BD/BA', 'Move Out Bucket'])
+                .size()
+                .reset_index(name='Count')
+            )
+
+            fig = px.bar(
+                grouped,
+                x="Move Out Bucket",
+                y="Count",
+                color="BD/BA",
+                title="📦 Upcoming Move-Outs by Room Type",
+                barmode="stack",
+                color_discrete_sequence=px.colors.qualitative.Pastel
+            )
+
+            fig.update_layout(
+                xaxis_title="Move Out Timeframe",
+                yaxis_title="Number of Units",
+                legend_title="BD/BA",
+                width=1000,
+                height=600
+            )
+
+            st.plotly_chart(fig, use_container_width=True)
 
     with tab2:
         col21, col22, col23, col24 = st.columns(4)
@@ -341,7 +486,7 @@ def show_dashboard():
         
         
         with col39:
-            today = pd.Timestamp.today()
+            pass
 
 
         with tab1:
@@ -368,6 +513,6 @@ def show_dashboard():
             st.subheader("📄 Billings")
             st.write(dfs["Purchase Order"])
        
-# if __name__ == "__main__":
-#     show_dashboard()
+if __name__ == "__main__":
+    show_dashboard()
 
