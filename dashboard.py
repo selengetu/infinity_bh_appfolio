@@ -10,6 +10,7 @@ from datetime import datetime, timedelta
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud, STOPWORDS
 
+st.set_page_config(page_title="Infinity BH Dashboards", layout="wide")
 
 def show_dashboard():
     
@@ -661,7 +662,7 @@ def show_dashboard():
                 "Move-Ins": df_leasing["Move-Ins"].sum(),
                 "Approved": df_leasing["Approved"].sum(),
                 "Rental Applications": df_leasing["Rental Apps"].sum(),
-                "Completed Shows": df_leasing["Completed Showings"].sum(),
+                # "Completed Shows": df_leasing["Completed Showings"].sum(),
                 "Inquiries": df_leasing["Inquiries"].sum(),
             }
 
@@ -1170,5 +1171,6 @@ def show_dashboard():
             st.write(dfs["Purchase Order"])
             st.write(dfs["Bill"])
        
-
+if __name__ == "__main__":
+    show_dashboard()
 
