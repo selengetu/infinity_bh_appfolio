@@ -33,6 +33,7 @@ LEASING_FUNNEL_URL = os.getenv('LEASING_FUNNEL_URL')
 TENANT_URL = os.getenv('TENANT_URL')
 PURCHASE_ORDER_URL = os.getenv('PURCHASE_ORDER_URL')
 PROSPECT_SOURCE_URL = os.getenv('PROSPECT_SOURCE_URL')
+BILL_URL = os.getenv('BILL_URL')
 USERNAME = os.getenv('APPFOLIO_USERNAME')
 PASSWORD = os.getenv('APPFOLIO_PASSWORD')
 
@@ -46,9 +47,17 @@ PROSPECT_SOURCE_FOLDER = os.path.join(BASE_DOWNLOAD_FOLDER, "prospect_source")
 
 today = datetime.today()
 ninety_days_ago = today - timedelta(days=90)
+first_day_of_month = today.replace(day=1)
+last_day_of_prev_month = first_day_of_month - timedelta(days=1)
+
+one_year_ago = last_day_of_prev_month - timedelta(days=365)
 
 formatted_today = today.strftime("%m/%d/%Y")
 formatted_ninety_days_ago = ninety_days_ago.strftime("%m/%d/%Y")
+formatted_first_day_of_month = first_day_of_month.strftime("%m/%d/%Y")
+formatted_last_day_prev_month = last_day_of_prev_month.strftime("%m/%d/%Y")
+formatted_year_ago = one_year_ago.strftime("%m/%d/%Y")
+
 
 def get_trailing_month_end_dates(today):
     trailing_months = []
@@ -198,7 +207,7 @@ def clean_csv(file_path,file_prefix, type):
         # Add the new column for Property Name, initially empty
     df['Property Name'] = pd.NA
 
-    if file_prefix == 'rentroll' or file_prefix == 'work_order' or file_prefix == 'purchase_order' or type == 2:
+    if file_prefix == 'rentroll' or file_prefix == 'work_order' or file_prefix == 'purchase_order' or file_prefix == 'bill' or type == 2:
         first_col = df.columns[0]
         header_mask = df[first_col].astype(str).str.strip().str.startswith('->')
 
@@ -218,7 +227,7 @@ def clean_csv(file_path,file_prefix, type):
         
         df = df.iloc[:-2]
 
-    elif file_prefix == 'tenant_data' or file_prefix == 'purchase_order':
+    elif file_prefix == 'tenant_data':
         df['Property Name'] = df['Property'].apply(parse_property_name)
         df = df.iloc[:-1]
 
@@ -276,6 +285,39 @@ def download_csv(driver, page_url, type, file_prefix, target_date=None):
         date_from_input.send_keys(formatted_ninety_days_ago) 
         date_input.send_keys(formatted_today) 
 
+
+    if file_prefix == 'purchase_order':
+       
+        date_from_input = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.ID, "filters_created_date_from"))
+        )
+        date_from_input_to = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.ID, "filters_created_date_to"))
+        )
+        time.sleep(5)
+
+        date_from_input.clear()
+        date_from_input.send_keys(formatted_year_ago) 
+        date_from_input_to.clear()
+        date_from_input_to.send_keys(formatted_last_day_prev_month) 
+
+    if file_prefix == 'bill':
+       
+        date_from_input = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.ID, "filters_occurred_on_from"))
+        )
+        
+        date_from_input_to = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.ID, "filters_occurred_on_to"))
+        )
+        time.sleep(5)
+
+        date_from_input.clear()
+        date_from_input.send_keys(formatted_year_ago) 
+        date_from_input_to.clear()
+        date_from_input_to.send_keys(formatted_last_day_prev_month) 
+        time.sleep(5)
+
     if file_prefix == 'leasing':
         date_from_input = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.ID, "filters_received_on_from"))
@@ -287,10 +329,10 @@ def download_csv(driver, page_url, type, file_prefix, target_date=None):
         date_input.clear()
         date_from_input.send_keys(formatted_ninety_days_ago) 
         date_input.send_keys(formatted_today) 
-
+    print("reached here")
     # Click update and download CSV
     click_update_button(driver)
-    time.sleep(20)
+    time.sleep(30)
     open_dropdown_and_click_csv(driver)
     time.sleep(30)
     
@@ -425,6 +467,7 @@ def get_data_from_appfolio():
         # leasing = download_csv(driver, LEASING_FUNNEL_URL, 1, 'leasing',None) 
         # prospect = download_csv(driver, PROSPECT_SOURCE_URL,1, 'prospect',None)
         # purchase = download_csv(driver, PURCHASE_ORDER_URL, 1,'purchase_order',None)
+        bill = download_csv(driver, BILL_URL, 1,'bill',None)
         month_end_dates = get_trailing_month_end_dates(today)
 
         for date_str in month_end_dates:
@@ -437,10 +480,10 @@ def get_data_from_appfolio():
             if not success:
                 logging.warning(f"Download failed for {date_str}")
 
-        df_all_rentrolls = union_rentrolls()
-        output_path = os.path.join(BASE_DOWNLOAD_FOLDER, f"rentroll_12_months_combined_{datetime.today().strftime('%Y%m%d')}.csv")
-        df_all_rentrolls.to_csv(output_path, index=False, encoding='utf-8-sig')
-        print(f"[DONE] Saved combined file to: {output_path}")
+        # df_all_rentrolls = union_rentrolls()
+        # output_path = os.path.join(BASE_DOWNLOAD_FOLDER, f"rentroll_12_months_combined_{datetime.today().strftime('%Y%m%d')}.csv")
+        # df_all_rentrolls.to_csv(output_path, index=False, encoding='utf-8-sig')
+        # print(f"[DONE] Saved combined file to: {output_path}")
         success = True  # Mark as successful
     except Exception as e:
         print(f" An error occurred: {e}")
@@ -461,3 +504,4 @@ if __name__ == "__main__":
     # filepath = r"C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\rent_roll-20250418.csv"
     # clean_csv(filepath, 'rentroll')
     get_data_from_appfolio()
+

@@ -25,6 +25,7 @@ def show_dashboard():
         "Rent Roll": "rentroll_cleaned",
         "Leasing": "leasing_cleaned",
         "Purchase Order": "purchase_order_cleaned",
+        "Bill": "bill_cleaned",
         "Rent Roll 12 Months": "rentroll_12_months_combined",
     }
 
@@ -75,6 +76,7 @@ def show_dashboard():
         "Leasing": latest_files.get("Leasing"),
         "Rent Roll": latest_files.get("Rent Roll"),
         "Purchase Order": latest_files.get("Purchase Order"),
+        "Bill": latest_files.get("Bill"),
         "Rent Roll 12 Months": latest_files.get("Rent Roll 12 Months")
     }
     # 🔹 2. Load DataFrames
@@ -820,7 +822,344 @@ def show_dashboard():
             # Show in Streamlit
             st.plotly_chart(fig, use_container_width=True)
 
+    with tab5:
 
+        col51, col52, col53, col54 = st.columns(4)
+
+        df = dfs["Tenant Data"].copy()
+        total_residents = df['Tenant'].nunique()  # or df.shape[0] if 1 row per resident
+        eviction_filings = df[df['Status'] == 'Evict'].shape[0]
+        notice = df[df['Status'] == 'Notice'].shape[0]
+        future = df[df['Status'] == 'Future'].shape[0]
+        evictions_per_resident = round(eviction_filings / total_residents, 3)
+
+        # Display the metric card
+        col51.metric(label="🏠Current Residents", value=f"{total_residents}")
+        col52.metric(label="📊Notice Residents",  value=f"{notice}")
+        col53.metric(label="🚪Future tenants (Next 60 days)", value=f"{future}")
+        col54.metric(label="⚖️ Eviction Filings per Residentt", value=f"{evictions_per_resident}")
+        
+
+        
+        col55, col56 = st.columns(2)
+
+        with col55:
+
+            # Load Rent Roll
+            df = dfs["Rent Roll"].copy()
+
+            # Clean columns
+            df['Past Due'] = pd.to_numeric(df['Past Due'], errors='coerce').fillna(0)
+            df['Late Count'] = pd.to_numeric(df['Late Count'], errors='coerce').fillna(0)
+
+            # Filter for tenants with Late Count > 0
+            df_late = df[df['Late Count'] > 0]
+
+           
+            # Group by Tenant (or Unit if better)
+            summary = df_late.groupby("Tenant").agg(
+                Past_Due=('Past Due', 'sum'),
+                Late_Count=('Late Count', 'sum')
+            ).reset_index()
+
+            # Sort by most Past Due
+            summary = summary.sort_values(by="Past_Due", ascending=False).head(30)  # top 30 tenants
+           
+            # Plotly dual-axis chart
+            fig = go.Figure()
+
+            # Bar: Past Due $
+            fig.add_trace(go.Bar(
+                x=summary['Tenant'],
+                y=summary['Past_Due'],
+                name='Past Due ($)',
+                yaxis='y2',
+                marker_color='indianred',
+                opacity=0.6
+            ))
+
+            # Line: Late Count
+            fig.add_trace(go.Scatter(
+                x=summary['Tenant'],
+                y=summary['Late_Count'],
+                name='Late Count',
+                yaxis='y1',
+                mode='lines+markers',
+                line=dict(color='green'),
+                marker=dict(size=8)
+            ))
+
+            # Layout
+            fig.update_layout(
+                title="📉 Late Tenants: Past Due vs Late Count",
+                xaxis=dict(title="Tenant", tickangle=-45),
+                yaxis=dict(
+                    title="Late Count",
+                    tickfont=dict(color="green"),
+                ),
+                yaxis2=dict(
+                    title="Past Due ($)",
+                    overlaying="y",
+                    side="right",
+                    tickformat="$.2s",
+                    tickfont=dict(color="indianred"),
+                    showgrid=False
+                ),
+                legend=dict(title="Metrics"),
+                height=600,
+                width=1100,
+                margin=dict(t=60, b=80, l=50, r=50)
+            )
+
+            st.plotly_chart(fig, use_container_width=True)
+
+        with col56:
+            df = dfs["Rent Roll"].copy()
+
+            
+                        # Group by Property
+            summary = (
+                df.groupby("Property Name")
+                .agg(
+                    Total_Residents=('Tenant', 'nunique'),
+                    Eviction_Filings=('Status', lambda x: (x == 'Evict').sum())
+                )
+                .reset_index()
+            )
+
+            # Calculate ratio
+            summary['Evictions per Resident'] = summary['Eviction_Filings'] / summary['Total_Residents']
+
+
+            fig = px.bar(
+                summary,
+                x="Property Name",
+                y="Evictions per Resident",
+                title="📉 Eviction Filings per Resident by Property",
+                color="Evictions per Resident",
+                color_continuous_scale="OrRd"
+            )
+
+            fig.update_layout(
+                xaxis_title="Property",
+                yaxis_title="Evictions per Resident",
+                width=1000,
+                height=600
+            )
+
+            st.plotly_chart(fig, use_container_width=True)
+
+    with tab6:
+
+        col61, col62, col63, col64 = st.columns(4)
+
+        df = dfs["Tenant Data"].copy()
+        total_residents = df['Tenant'].nunique()  # or df.shape[0] if 1 row per resident
+        eviction_filings = df[df['Status'] == 'Evict'].shape[0]
+        notice = df[df['Status'] == 'Notice'].shape[0]
+        future = df[df['Status'] == 'Future'].shape[0]
+        evictions_per_resident = round(eviction_filings / total_residents, 3)
+
+        # Display the metric card
+        col61.metric(label="🏠Current Residents", value=f"{total_residents}")
+        col62.metric(label="📊Notice Residents",  value=f"{notice}")
+        col63.metric(label="🚪Future tenants (Next 60 days)", value=f"{future}")
+        col64.metric(label="⚖️ Eviction Filings per Residentt", value=f"{evictions_per_resident}")
+        
+
+        
+        col65, col66 = st.columns(2)
+
+        with col65:
+
+            # Load your data
+            df = dfs["Purchase Order"].copy()
+
+            # Parse datetime and extract month
+            df['Created At'] = pd.to_datetime(df['Created At'], errors='coerce')
+            df['Month'] = df['Created At'].dt.to_period("M").astype(str)
+
+            # Convert Billed Amount to numeric
+            df['Billed Amount (Line Item)'] = pd.to_numeric(df['Billed Amount (Line Item)'], errors='coerce')
+
+            # Filter only completed orders
+            df_completed = df[df['Completed'] == 'Yes'].copy()
+            df_completed['Billed Amount (Line Item)'] = df_completed['Billed Amount (Line Item)'].fillna(0)
+
+            # Group by Month
+            monthly_summary = df_completed.groupby('Month').agg({
+                'Purchase Order Number': 'nunique',
+                'Billed Amount (Line Item)': 'sum'
+            }).reset_index()
+
+            monthly_summary.columns = ['Month', 'Purchase Order Count', 'Total Billed Amount']
+            monthly_summary = monthly_summary.sort_values('Month')
+
+            # Create dual-axis plot
+            fig = go.Figure()
+
+            # Bar: PO count
+            fig.add_trace(go.Bar(
+                x=monthly_summary['Month'],
+                y=monthly_summary['Purchase Order Count'],
+                name='Purchase Order Count',
+                marker_color='skyblue',
+                text=monthly_summary['Purchase Order Count'],
+                textposition='auto'
+            ))
+
+            # Line: Billed Amount
+            fig.add_trace(go.Scatter(
+                x=monthly_summary['Month'],
+                y=monthly_summary['Total Billed Amount'],
+                name='Billed Amount ($)',
+                yaxis='y2',
+                mode='lines+markers',
+                line=dict(color='darkgreen'),
+                marker=dict(size=8),
+                text=monthly_summary['Total Billed Amount'].map('${:,.0f}'.format),
+                textposition='top center'
+            ))
+
+            # Layout
+            fig.update_layout(
+                title='📦 Completed Purchase Orders & Total Billed Amount by Month',
+                xaxis=dict(title='Month'),
+                yaxis=dict(title='Purchase Orders'),
+                yaxis2=dict(
+                    title='Billed Amount ($)',
+                    overlaying='y',
+                    side='right',
+                    showgrid=False,
+                    tickformat="$.2s"
+                ),
+                legend=dict(title='Metric'),
+                height=600,
+                width=1000
+            )
+
+            st.plotly_chart(fig, use_container_width=True)
+
+        with col66:
+
+            # Load your data
+            df = dfs["Bill"].copy()
+
+            # Parse datetime and extract month
+            df['Bill Date'] = pd.to_datetime(df['Bill Date'], errors='coerce')
+            df['Month'] = df['Bill Date'].dt.to_period("M").astype(str)
+
+            # Convert Billed Amount to numeric
+            df['Paid'] = pd.to_numeric(df['Paid'], errors='coerce')
+
+            # Group by Month
+            monthly_summary = df.groupby('Month').agg({
+                'Reference': 'nunique',
+                'Paid': 'sum'
+            }).reset_index()
+
+            monthly_summary.columns = ['Month', 'Reference', 'Paid']
+            monthly_summary = monthly_summary.sort_values('Month')
+
+            # Create dual-axis plot
+            fig = go.Figure()
+
+            # Bar: PO count
+            fig.add_trace(go.Bar(
+                x=monthly_summary['Month'],
+                y=monthly_summary['Reference'],
+                name='Reference',
+                marker_color='grey',
+                text=monthly_summary['Reference'],
+                textposition='auto'
+            ))
+
+            # Line: Billed Amount
+            fig.add_trace(go.Scatter(
+                x=monthly_summary['Month'],
+                y=monthly_summary['Paid'],
+                name='Paid ($)',
+                yaxis='y2',
+                mode='lines+markers',
+                line=dict(color='red'),
+                marker=dict(size=8),
+                text=monthly_summary['Paid'].map('${:,.0f}'.format),
+                textposition='top center'
+            ))
+
+            # Layout
+            fig.update_layout(
+                title='📦 Completed Bills & Paid by Month',
+                xaxis=dict(title='Month'),
+                yaxis=dict(title='Bills'),
+                yaxis2=dict(
+                    title='Billed Amount ($)',
+                    overlaying='y',
+                    side='right',
+                    showgrid=False,
+                    tickformat="$.2s"
+                ),
+                legend=dict(title='Metric'),
+                height=600,
+                width=1000
+            )
+
+            st.plotly_chart(fig, use_container_width=True)
+
+        col67 = st.columns(1)[0]
+
+        with col67:
+
+            # Sample DataFrame: replace with your actual data source
+            df = dfs["Bill"].copy()
+
+            # Ensure columns are in correct type
+            df['Bill Date'] = pd.to_datetime(df['Bill Date'], errors='coerce')
+            df['Paid'] = pd.to_numeric(df['Paid'], errors='coerce')
+
+            # Drop nulls in critical fields
+            df = df.dropna(subset=['Payee Name', 'Bill Date', 'Paid'])
+
+            # Extract Month-Year
+            df['Month'] = df['Bill Date'].dt.to_period("M").astype(str)
+
+            top_payees = (
+                df.groupby('Payee Name')['Paid'].sum()
+                .sort_values(ascending=False)
+                .head(10)
+                .index
+            )
+
+            df_top = df[df['Payee Name'].isin(top_payees)]
+            # Group by Month and Payee
+            monthly_spend = (
+                df_top.groupby(['Month', 'Payee Name'])['Paid'].sum()
+                .reset_index()
+                .sort_values('Month')
+            )
+
+            # Plot with Plotly
+            fig = px.line(
+                monthly_spend,
+                x='Month',
+                y='Paid',
+                color='Payee Name',
+                markers=True,
+                title="💸 Monthly Spend by Vendor",
+                labels={'Paid': 'Amount ($)', 'Month': 'Month'},
+            )
+
+            fig.update_layout(
+                xaxis_title="Month",
+                yaxis_title="Total $ Spent",
+                width=1000,
+                height=600,
+                legend_title="Vendor",
+                xaxis=dict(tickangle=-45),
+                hovermode="x unified"
+            )
+
+            st.plotly_chart(fig, use_container_width=True)
 
         with tab1:
             st.subheader("🏠 Property Performance")
@@ -845,6 +1184,7 @@ def show_dashboard():
         with tab6:
             st.subheader("📄 Billings")
             st.write(dfs["Purchase Order"])
+            st.write(dfs["Bill"])
        
 if __name__ == "__main__":
     show_dashboard()

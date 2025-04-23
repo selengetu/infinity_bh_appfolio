@@ -3944,3 +3944,309 @@ Stacktrace:
 2025-04-21 13:30:05,807 - INFO - Entered verification code: 374187
 2025-04-21 13:30:07,382 - INFO - Successfully submitted the verification code!
 2025-04-21 13:30:13,010 - INFO - [SUCCESS] The entire process completed successfully.
+2025-04-23 09:42:26,946 - INFO - Started Appfolio data process
+2025-04-23 09:42:28,165 - INFO - [INFO] Opening login page...
+2025-04-23 09:42:30,607 - INFO - [INFO] Entered username
+2025-04-23 09:42:30,678 - INFO - [INFO] Entered password
+2025-04-23 09:42:31,534 - INFO - [INFO] Clicked login button
+2025-04-23 09:42:34,541 - INFO - [INFO] 2-Step Verification detected. Retrieving verification code...
+2025-04-23 09:42:34,952 - INFO - [INFO] Requested verification code.
+2025-04-23 09:42:38,564 - INFO - Entered verification code: 843956
+2025-04-23 09:42:40,768 - INFO - Successfully submitted the verification code!
+2025-04-23 09:42:43,769 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/purchase_order?customize=true and downloading CSV...
+2025-04-23 09:42:57,870 - INFO -  An error occurred: Message: 
+Stacktrace:
+	GetHandleVerifier [0x00007FF765815355+78597]
+	GetHandleVerifier [0x00007FF7658153B0+78688]
+	(No symbol) [0x00007FF7655C91AA]
+	(No symbol) [0x00007FF76561F149]
+	(No symbol) [0x00007FF76561F3FC]
+	(No symbol) [0x00007FF765672467]
+	(No symbol) [0x00007FF76564712F]
+	(No symbol) [0x00007FF76566F2BB]
+	(No symbol) [0x00007FF765646EC3]
+	(No symbol) [0x00007FF7656103F8]
+	(No symbol) [0x00007FF765611163]
+	GetHandleVerifier [0x00007FF765ABEF0D+2870973]
+	GetHandleVerifier [0x00007FF765AB96B8+2848360]
+	GetHandleVerifier [0x00007FF765AD6993+2967875]
+	GetHandleVerifier [0x00007FF76583019A+188746]
+	GetHandleVerifier [0x00007FF76583847F+222255]
+	GetHandleVerifier [0x00007FF76581D2D4+111236]
+	GetHandleVerifier [0x00007FF76581D482+111666]
+	GetHandleVerifier [0x00007FF7658035A9+5465]
+	BaseThreadInitThunk [0x00007FF96DB6E8D7+23]
+	RtlUserThreadStart [0x00007FF96FB5BF6C+44]
+
+2025-04-23 09:43:00,072 - INFO - [ERROR] The process encountered an error.
+2025-04-23 09:44:38,619 - INFO - Started Appfolio data process
+2025-04-23 09:44:39,675 - INFO - [INFO] Opening login page...
+2025-04-23 09:44:41,596 - INFO - [INFO] Entered username
+2025-04-23 09:44:41,657 - INFO - [INFO] Entered password
+2025-04-23 09:44:42,367 - INFO - [INFO] Clicked login button
+2025-04-23 09:44:45,374 - INFO - [INFO] 2-Step Verification detected. Retrieving verification code...
+2025-04-23 09:44:45,734 - INFO - [INFO] Requested verification code.
+2025-04-23 09:44:49,318 - INFO - Entered verification code: 680222
+2025-04-23 09:44:49,412 - INFO - Successfully submitted the verification code!
+2025-04-23 09:44:52,412 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/purchase_order?customize=true and downloading CSV...
+2025-04-23 09:45:06,509 - INFO -  An error occurred: Message: 
+Stacktrace:
+	GetHandleVerifier [0x00007FF765815355+78597]
+	GetHandleVerifier [0x00007FF7658153B0+78688]
+	(No symbol) [0x00007FF7655C91AA]
+	(No symbol) [0x00007FF76561F149]
+	(No symbol) [0x00007FF76561F3FC]
+	(No symbol) [0x00007FF765672467]
+	(No symbol) [0x00007FF76564712F]
+	(No symbol) [0x00007FF76566F2BB]
+	(No symbol) [0x00007FF765646EC3]
+	(No symbol) [0x00007FF7656103F8]
+	(No symbol) [0x00007FF765611163]
+	GetHandleVerifier [0x00007FF765ABEF0D+2870973]
+	GetHandleVerifier [0x00007FF765AB96B8+2848360]
+	GetHandleVerifier [0x00007FF765AD6993+2967875]
+	GetHandleVerifier [0x00007FF76583019A+188746]
+	GetHandleVerifier [0x00007FF76583847F+222255]
+	GetHandleVerifier [0x00007FF76581D2D4+111236]
+	GetHandleVerifier [0x00007FF76581D482+111666]
+	GetHandleVerifier [0x00007FF7658035A9+5465]
+	BaseThreadInitThunk [0x00007FF96DB6E8D7+23]
+	RtlUserThreadStart [0x00007FF96FB5BF6C+44]
+
+2025-04-23 09:45:08,721 - INFO - [ERROR] The process encountered an error.
+2025-04-23 09:52:13,829 - INFO - Started Appfolio data process
+2025-04-23 09:52:14,909 - INFO - [INFO] Opening login page...
+2025-04-23 09:52:18,792 - INFO - [INFO] Entered username
+2025-04-23 09:52:18,864 - INFO - [INFO] Entered password
+2025-04-23 09:52:19,025 - INFO - [INFO] Clicked login button
+2025-04-23 09:52:22,032 - INFO - [INFO] 2-Step Verification detected. Retrieving verification code...
+2025-04-23 09:52:22,408 - INFO - [INFO] Requested verification code.
+2025-04-23 09:52:22,652 - INFO - Too many requests. Waiting 10 seconds before retrying...
+2025-04-23 09:52:34,028 - INFO - Entered verification code: 408756
+2025-04-23 09:52:34,109 - INFO - Successfully submitted the verification code!
+2025-04-23 09:52:37,111 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/purchase_order?customize=true and downloading CSV...
+2025-04-23 09:52:51,915 - INFO -  An error occurred: Message: 
+Stacktrace:
+	GetHandleVerifier [0x00007FF765815355+78597]
+	GetHandleVerifier [0x00007FF7658153B0+78688]
+	(No symbol) [0x00007FF7655C91AA]
+	(No symbol) [0x00007FF76561F149]
+	(No symbol) [0x00007FF76561F3FC]
+	(No symbol) [0x00007FF765672467]
+	(No symbol) [0x00007FF76564712F]
+	(No symbol) [0x00007FF76566F2BB]
+	(No symbol) [0x00007FF765646EC3]
+	(No symbol) [0x00007FF7656103F8]
+	(No symbol) [0x00007FF765611163]
+	GetHandleVerifier [0x00007FF765ABEF0D+2870973]
+	GetHandleVerifier [0x00007FF765AB96B8+2848360]
+	GetHandleVerifier [0x00007FF765AD6993+2967875]
+	GetHandleVerifier [0x00007FF76583019A+188746]
+	GetHandleVerifier [0x00007FF76583847F+222255]
+	GetHandleVerifier [0x00007FF76581D2D4+111236]
+	GetHandleVerifier [0x00007FF76581D482+111666]
+	GetHandleVerifier [0x00007FF7658035A9+5465]
+	BaseThreadInitThunk [0x00007FF96DB6E8D7+23]
+	RtlUserThreadStart [0x00007FF96FB5BF6C+44]
+
+2025-04-23 09:52:54,131 - INFO - [ERROR] The process encountered an error.
+2025-04-23 09:55:09,551 - INFO - Started Appfolio data process
+2025-04-23 09:55:10,596 - INFO - [INFO] Opening login page...
+2025-04-23 09:55:12,738 - INFO - [INFO] Entered username
+2025-04-23 09:55:12,829 - INFO - [INFO] Entered password
+2025-04-23 09:55:12,983 - INFO - [INFO] Clicked login button
+2025-04-23 09:55:15,990 - INFO - [INFO] 2-Step Verification detected. Retrieving verification code...
+2025-04-23 09:55:16,346 - INFO - [INFO] Requested verification code.
+2025-04-23 09:55:19,943 - INFO - Entered verification code: 023365
+2025-04-23 09:55:20,016 - INFO - Successfully submitted the verification code!
+2025-04-23 09:55:23,017 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/purchase_order?customize=true and downloading CSV...
+2025-04-23 09:55:37,209 - INFO -  An error occurred: Message: 
+Stacktrace:
+	GetHandleVerifier [0x00007FF765815355+78597]
+	GetHandleVerifier [0x00007FF7658153B0+78688]
+	(No symbol) [0x00007FF7655C91AA]
+	(No symbol) [0x00007FF76561F149]
+	(No symbol) [0x00007FF76561F3FC]
+	(No symbol) [0x00007FF765672467]
+	(No symbol) [0x00007FF76564712F]
+	(No symbol) [0x00007FF76566F2BB]
+	(No symbol) [0x00007FF765646EC3]
+	(No symbol) [0x00007FF7656103F8]
+	(No symbol) [0x00007FF765611163]
+	GetHandleVerifier [0x00007FF765ABEF0D+2870973]
+	GetHandleVerifier [0x00007FF765AB96B8+2848360]
+	GetHandleVerifier [0x00007FF765AD6993+2967875]
+	GetHandleVerifier [0x00007FF76583019A+188746]
+	GetHandleVerifier [0x00007FF76583847F+222255]
+	GetHandleVerifier [0x00007FF76581D2D4+111236]
+	GetHandleVerifier [0x00007FF76581D482+111666]
+	GetHandleVerifier [0x00007FF7658035A9+5465]
+	BaseThreadInitThunk [0x00007FF96DB6E8D7+23]
+	RtlUserThreadStart [0x00007FF96FB5BF6C+44]
+
+2025-04-23 09:55:39,426 - INFO - [ERROR] The process encountered an error.
+2025-04-23 09:57:53,515 - INFO - Started Appfolio data process
+2025-04-23 09:57:54,561 - INFO - [INFO] Opening login page...
+2025-04-23 09:57:56,716 - INFO - [INFO] Entered username
+2025-04-23 09:57:56,796 - INFO - [INFO] Entered password
+2025-04-23 09:57:56,950 - INFO - [INFO] Clicked login button
+2025-04-23 09:57:59,958 - INFO - [INFO] 2-Step Verification detected. Retrieving verification code...
+2025-04-23 09:58:00,313 - INFO - [INFO] Requested verification code.
+2025-04-23 09:58:00,579 - INFO - Too many requests. Waiting 10 seconds before retrying...
+2025-04-23 09:58:11,980 - INFO - Entered verification code: 019248
+2025-04-23 09:58:12,052 - INFO - Successfully submitted the verification code!
+2025-04-23 09:58:15,053 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/purchase_order?customize=true and downloading CSV...
+2025-04-23 09:58:25,309 - INFO - Update button clicked successfully.
+2025-04-23 09:58:45,541 - INFO - Export CSV button clicked successfully.
+2025-04-23 09:58:45,541 - INFO - CSV export process initiated.
+2025-04-23 09:59:15,542 - INFO -  Waiting for CSV file to be downloaded...
+2025-04-23 09:59:15,545 - INFO -  Latest downloaded file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\purchase_order-20250423.csv
+2025-04-23 09:59:15,545 - INFO - [SUCCESS] CSV file ready: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\purchase_order-20250423.csv
+2025-04-23 09:59:15,545 - INFO - [SUCCESS] CSV URL: file://C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\purchase_order-20250423.csv
+2025-04-23 09:59:15,690 - INFO - Deleted original file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\purchase_order-20250423.csv
+2025-04-23 09:59:18,381 - INFO - [SUCCESS] The entire process completed successfully.
+2025-04-23 10:16:31,514 - INFO - Started Appfolio data process
+2025-04-23 10:16:32,567 - INFO - [INFO] Opening login page...
+2025-04-23 10:16:34,692 - INFO - [INFO] Entered username
+2025-04-23 10:16:34,767 - INFO - [INFO] Entered password
+2025-04-23 10:16:35,654 - INFO - [INFO] Clicked login button
+2025-04-23 10:16:38,659 - INFO - [INFO] 2-Step Verification detected. Retrieving verification code...
+2025-04-23 10:16:39,032 - INFO - [INFO] Requested verification code.
+2025-04-23 10:16:48,766 - INFO - Entered verification code: 563153
+2025-04-23 10:16:48,850 - INFO - Successfully submitted the verification code!
+2025-04-23 10:16:51,851 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/purchase_order?customize=true and downloading CSV...
+2025-04-23 10:17:01,546 - INFO - Update button clicked successfully.
+2025-04-23 10:17:21,838 - INFO - Export CSV button clicked successfully.
+2025-04-23 10:17:21,838 - INFO - CSV export process initiated.
+2025-04-23 10:17:51,839 - INFO -  Waiting for CSV file to be downloaded...
+2025-04-23 10:17:51,841 - INFO -  Latest downloaded file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\purchase_order-20250423.csv
+2025-04-23 10:17:51,841 - INFO - [SUCCESS] CSV file ready: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\purchase_order-20250423.csv
+2025-04-23 10:17:51,841 - INFO - [SUCCESS] CSV URL: file://C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\purchase_order-20250423.csv
+2025-04-23 10:17:51,970 - INFO - Deleted original file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\purchase_order-20250423.csv
+2025-04-23 10:17:54,510 - INFO - [SUCCESS] The entire process completed successfully.
+2025-04-23 10:33:13,020 - INFO - Started Appfolio data process
+2025-04-23 10:33:14,084 - INFO - [INFO] Opening login page...
+2025-04-23 10:33:16,527 - INFO - [INFO] Entered username
+2025-04-23 10:33:16,698 - INFO - [INFO] Entered password
+2025-04-23 10:33:17,674 - INFO - [INFO] Clicked login button
+2025-04-23 10:33:20,678 - INFO - [INFO] 2-Step Verification detected. Retrieving verification code...
+2025-04-23 10:33:21,032 - INFO - [INFO] Requested verification code.
+2025-04-23 10:33:21,261 - INFO - Too many requests. Waiting 10 seconds before retrying...
+2025-04-23 10:33:35,372 - INFO - Entered verification code: 183294
+2025-04-23 10:33:38,528 - INFO - Successfully submitted the verification code!
+2025-04-23 10:33:41,529 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/purchase_order?customize=true and downloading CSV...
+2025-04-23 10:33:51,127 - INFO - Update button clicked successfully.
+2025-04-23 10:34:11,337 - INFO - Export CSV button clicked successfully.
+2025-04-23 10:34:11,338 - INFO - CSV export process initiated.
+2025-04-23 10:34:41,338 - INFO -  Waiting for CSV file to be downloaded...
+2025-04-23 10:34:41,339 - INFO -  Latest downloaded file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\purchase_order-20250423.csv
+2025-04-23 10:34:41,339 - INFO - [SUCCESS] CSV file ready: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\purchase_order-20250423.csv
+2025-04-23 10:34:41,339 - INFO - [SUCCESS] CSV URL: file://C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\purchase_order-20250423.csv
+2025-04-23 10:34:41,477 - INFO - Deleted original file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\purchase_order-20250423.csv
+2025-04-23 10:34:44,145 - INFO - [SUCCESS] The entire process completed successfully.
+2025-04-23 11:26:50,290 - INFO - Started Appfolio data process
+2025-04-23 11:26:51,348 - INFO - [INFO] Opening login page...
+2025-04-23 11:26:53,718 - INFO - [INFO] Entered username
+2025-04-23 11:26:53,810 - INFO - [INFO] Entered password
+2025-04-23 11:26:55,259 - INFO - [INFO] Clicked login button
+2025-04-23 11:26:58,263 - INFO - [INFO] 2-Step Verification detected. Retrieving verification code...
+2025-04-23 11:26:58,601 - INFO - [INFO] Requested verification code.
+2025-04-23 11:27:02,313 - INFO - Entered verification code: 446667
+2025-04-23 11:27:02,396 - INFO - Successfully submitted the verification code!
+2025-04-23 11:27:05,398 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/bill_detail?customize=true and downloading CSV...
+2025-04-23 11:27:14,908 - INFO - Update button clicked successfully.
+2025-04-23 11:27:36,020 - INFO - An error occurred: Message: element click intercepted: Element <button type="button" aria-haspopup="true" aria-expanded="false" class="dropdown-div__button js-dropdown btn btn-secondary dropdown-toggle btn btn-secondary">...</button> is not clickable at point (1397, 27). Other element would receive the click: <div class="modal show" aria-modal="true" role="dialog" tabindex="-1" style="display: block;">...</div>
+  (Session info: chrome=135.0.7049.96)
+Stacktrace:
+	GetHandleVerifier [0x00007FF765815355+78597]
+	GetHandleVerifier [0x00007FF7658153B0+78688]
+	(No symbol) [0x00007FF7655C91AA]
+	(No symbol) [0x00007FF765627089]
+	(No symbol) [0x00007FF765624A42]
+	(No symbol) [0x00007FF765621AE1]
+	(No symbol) [0x00007FF765620A42]
+	(No symbol) [0x00007FF765612204]
+	(No symbol) [0x00007FF7656470EA]
+	(No symbol) [0x00007FF765611AB6]
+	(No symbol) [0x00007FF765647300]
+	(No symbol) [0x00007FF76566F2BB]
+	(No symbol) [0x00007FF765646EC3]
+	(No symbol) [0x00007FF7656103F8]
+	(No symbol) [0x00007FF765611163]
+	GetHandleVerifier [0x00007FF765ABEF0D+2870973]
+	GetHandleVerifier [0x00007FF765AB96B8+2848360]
+	GetHandleVerifier [0x00007FF765AD6993+2967875]
+	GetHandleVerifier [0x00007FF76583019A+188746]
+	GetHandleVerifier [0x00007FF76583847F+222255]
+	GetHandleVerifier [0x00007FF76581D2D4+111236]
+	GetHandleVerifier [0x00007FF76581D482+111666]
+	GetHandleVerifier [0x00007FF7658035A9+5465]
+	BaseThreadInitThunk [0x00007FF96DB6E8D7+23]
+	RtlUserThreadStart [0x00007FF96FB5BF6C+44]
+
+2025-04-23 11:28:06,020 - INFO -  Waiting for CSV file to be downloaded...
+2025-04-23 11:28:06,021 - INFO -  Latest downloaded file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\rentroll_12_months_combined_20250423.csv
+2025-04-23 11:28:06,022 - INFO - [SUCCESS] CSV file ready: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\rentroll_12_months_combined_20250423.csv
+2025-04-23 11:28:06,022 - INFO - [SUCCESS] CSV URL: file://C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\rentroll_12_months_combined_20250423.csv
+2025-04-23 11:28:06,378 - INFO - Deleted original file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\rentroll_12_months_combined_20250423.csv
+2025-04-23 11:28:08,601 - INFO - [SUCCESS] The entire process completed successfully.
+2025-04-23 11:32:12,701 - INFO - Started Appfolio data process
+2025-04-23 11:32:13,788 - INFO - [INFO] Opening login page...
+2025-04-23 11:32:15,783 - INFO - [INFO] Entered username
+2025-04-23 11:32:15,842 - INFO - [INFO] Entered password
+2025-04-23 11:32:16,773 - INFO - [INFO] Clicked login button
+2025-04-23 11:32:19,780 - INFO - [INFO] 2-Step Verification detected. Retrieving verification code...
+2025-04-23 11:32:20,147 - INFO - [INFO] Requested verification code.
+2025-04-23 11:32:26,193 - INFO - Entered verification code: 991643
+2025-04-23 11:32:28,136 - INFO - Successfully submitted the verification code!
+2025-04-23 11:32:31,137 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/bill_detail?customize=true and downloading CSV...
+2025-04-23 11:32:45,722 - INFO - Update button clicked successfully.
+2025-04-23 11:33:06,794 - INFO - An error occurred: Message: element click intercepted: Element <button type="button" aria-haspopup="true" aria-expanded="false" class="dropdown-div__button js-dropdown btn btn-secondary dropdown-toggle btn btn-secondary">...</button> is not clickable at point (1397, 27). Other element would receive the click: <div class="modal show" aria-modal="true" role="dialog" tabindex="-1" style="display: block;">...</div>
+  (Session info: chrome=135.0.7049.96)
+Stacktrace:
+	GetHandleVerifier [0x00007FF765815355+78597]
+	GetHandleVerifier [0x00007FF7658153B0+78688]
+	(No symbol) [0x00007FF7655C91AA]
+	(No symbol) [0x00007FF765627089]
+	(No symbol) [0x00007FF765624A42]
+	(No symbol) [0x00007FF765621AE1]
+	(No symbol) [0x00007FF765620A42]
+	(No symbol) [0x00007FF765612204]
+	(No symbol) [0x00007FF7656470EA]
+	(No symbol) [0x00007FF765611AB6]
+	(No symbol) [0x00007FF765647300]
+	(No symbol) [0x00007FF76566F2BB]
+	(No symbol) [0x00007FF765646EC3]
+	(No symbol) [0x00007FF7656103F8]
+	(No symbol) [0x00007FF765611163]
+	GetHandleVerifier [0x00007FF765ABEF0D+2870973]
+	GetHandleVerifier [0x00007FF765AB96B8+2848360]
+	GetHandleVerifier [0x00007FF765AD6993+2967875]
+	GetHandleVerifier [0x00007FF76583019A+188746]
+	GetHandleVerifier [0x00007FF76583847F+222255]
+	GetHandleVerifier [0x00007FF76581D2D4+111236]
+	GetHandleVerifier [0x00007FF76581D482+111666]
+	GetHandleVerifier [0x00007FF7658035A9+5465]
+	BaseThreadInitThunk [0x00007FF96DB6E8D7+23]
+	RtlUserThreadStart [0x00007FF96FB5BF6C+44]
+
+2025-04-23 11:33:26,054 - WARNING - Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ConnectionResetError(10054, 'An existing connection was forcibly closed by the remote host', None, 10054, None)': /session/3c17723b07154fdb4c42dd9d5fc60c6f
+2025-04-23 11:33:39,367 - INFO - Started Appfolio data process
+2025-04-23 11:33:40,436 - INFO - [INFO] Opening login page...
+2025-04-23 11:33:42,784 - INFO - [INFO] Entered username
+2025-04-23 11:33:42,881 - INFO - [INFO] Entered password
+2025-04-23 11:33:43,824 - INFO - [INFO] Clicked login button
+2025-04-23 11:33:46,829 - INFO - [INFO] 2-Step Verification detected. Retrieving verification code...
+2025-04-23 11:33:47,178 - INFO - [INFO] Requested verification code.
+2025-04-23 11:33:51,028 - INFO - Entered verification code: 386340
+2025-04-23 11:33:52,978 - INFO - Successfully submitted the verification code!
+2025-04-23 11:33:55,980 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/bill_detail?customize=true and downloading CSV...
+2025-04-23 11:34:10,428 - INFO - Update button clicked successfully.
+2025-04-23 11:34:40,639 - INFO - Export CSV button clicked successfully.
+2025-04-23 11:34:40,639 - INFO - CSV export process initiated.
+2025-04-23 11:35:10,640 - INFO -  Waiting for CSV file to be downloaded...
+2025-04-23 11:35:10,641 - INFO -  Latest downloaded file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_detail-20250331.csv
+2025-04-23 11:35:10,641 - INFO - [SUCCESS] CSV file ready: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_detail-20250331.csv
+2025-04-23 11:35:10,641 - INFO - [SUCCESS] CSV URL: file://C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_detail-20250331.csv
+2025-04-23 11:35:11,001 - INFO - Deleted original file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_detail-20250331.csv
+2025-04-23 11:35:13,297 - INFO - [SUCCESS] The entire process completed successfully.
