@@ -1171,6 +1171,5 @@ def show_dashboard():
             st.write(dfs["Purchase Order"])
             st.write(dfs["Bill"])
        
-if __name__ == "__main__":
-    show_dashboard()
+
 
