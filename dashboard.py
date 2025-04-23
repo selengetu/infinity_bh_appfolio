@@ -951,22 +951,7 @@ def show_dashboard():
 
     with tab6:
 
-        col61, col62, col63, col64 = st.columns(4)
-
-        df = dfs["Tenant Data"].copy()
-        total_residents = df['Tenant'].nunique()  # or df.shape[0] if 1 row per resident
-        eviction_filings = df[df['Status'] == 'Evict'].shape[0]
-        notice = df[df['Status'] == 'Notice'].shape[0]
-        future = df[df['Status'] == 'Future'].shape[0]
-        evictions_per_resident = round(eviction_filings / total_residents, 3)
-
-        # Display the metric card
-        col61.metric(label="🏠Current Residents", value=f"{total_residents}")
-        col62.metric(label="📊Notice Residents",  value=f"{notice}")
-        col63.metric(label="🚪Future tenants (Next 60 days)", value=f"{future}")
-        col64.metric(label="⚖️ Eviction Filings per Residentt", value=f"{evictions_per_resident}")
-        
-
+       
         
         col65, col66 = st.columns(2)
 
