@@ -8,14 +8,15 @@ import json
 import os
 from datetime import datetime, timedelta
 import matplotlib.pyplot as plt
+from wordcloud import WordCloud, STOPWORDS
 
-st.set_page_config(page_title="Appfolio Dashboards", layout="wide")
+st.set_page_config(page_title="Infinity BH Dashboards", layout="wide")
 
 def show_dashboard():
     
     BASE_DIR = os.path.join(os.getcwd(), "data")  # Use relative path
     IMG_DIR = "plotly_pdf_images"
-    st.title("📊 Appfolio Dashboards")
+    st.title("📊 Infinity BH Dashboards")
     # Define file prefixes
     file_prefixes = {
         "Tenant Data": "tenant_data_cleaned",
@@ -109,8 +110,10 @@ def show_dashboard():
         notice_re = dfs["Rent Roll"][dfs["Rent Roll"]["Status"] == "Notice-Rented"].shape[0]
         evict = dfs["Rent Roll"][dfs["Rent Roll"]["Status"] == "Evict"].shape[0]
         occupied = ((current_resident+evict+notice+notice_re) / all_units) * 100
-        dfs["Rent Roll"]["Rent"] = dfs["Tenant Data"]["Rent"].replace("[\$,]", "", regex=True)  # Remove $ and ,
-        dfs["Rent Roll"]["Rent"] = pd.to_numeric(dfs["Tenant Data"]["Rent"], errors="coerce")  # Convert to number
+        dfs["Rent Roll"]["Rent"] = dfs["Rent Roll"]["Rent"].replace("[\$,]", "", regex=True)  # Remove $ and ,
+        dfs["Rent Roll"]["Rent"] = pd.to_numeric(dfs["Rent Roll"]["Rent"], errors="coerce")  # Convert to number
+        dfs["Rent Roll"]["Market Rent"] = dfs["Rent Roll"]["Market Rent"].replace("[\$,]", "", regex=True)  # Remove $ and ,
+        dfs["Rent Roll"]["Market Rent"] = pd.to_numeric(dfs["Rent Roll"]["Market Rent"], errors="coerce")  # Convert to number
         total_rent = dfs["Rent Roll"]["Rent"].sum()
         total_move_out = dfs["Rent Roll"]["Move-out"].notnull().sum()
         # Display the metric card
@@ -437,56 +440,386 @@ def show_dashboard():
 
             st.plotly_chart(fig, use_container_width=True)
 
+
+        col11, col12 = st.columns(2)
+
+        with col11:
+            today = datetime.today()
+            df = dfs["Rent Roll"].copy()
+            
+            df['Move-in'] = pd.to_datetime(df['Move-in'], errors='coerce')
+            df['Move-out'] = pd.to_datetime(df['Move-out'], errors='coerce')
+
+            df = df[df['Move-out'] >= today]
+            # Extract Month-Year
+            df['Move-in Month'] = df['Move-in'].dt.to_period("M").astype(str)
+            df['Move-out Month'] = df['Move-out'].dt.to_period("M").astype(str)
+
+            # Count Move-ins
+            movein_counts = (
+                df.groupby('Move-in Month').size().reset_index(name='Count')
+                .rename(columns={'Move-in Month': 'Month'})
+            )
+            movein_counts['Type'] = 'Move-in'
+
+            # Count Move-outs
+            moveout_counts = (
+                df.groupby('Move-out Month').size().reset_index(name='Count')
+                .rename(columns={'Move-out Month': 'Month'})
+            )
+            moveout_counts['Type'] = 'Move-out'
+
+            # Combine and convert Month to datetime
+            combined = pd.concat([movein_counts, moveout_counts])
+            combined['Month'] = pd.to_datetime(combined['Month'], format='%Y-%m')
+            combined = combined.sort_values('Month')
+            combined['Month'] = combined['Month'].dt.strftime('%b %Y')
+
+
+            
+            fig = px.line(
+                combined,
+                x='Month',
+                y='Count',
+                color='Type',
+                markers=True,
+                title="📈 Monthly Move-ins vs Move-outs",
+                color_discrete_map={
+                    "Move-in": "green",
+                    "Move-out": "red"
+                }
+            )
+
+            fig.update_layout(
+                xaxis_title="Month",
+                yaxis_title="Number of Units",
+                yaxis=dict(range=[0, 200]),  # 👈 Adjust max value here
+                legend_title="Event Type",
+                width=1000,
+                height=600
+            )
+
+            st.plotly_chart(fig, use_container_width=True)
+
+        with col12:
+            df = dfs["Rent Roll"].copy()
+            df['Past Due'] = pd.to_numeric(df['Past Due'], errors='coerce').fillna(0)
+
+            df_delinquent = df[df['Past Due'] > 0]
+
+            summary = df_delinquent.groupby('BD/BA').agg(
+                Delinquent_Units=('Unit', 'count'),
+                Delinquent_Amount=('Past Due', 'sum')
+            ).reset_index()
+
+            summary = summary.sort_values(by='Delinquent_Units', ascending=False)
+
+            fig = go.Figure()
+
+            # Bar chart for $ amount (use y2 - right side)
+            fig.add_trace(go.Bar(
+                x=summary['BD/BA'],
+                y=summary['Delinquent_Amount'],
+                name='Delinquent $',
+                yaxis='y2',
+                marker_color='blue',
+                opacity=0.4
+            ))
+
+            # Line chart for unit count (use y - left side)
+            fig.add_trace(go.Scatter(
+                x=summary['BD/BA'],
+                y=summary['Delinquent_Units'],
+                mode='lines+markers+text',
+                text=summary['Delinquent_Units'],
+                textposition='top center',
+                name='Delinquent Units',
+                line=dict(color='green'),
+                marker=dict(size=10)
+            ))
+
+            fig.update_layout(
+                title="💰 Delinquency by Unit Type (BD/BA)",
+                xaxis=dict(title="BD/BA"),
+                
+                yaxis=dict(  # LEFT: Delinquent Units
+                    title=dict(text="Delinquent Units"),
+                    tickformat=","
+                ),
+                
+                yaxis2=dict(  # RIGHT: Delinquent Amount $
+                    title=dict(text="Delinquent Amount ($)"),
+                    tickformat="$.2s",
+                    overlaying="y",
+                    side="right",
+                    showgrid=False
+                ),
+
+                legend=dict(title="Metric"),
+                width=1000,
+                height=600,
+                margin=dict(t=60, b=60, l=50, r=50)
+            )
+
+            st.plotly_chart(fig, use_container_width=True)
+
+
     with tab2:
-        col21, col22, col23, col24 = st.columns(4)
-        
-
-        # Display the metric card
-        col21.metric(label="🛠️ Total work order", value="")
-        col22.metric(label="🆕New work orders", value="")
-        col23.metric(label="⚠️Urgent work order ", value="")
-        col24.metric(label="💰Total Amounts", value="")
-
+       
         col26, col27 = st.columns(2)
 
         # Use col2 and col5 for two separate charts
             
         with col26:
+            dfs["Rent Roll"]["Rent"] = pd.to_numeric(dfs["Rent Roll"]["Rent"], errors="coerce")
+            dfs["Rent Roll"]["Market Rent"] = pd.to_numeric(dfs["Rent Roll"]["Market Rent"], errors="coerce")
 
-            pass
+            # Drop invalid rows where Rent or Market Rent is NaN
+            filtered_df = dfs["Rent Roll"].dropna(subset=["Rent", "Market Rent"])
+
+            # Group by BD/BA and Calculate Avg Rent and Market Rent
+            avg_rent_df = filtered_df.groupby("BD/BA")[["Rent", "Market Rent"]].mean().round(0).reset_index()
+
+            # Count the number of units per BD/BA
+            unit_count_df = filtered_df.groupby("BD/BA").size().reset_index(name="Unit Count")
+
+            # Merge DataFrames to align BD/BA categories
+            final_df = avg_rent_df.merge(unit_count_df, on="BD/BA")
+
+            # Create figure with Bar Chart for Rent & Market Rent
+            fig3 = go.Figure()
+
+            # Add Rent bars
+            fig3.add_trace(go.Bar(
+                x=final_df["BD/BA"], 
+                y=final_df["Rent"], 
+                name="Avg Rent",
+                marker_color="blue",
+                text=final_df["Rent"], 
+                textposition="auto"
+            ))
+
+            # Add Market Rent bars
+            fig3.add_trace(go.Bar(
+                x=final_df["BD/BA"], 
+                y=final_df["Market Rent"], 
+                name="Avg Market Rent",
+                marker_color="green",
+                text=final_df["Market Rent"], 
+                textposition="auto"
+            ))
+
+            # Add Line Chart for Unit Count (Secondary Y-Axis)
+            fig3.add_trace(go.Scatter(
+                x=final_df["BD/BA"], 
+                y=final_df["Unit Count"], 
+                name="Unit Count",
+                mode="lines+markers",
+                yaxis="y2",
+                line=dict(color="red", width=2),
+                marker=dict(size=8, symbol="circle"),
+            ))
+
+            fig3.update_layout(
+                title="📊 Avg Rent vs. Market Rent with Unit Count by BD/BA",
+                xaxis=dict(
+                    title=dict(text="Bedroom/Bathroom"), 
+                    tickangle=-45, 
+                    tickfont=dict(size=12)
+                ),
+                yaxis=dict(
+                    title=dict(text="Amount ($)"), 
+                    gridcolor="lightgray"
+                ),
+                yaxis2=dict(
+                    title=dict(text="Unit Count"), 
+                    overlaying="y", 
+                    side="right", 
+                    showgrid=False
+                ),
+                legend=dict(title=dict(text="Legend")),
+                width=1000, height=600,
+                bargap=0.15,  # Reduce gap between bars
+                barmode="group"
+            )
+                    # Display in Streamlit
+            st.plotly_chart(fig3, use_container_width=True)
         with col27:
             pass
 
     with tab3:
-        col31, col32, col33, col34 = st.columns(4)
-
-
-            # **Display Metric Cards**
-        col31.metric(label="🏠 Total Vacancy", value="")
-        col32.metric(label="✅ Rent Ready Units", value="")
-        col33.metric(label="🆕 Upcoming Move In", value="")
-        col34.metric(label="📉 Avg Days Vacant", value="")
-
-            # **Create Another Row for More Metrics**
+      
         col36, col37 = st.columns(2)
 
         with col36:
-           pass
+           
+            df_leasing = dfs["Leasing"].copy()
+
+            # Sum values across all properties
+            funnel_counts = {
+                "Move-Ins": df_leasing["Move-Ins"].sum(),
+                "Approved": df_leasing["Approved"].sum(),
+                "Rental Applications": df_leasing["Rental Apps"].sum(),
+                "Completed Shows": df_leasing["Completed Showings"].sum(),
+                "Inquiries": df_leasing["Inquiries"].sum(),
+            }
+
+            # Convert to DataFrame
+            funnel_df = pd.DataFrame({
+                "Stage": list(funnel_counts.keys()),
+                "Count": list(funnel_counts.values())
+            })
+
+            # Create funnel chart
+            fig = px.funnel(
+                funnel_df,
+                x="Count",
+                y="Stage",
+                title="🔻 Leasing Funnel Overview",
+                color="Stage",
+                color_discrete_sequence=px.colors.sequential.Blues
+            )
+
+            # Improve layout
+            fig.update_layout(
+                yaxis_title="Leasing Stage",
+                xaxis_title="Number of Leads",
+                showlegend=False,
+                width=700,
+                height=500,
+                margin=dict(t=50, b=50, l=50, r=50)
+            )
+
+            # Show in Streamlit
+            st.plotly_chart(fig, use_container_width=True)
 
         with col37:
         
-           pass
+            df_prospect = dfs["Prospect"].copy()
+
+            # Clean data
+            df_prospect['Source'] = df_prospect['Source'].fillna("Unknown")
+
+            # Group by Source
+            summary = df_prospect.groupby("Source").agg(
+                Guest_Cards=('Guest Card Inquiries', 'sum'),
+                Converted_Tenants=('Converted Tenants', 'sum')
+            ).reset_index()
+
+            # Sort by most Guest Cards
+            summary = summary.sort_values(by="Converted_Tenants", ascending=False).head(10)
+
+            # Create bar chart
+            fig = go.Figure()
+
+            # Bar 1: Guest Card Inquiries
+            fig.add_trace(go.Bar(
+                x=summary["Source"],
+                y=summary["Guest_Cards"],
+                name="Guest Card Inquiries",
+                marker_color="skyblue"
+            ))
+
+            # Bar 2: Converted Tenants
+            fig.add_trace(go.Bar(
+                x=summary["Source"],
+                y=summary["Converted_Tenants"],
+                name="Converted Tenants",
+                marker_color="seagreen"
+            ))
+
+            # Layout
+            fig.update_layout(
+                title="📈 Guest Card Inquiries vs Converted Tenants by Source",
+                xaxis=dict(title="Lead Source", tickangle=-45),
+                yaxis=dict(title="Count"),
+                barmode='group',
+                legend_title="Metric",
+                width=1000,
+                height=600
+            )
+
+            # Show in Streamlit
+            st.plotly_chart(fig, use_container_width=True)
 
         col38, col39 = st.columns(2)
 
         # Use col2 and col5 for two separate charts
             
         with col38:
+            # Load your Work Orders table
             pass
-        
+                    
         
         with col39:
             pass
+
+    with tab4:
+      
+        col45, col46 = st.columns(2)
+
+        with col45:
+            df_work = dfs["Work Orders"].copy()
+
+            # Combine all job descriptions into one big string
+            text = " ".join(str(desc) for desc in df_work['Job Description'].dropna())
+
+            custom_stopwords = set(STOPWORDS)
+            custom_stopwords.update([
+                "unit", "please", "de", "la", "y", "need", "working"
+            ])
+
+            # Generate the Word Cloud
+            wordcloud = WordCloud(
+                width=800,
+                height=400,
+                background_color='white',
+                colormap='tab10',
+                max_words=100,
+                contour_width=0.5,
+                contour_color='steelblue',
+                stopwords=custom_stopwords,
+            ).generate(text)
+
+            # Display it with Matplotlib in Streamlit
+            st.subheader("🛠️ Most Common Terms in Work Order Descriptions")
+
+            fig, ax = plt.subplots(figsize=(12, 6))
+            ax.imshow(wordcloud, interpolation='bilinear')
+            ax.axis('off')
+            st.pyplot(fig)
+
+        with col46:
+            df_work = dfs["Work Orders"].copy()
+
+            # Use the correct column name for status (adjust if needed)
+            status_col = "Status"  # or "Work Order Status"
+
+            # Drop blanks and count by status
+            status_counts = df_work[status_col].dropna().value_counts().reset_index()
+            status_counts.columns = ["Status", "Count"]
+
+            # Create bar chart
+            fig = px.bar(
+                status_counts,
+                x="Status",
+                y="Count",
+                title="🔧 Work Orders by Status",
+                color="Status",
+                color_discrete_sequence=px.colors.qualitative.Pastel
+            )
+
+            fig.update_layout(
+                xaxis_title="Work Order Status",
+                yaxis_title="Number of Work Orders",
+                showlegend=False,
+                width=900,
+                height=500
+            )
+
+            # Show in Streamlit
+            st.plotly_chart(fig, use_container_width=True)
+
 
 
         with tab1:
