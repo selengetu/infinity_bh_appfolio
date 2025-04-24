@@ -104,31 +104,65 @@ def show_dashboard():
         ])
 
     with tab1:
+         # Get unique filter values
+        properties = dfs["Rent Roll"]["Property Name"].dropna().unique().tolist()
+        statuses = dfs["Rent Roll"]["Status"].dropna().unique().tolist()
+        bdba_types = dfs["Rent Roll"]["BD/BA"].dropna().unique().tolist()
+
+        col_prop, col_status, col_bdba = st.columns(3)
+
+        with col_prop:
+            selected_property = st.selectbox("Filter by Property", ["All"] + properties)
+
+        with col_status:
+            selected_statuses = st.multiselect("Filter by Status", statuses, default=statuses)
+
+        with col_bdba:
+            selected_bdbas = st.multiselect("Filter by BD/BA", bdba_types, default=bdba_types)
+
+       # Filter data
+        rent_roll = dfs["Rent Roll"].copy()
+        trailing_12months = dfs["Rent Roll 12 Months"].copy()  
+        tenant_data = dfs["Tenant Data"].copy()
+
+        if selected_property != "All":
+            rent_roll = rent_roll[rent_roll["Property Name"] == selected_property]
+            trailing_12months = trailing_12months[trailing_12months["Property Name"] == selected_property]
+            tenant_data = tenant_data[tenant_data["Property Name"] == selected_property]
+
+        rent_roll = rent_roll[rent_roll["Status"].isin(selected_statuses)]
+        rent_roll = rent_roll[rent_roll["BD/BA"].isin(selected_bdbas)]
+        trailing_12months = trailing_12months[trailing_12months["Status"].isin(selected_statuses)]
+        trailing_12months = trailing_12months[trailing_12months["BD/BA"].isin(selected_bdbas)]
+        tenant_data = tenant_data[tenant_data["Status"].isin(selected_statuses)]
+
+        # Metric calculations using filtered data
         col1, col2, col3, col4 = st.columns(4)
 
-        all_units = dfs["Rent Roll"].shape[0]
-        current_resident = dfs["Rent Roll"][dfs["Rent Roll"]["Status"] == "Current"].shape[0]
-        notice = dfs["Rent Roll"][dfs["Rent Roll"]["Status"] == "Notice-Unrented"].shape[0]
-        notice_re = dfs["Rent Roll"][dfs["Rent Roll"]["Status"] == "Notice-Rented"].shape[0]
-        evict = dfs["Rent Roll"][dfs["Rent Roll"]["Status"] == "Evict"].shape[0]
-        occupied = ((current_resident+evict+notice+notice_re) / all_units) * 100
-        dfs["Rent Roll"]["Rent"] = dfs["Rent Roll"]["Rent"].replace("[\$,]", "", regex=True)  # Remove $ and ,
-        dfs["Rent Roll"]["Rent"] = pd.to_numeric(dfs["Rent Roll"]["Rent"], errors="coerce")  # Convert to number
-        dfs["Rent Roll"]["Market Rent"] = dfs["Rent Roll"]["Market Rent"].replace("[\$,]", "", regex=True)  # Remove $ and ,
-        dfs["Rent Roll"]["Market Rent"] = pd.to_numeric(dfs["Rent Roll"]["Market Rent"], errors="coerce")  # Convert to number
-        total_rent = dfs["Rent Roll"]["Rent"].sum()
-        total_move_out = dfs["Rent Roll"]["Move-out"].notnull().sum()
-        # Display the metric card
-        col1.metric(label="🏠Total Unit", value=f"{all_units}")
-        col2.metric(label="📊 Occupancy Rate",  value=f"{occupied:.2f}%")
-        col3.metric(label="💵 Total Rent ",value=f"${(total_rent):,.0f}")
-        col4.metric(label="🚪Total Move-outs (Next 60 days)", value=f"{total_move_out}")
+        all_units = rent_roll.shape[0]
+        current_resident = rent_roll[rent_roll["Status"] == "Current"].shape[0]
+        notice = rent_roll[rent_roll["Status"] == "Notice-Unrented"].shape[0]
+        notice_re = rent_roll[rent_roll["Status"] == "Notice-Rented"].shape[0]
+        evict = rent_roll[rent_roll["Status"] == "Evict"].shape[0]
+        occupied = ((current_resident + evict + notice + notice_re) / all_units) * 100 if all_units > 0 else 0
+
+        # Convert rent columns
+        rent_roll["Rent"] = rent_roll["Rent"].replace("[\$,]", "", regex=True)
+        rent_roll["Rent"] = pd.to_numeric(rent_roll["Rent"], errors="coerce")
+        total_rent = rent_roll["Rent"].sum()
+
+        total_move_out = rent_roll["Move-out"].notnull().sum()
+
+        # Display metrics
+        col1.metric(label="🏠 Total Units", value=f"{all_units}")
+        col2.metric(label="📊 Occupancy Rate", value=f"{occupied:.2f}%")
+        col3.metric(label="💵 Total Rent", value=f"${total_rent:,.0f}")
+        col4.metric(label="🚪 Total Move-outs (Next 60 days)", value=f"{total_move_out}")
 
         col5, col6 = st.columns(2)
         
         with col5:
-
-            trailing_12months = dfs["Rent Roll 12 Months"]  
+            
             trailing_12months['date_str'] = pd.to_datetime(trailing_12months['date_str'], format='%m-%d-%Y')
             trailing_12months = trailing_12months.sort_values(by='date_str')
             summary = []
@@ -150,9 +184,6 @@ def show_dashboard():
             df_occ = pd.DataFrame(summary)
 
             fig = go.Figure()
-
-           
-
             # Line chart for Occupancy %
             fig.add_trace(
                 go.Scatter(
@@ -188,8 +219,7 @@ def show_dashboard():
             st.plotly_chart(fig, use_container_width=True)
         
         with col6:
-              
-            trailing_12months = dfs["Rent Roll 12 Months"]  
+            
             trailing_12months['date_str'] = pd.to_datetime(trailing_12months['date_str'], format='%m-%d-%Y')
             trailing_12months = trailing_12months.sort_values(by='date_str')
             summary = []
@@ -256,7 +286,6 @@ def show_dashboard():
             "Vacant-Unrented"
             ]
 
-            rent_roll = dfs["Rent Roll"]
             # Filter only relevant statuses
             filtered = rent_roll[rent_roll["Status"].isin(statuses)]
 
@@ -307,8 +336,8 @@ def show_dashboard():
 
         with col8:
             # Ensure "Status" column exists
-            if "Status" in dfs["Rent Roll"].columns:
-                status_counts = dfs["Rent Roll"]["Status"].value_counts().reset_index()
+            if "Status" in rent_roll.columns:
+                status_counts = rent_roll["Status"].value_counts().reset_index()
                 status_counts.columns = ["Status", "Count"]
 
                 # Normalize to match color map keys
@@ -352,30 +381,29 @@ def show_dashboard():
 
         with col9:
             today = datetime.today()
-            df = dfs["Tenant Data"].copy()
             
-            df['Move-in'] = pd.to_datetime(df['Move-in'], errors='coerce')
-            df = df[df['Move-in'] >= today]
+            tenant_data['Move-in'] = pd.to_datetime(tenant_data['Move-in'], errors='coerce')
+            tenant_data1 = tenant_data[tenant_data['Move-in'] >= today]
             # Extract Month-Year
-            df['Move-in Month'] = df['Move-in'].dt.to_period("M").astype(str)
+            tenant_data1['Move-in Month'] = tenant_data1['Move-in'].dt.to_period("M").astype(str)
             movein_counts = (
-                df.groupby('Move-in Month').size().reset_index(name='Count')
+                tenant_data1.groupby('Move-in Month').size().reset_index(name='Count')
                 .rename(columns={'Move-in Month': 'Month'})
             )
             movein_counts['Type'] = 'Move-in'
 
-            df1 = dfs["Tenant Data"].copy()
+            tenant_data2 = tenant_data.copy()
 
-            df1['Lease To'] = pd.to_datetime(df1['Lease To'], errors='coerce')
-            df1 = df1[df1['Lease To'] >= today]
+            tenant_data2['Lease To'] = pd.to_datetime(tenant_data2['Lease To'], errors='coerce')
+            tenant_data2 = tenant_data2[tenant_data2['Lease To'] >= today]
             
-            df1['Lease To Month'] = df1['Lease To'].dt.to_period("M").astype(str)
+            tenant_data2['Lease To Month'] = tenant_data2['Lease To'].dt.to_period("M").astype(str)
 
             # Count Move-ins
            
             # Count Move-outs
             moveout_counts = (
-                df1.groupby('Lease To Month').size().reset_index(name='Count')
+                tenant_data2.groupby('Lease To Month').size().reset_index(name='Count')
                 .rename(columns={'Lease To Month': 'Month'})
             )
             moveout_counts['Type'] = 'Lease To'
@@ -413,8 +441,7 @@ def show_dashboard():
 
         with col10:
 
-            df = dfs["Tenant Data"].copy()
-            df['Lease To'] = pd.to_datetime(df['Lease To'], errors='coerce')
+            tenant_data['Lease To'] = pd.to_datetime(tenant_data['Lease To'], errors='coerce')
 
             today = datetime.today()
 
@@ -435,11 +462,11 @@ def show_dashboard():
                 else:
                     return None
 
-            df['Move Out Bucket'] = df.apply(lambda row: categorize_moveout_days(row), axis=1)
+            tenant_data['Move Out Bucket'] = tenant_data.apply(lambda row: categorize_moveout_days(row), axis=1)
 
             # Group only by Move Out Bucket
             grouped = (
-                df[df['Move Out Bucket'].notna()]
+                tenant_data[tenant_data['Move Out Bucket'].notna()]
                 .groupby(['Move Out Bucket'])
                 .size()
                 .reset_index(name='Count')
@@ -466,7 +493,6 @@ def show_dashboard():
         col11, col12 = st.columns(2)
 
         with col11:
-            trailing_12months = dfs["Rent Roll 12 Months"]  
             trailing_12months['date_str'] = pd.to_datetime(trailing_12months['date_str'], format='%m-%d-%Y')
             trailing_12months = trailing_12months.sort_values(by='date_str')
             summary = []
@@ -510,20 +536,19 @@ def show_dashboard():
             st.plotly_chart(fig, use_container_width=True)
 
         with col12:
-            df = dfs["Rent Roll"].copy()
 
             # Clean the 'Past Due' column: remove $ and commas, convert to float
-            df['Past Due'] = (
-                df['Past Due']
+            rent_roll['Past Due'] = (
+                rent_roll['Past Due']
                 .astype(str)  # Convert to string in case of mixed types
                 .str.replace(r'[$,]', '', regex=True)  # Remove $ and commas
             )
 
             # Convert to numeric, coercing any invalid entries to NaN, then fill NaN with 0
-            df['Past Due'] = pd.to_numeric(df['Past Due'], errors='coerce').fillna(0)
+            rent_roll['Past Due'] = pd.to_numeric(rent_roll['Past Due'], errors='coerce').fillna(0)
 
             # Filter for tenants who have any amount past due
-            df_delinquent = df[df['Past Due'] > 0]
+            df_delinquent = rent_roll[rent_roll['Past Due'] > 0]
 
             summary = df_delinquent.groupby('BD/BA').agg(
                 Delinquent_Units=('Unit', 'count'),
@@ -583,31 +608,51 @@ def show_dashboard():
 
 
     with tab2:
-       
+        # Filters
+        properties1 = dfs["Rent Roll"]["Property Name"].dropna().unique().tolist()
+        statuses1 = dfs["Rent Roll"]["Status"].dropna().unique().tolist()
+        bdba_types1 = dfs["Rent Roll"]["BD/BA"].dropna().unique().tolist()
+
+        col_prop1, col_status1, col_bdba1 = st.columns(3)
+
+        with col_prop1:
+            selected_property1 = st.selectbox("Filter by Property", ["All"] + properties1, key="property_tab2")
+
+        with col_status1:
+            selected_statuses1 = st.multiselect("Filter by Status", statuses1, default=statuses1, key="status_tab2")
+
+        with col_bdba1:
+            selected_bdbas1 = st.multiselect("Filter by BD/BA", bdba_types1, default=bdba_types1, key="bdba_tab2")
+
+        # Filter data
+        rent_roll = dfs["Rent Roll"].copy()
+
+        if selected_property1 != "All":
+            rent_roll = rent_roll[rent_roll["Property Name"] == selected_property1]
+
+        rent_roll = rent_roll[rent_roll["Status"].isin(selected_statuses1)]
+        rent_roll = rent_roll[rent_roll["BD/BA"].isin(selected_bdbas1)]
+
         col26, col27 = st.columns(2)
 
-        # Use col2 and col5 for two separate charts
-            
         with col26:
-            dfs["Rent Roll"]["Rent"] = pd.to_numeric(dfs["Rent Roll"]["Rent"], errors="coerce")
-            dfs["Rent Roll"]["Market Rent"] = pd.to_numeric(dfs["Rent Roll"]["Market Rent"], errors="coerce")
+            # Clean Rent and Market Rent columns
+            rent_roll["Rent"] = pd.to_numeric(rent_roll["Rent"].replace("[\$,]", "", regex=True), errors="coerce")
+            rent_roll["Market Rent"] = pd.to_numeric(rent_roll["Market Rent"].replace("[\$,]", "", regex=True), errors="coerce")
 
-            # Drop invalid rows where Rent or Market Rent is NaN
-            filtered_df = dfs["Rent Roll"].dropna(subset=["Rent", "Market Rent"])
+            # Drop rows with missing rent data
+            filtered_df = rent_roll.dropna(subset=["Rent", "Market Rent"])
 
-            # Group by BD/BA and Calculate Avg Rent and Market Rent
+            # Group and aggregate
             avg_rent_df = filtered_df.groupby("BD/BA")[["Rent", "Market Rent"]].mean().round(0).reset_index()
-
-            # Count the number of units per BD/BA
             unit_count_df = filtered_df.groupby("BD/BA").size().reset_index(name="Unit Count")
 
-            # Merge DataFrames to align BD/BA categories
+            # Merge
             final_df = avg_rent_df.merge(unit_count_df, on="BD/BA")
 
-            # Create figure with Bar Chart for Rent & Market Rent
+            # Plot
             fig3 = go.Figure()
 
-            # Add Rent bars
             fig3.add_trace(go.Bar(
                 x=final_df["BD/BA"], 
                 y=final_df["Rent"], 
@@ -617,7 +662,6 @@ def show_dashboard():
                 textposition="auto"
             ))
 
-            # Add Market Rent bars
             fig3.add_trace(go.Bar(
                 x=final_df["BD/BA"], 
                 y=final_df["Market Rent"], 
@@ -627,7 +671,6 @@ def show_dashboard():
                 textposition="auto"
             ))
 
-            # Add Line Chart for Unit Count (Secondary Y-Axis)
             fig3.add_trace(go.Scatter(
                 x=final_df["BD/BA"], 
                 y=final_df["Unit Count"], 
@@ -635,35 +678,25 @@ def show_dashboard():
                 mode="lines+markers",
                 yaxis="y2",
                 line=dict(color="red", width=2),
-                marker=dict(size=8, symbol="circle"),
+                marker=dict(size=8),
             ))
 
             fig3.update_layout(
                 title="📊 Avg Rent vs. Market Rent with Unit Count by BD/BA",
-                xaxis=dict(
-                    title=dict(text="Bedroom/Bathroom"), 
-                    tickangle=-45, 
-                    tickfont=dict(size=12)
-                ),
-                yaxis=dict(
-                    title=dict(text="Amount ($)"), 
-                    gridcolor="lightgray"
-                ),
-                yaxis2=dict(
-                    title=dict(text="Unit Count"), 
-                    overlaying="y", 
-                    side="right", 
-                    showgrid=False
-                ),
-                legend=dict(title=dict(text="Legend")),
-                width=1000, height=600,
-                bargap=0.15,  # Reduce gap between bars
+                xaxis=dict(title="Bedroom/Bathroom", tickangle=-45, tickfont=dict(size=12)),
+                yaxis=dict(title="Amount ($)", gridcolor="lightgray"),
+                yaxis2=dict(title="Unit Count", overlaying="y", side="right", showgrid=False),
+                legend=dict(title="Legend"),
+                width=1000,
+                height=600,
+                bargap=0.15,
                 barmode="group"
             )
-                    # Display in Streamlit
+
             st.plotly_chart(fig3, use_container_width=True)
+
         with col27:
-            pass
+            pass  # You can add another visualization or summary here
 
     with tab3:
       
@@ -760,56 +793,64 @@ def show_dashboard():
             # Show in Streamlit
             st.plotly_chart(fig, use_container_width=True)
 
-        col38, col39 = st.columns(2)
-
-        # Use col2 and col5 for two separate charts
-            
-        with col38:
-            # Load your Work Orders table
-            pass
-                    
-        
-        with col39:
-            pass
 
     with tab4:
-      
+        
+         # Filters
+        properties4 = dfs["Rent Roll"]["Property Name"].dropna().unique().tolist()
+
+        col_prop4 = st.columns(3)[0]
+
+        with col_prop4:
+            selected_property4 = st.selectbox("Filter by Property", ["All"] + properties4, key="property_tab4")
+
+        # Filter data
+        df_work = dfs["Work Orders"].copy()
+
+        if selected_property4 != "All":
+            df_work = df_work[df_work["Property Name"] == selected_property4]
+
         col45, col46 = st.columns(2)
 
         with col45:
-            df_work = dfs["Work Orders"].copy()
-
-            # Combine all job descriptions into one big string
-            text = " ".join(str(desc) for desc in df_work['Job Description'].dropna())
-
-            custom_stopwords = set(STOPWORDS)
-            custom_stopwords.update([
-                "unit", "please", "de", "la", "y", "need", "working", "lo", "needs", "por", "come", "fix", "que", "se", "en", "el",
-                "agua", "funciona", "cocina"
-            ])
-
-            # Generate the Word Cloud
-            wordcloud = WordCloud(
-                width=800,
-                height=400,
-                background_color='white',
-                colormap='tab10',
-                max_words=100,
-                contour_width=0.5,
-                contour_color='steelblue',
-                stopwords=custom_stopwords,
-            ).generate(text)
-
-            # Display it with Matplotlib in Streamlit
+            
             st.subheader("🛠️ Most Common Terms in Work Order Descriptions")
 
-            fig, ax = plt.subplots(figsize=(12, 6))
-            ax.imshow(wordcloud, interpolation='bilinear')
-            ax.axis('off')
-            st.pyplot(fig)
+            if "Job Description" in df_work.columns:
+                # Combine all job descriptions into one big string
+                text = " ".join(str(desc) for desc in df_work['Job Description'].dropna())
+
+                if text.strip():  # ✅ Only proceed if there's non-empty text
+                    custom_stopwords = set(STOPWORDS)
+                    custom_stopwords.update([
+                        "unit", "please", "de", "la", "y", "need", "working", "lo", "needs", "por", "come", "fix", "que", "se", "en", "el",
+                        "agua", "funciona", "cocina"
+                    ])
+
+                    # Generate the Word Cloud
+                    wordcloud = WordCloud(
+                        width=800,
+                        height=400,
+                        background_color='white',
+                        colormap='tab10',
+                        max_words=100,
+                        contour_width=0.5,
+                        contour_color='steelblue',
+                        stopwords=custom_stopwords,
+                    ).generate(text)
+
+                    # Display it with Matplotlib in Streamlit
+                    fig, ax = plt.subplots(figsize=(12, 6))
+                    ax.imshow(wordcloud, interpolation='bilinear')
+                    ax.axis('off')
+                    st.pyplot(fig)
+
+                else:
+                    st.warning("⚠️ No job descriptions available to generate a word cloud.")
+            else:
+                st.warning("⚠️ 'Job Description' column not found in the data.")
 
         with col46:
-            df_work = dfs["Work Orders"].copy()
 
             # Ensure date column is datetime
             df_work["Created At"] = pd.to_datetime(df_work["Created At"], errors="coerce")
@@ -852,13 +893,40 @@ def show_dashboard():
 
     with tab5:
 
+         # Get unique filter values
+        properties5 = dfs["Rent Roll"]["Property Name"].dropna().unique().tolist()
+        statuses5 = dfs["Rent Roll"]["Status"].dropna().unique().tolist()
+        bdba_types5 = dfs["Rent Roll"]["BD/BA"].dropna().unique().tolist()
+
+        col_prop5, col_status5, col_bdba5 = st.columns(3)
+
+        with col_prop5:
+            selected_property5 = st.selectbox("Filter by Property", ["All"] + properties5, key="property_tab5")
+
+        with col_status5:
+            selected_statuses5 = st.multiselect("Filter by Status", statuses5, default=statuses5, key="status_tab5")
+
+        with col_bdba5:
+            selected_bdbas5 = st.multiselect("Filter by BD/BA", bdba_types5, default=bdba_types5, key="bdba_tab5")
+
+       # Filter data
+        rent_roll = dfs["Rent Roll"].copy()
+        tenant_data = dfs["Tenant Data"].copy()
+
+        if selected_property5 != "All":
+            rent_roll = rent_roll[rent_roll["Property Name"] == selected_property5]
+            tenant_data = tenant_data[tenant_data["Property Name"] == selected_property5]
+
+        rent_roll = rent_roll[rent_roll["Status"].isin(selected_statuses5)]
+        rent_roll = rent_roll[rent_roll["BD/BA"].isin(selected_bdbas5)]
+        tenant_data = tenant_data[tenant_data["Status"].isin(selected_statuses5)]
+
         col51, col52, col53, col54 = st.columns(4)
 
-        df = dfs["Tenant Data"].copy()
-        total_residents = df['Tenant'].nunique()  # or df.shape[0] if 1 row per resident
-        eviction_filings = df[df['Status'] == 'Evict'].shape[0]
-        notice = df[df['Status'] == 'Notice'].shape[0]
-        future = df[df['Status'] == 'Future'].shape[0]
+        total_residents = rent_roll[rent_roll['Status'] == 'Current'].shape[0] # or df.shape[0] if 1 row per resident
+        eviction_filings = rent_roll[rent_roll['Status'] == 'Evict'].shape[0]
+        notice = rent_roll[rent_roll['Status'] == 'Notice'].shape[0]
+        future = rent_roll[rent_roll['Status'] == 'Future'].shape[0]
         evictions_per_resident = round(eviction_filings / total_residents, 3)
 
         # Display the metric card
@@ -867,21 +935,16 @@ def show_dashboard():
         col53.metric(label="🚪Future tenants (Next 60 days)", value=f"{future}")
         col54.metric(label="⚖️ Eviction Filings per Residentt", value=f"{evictions_per_resident}")
         
-
-        
         col55, col56 = st.columns(2)
 
         with col55:
 
-            # Load Rent Roll
-            df = dfs["Rent Roll"].copy()
-
             # Clean columns
-            df['Past Due'] = pd.to_numeric(df['Past Due'], errors='coerce').fillna(0)
-            df['Late Count'] = pd.to_numeric(df['Late Count'], errors='coerce').fillna(0)
+            rent_roll['Past Due'] = pd.to_numeric(rent_roll['Past Due'], errors='coerce').fillna(0)
+            rent_roll['Late Count'] = pd.to_numeric(rent_roll['Late Count'], errors='coerce').fillna(0)
 
             # Filter for tenants with Late Count > 0
-            df_late = df[df['Late Count'] > 0]
+            df_late = rent_roll[rent_roll['Late Count'] > 0]
 
            
             # Group by Tenant (or Unit if better)
@@ -942,12 +1005,9 @@ def show_dashboard():
             st.plotly_chart(fig, use_container_width=True)
 
         with col56:
-            df = dfs["Rent Roll"].copy()
-
-            
                         # Group by Property
             summary = (
-                df.groupby("Property Name")
+                rent_roll.groupby("Property Name")
                 .agg(
                     Total_Residents=('Tenant', 'nunique'),
                     Eviction_Filings=('Status', lambda x: (x == 'Evict').sum())
@@ -978,26 +1038,34 @@ def show_dashboard():
             st.plotly_chart(fig, use_container_width=True)
 
     with tab6:
+          # Filters
+        properties6 = dfs["Bill"]["Property Name"].dropna().unique().tolist()
 
-       
-        
+        col_prop6 = st.columns(3)[0]
+
+        with col_prop6:
+            selected_property6 = st.selectbox("Filter by Property", ["All"] + properties6, key="property_tab6")
+
+        # Filter data
+        bill = dfs["Bill"].copy()
+
+        if selected_property6 != "All":
+            bill = bill[bill["Property Name"] == selected_property6]
+
         col65, col66 = st.columns(2)
 
         with col65:
 
-                    # Load and clean data
-            df = dfs["Bill"].copy()
-
             # Parse datetime and extract month
-            df['Bill Date'] = pd.to_datetime(df['Bill Date'], errors='coerce')
-            df['Month'] = df['Bill Date'].dt.to_period("M").astype(str)
+            bill['Bill Date'] = pd.to_datetime(bill['Bill Date'], errors='coerce')
+            bill['Month'] = bill['Bill Date'].dt.to_period("M").astype(str)
 
             # Convert amounts to numeric
-            df['Paid'] = pd.to_numeric(df['Paid'], errors='coerce').fillna(0)
-            df['Unpaid'] = pd.to_numeric(df['Unpaid'], errors='coerce').fillna(0)
+            bill['Paid'] = pd.to_numeric(bill['Paid'], errors='coerce').fillna(0)
+            bill['Unpaid'] = pd.to_numeric(bill['Unpaid'], errors='coerce').fillna(0)
 
             # Group by Month
-            monthly_summary = df.groupby('Month').agg({
+            monthly_summary = bill.groupby('Month').agg({
                 'Paid': 'sum',
                 'Unpaid': 'sum',
                 'Reference': 'nunique'  # Count of unique bill references
@@ -1050,36 +1118,29 @@ def show_dashboard():
                 height=600,
                 width=1000
             )
-
-
             # Show chart in Streamlit
             st.plotly_chart(fig, use_container_width=True)
 
-
-
         with col66:
 
-            # Sample DataFrame: replace with your actual data source
-            df = dfs["Bill"].copy()
-
             # Ensure columns are in correct type
-            df['Bill Date'] = pd.to_datetime(df['Bill Date'], errors='coerce')
-            df['Paid'] = pd.to_numeric(df['Paid'], errors='coerce')
+            bill['Bill Date'] = pd.to_datetime(bill['Bill Date'], errors='coerce')
+            bill['Paid'] = pd.to_numeric(bill['Paid'], errors='coerce')
 
             # Drop nulls in critical fields
-            df = df.dropna(subset=['Payee Name', 'Bill Date', 'Paid'])
+            bill_cleaned = bill.dropna(subset=['Payee Name', 'Bill Date', 'Paid'])
 
             # Extract Month-Year
-            df['Month'] = df['Bill Date'].dt.to_period("M").astype(str)
+            bill_cleaned['Month'] = bill_cleaned['Bill Date'].dt.to_period("M").astype(str)
 
             top_payees = (
-                df.groupby('Payee Name')['Paid'].sum()
+                bill_cleaned.groupby('Payee Name')['Paid'].sum()
                 .sort_values(ascending=False)
                 .head(10)
                 .index
             )
 
-            df_top = df[df['Payee Name'].isin(top_payees)]
+            df_top = bill_cleaned[bill_cleaned['Payee Name'].isin(top_payees)]
             # Group by Month and Payee
             monthly_spend = (
                 df_top.groupby(['Month', 'Payee Name'])['Paid'].sum()

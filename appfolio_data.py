@@ -207,7 +207,7 @@ def clean_csv(file_path,file_prefix, type):
         # Add the new column for Property Name, initially empty
     df['Property Name'] = pd.NA
 
-    if file_prefix == 'rentroll' or file_prefix == 'work_order' or file_prefix == 'purchase_order' or file_prefix == 'bill' or type == 2:
+    if file_prefix == 'rentroll' or file_prefix == 'work_order' or file_prefix == 'purchase_order' or type == 2:
         first_col = df.columns[0]
         header_mask = df[first_col].astype(str).str.strip().str.startswith('->')
 
@@ -226,6 +226,25 @@ def clean_csv(file_path,file_prefix, type):
         df = df.drop(index=rows_to_drop).reset_index(drop=True)
         
         df = df.iloc[:-2]
+
+    elif file_prefix == 'bill':
+        first_col = df.columns[0]
+
+        # Detect header rows that start with '->'
+        header_mask = df[first_col].astype(str).str.strip().str.startswith('->')
+        header_indices = header_mask[header_mask].index
+
+        
+
+        # Drop those header rows
+        df = df.drop(index=header_indices).reset_index(drop=True)
+
+        # Drop the last 2 rows (footer)
+        df = df.iloc[:-2]
+
+        df = df[df['Reference'].notna()].reset_index(drop=True)
+        # Parse and fill 'Property Name' from header lines
+        df['Property Name'] = df['Property'].apply(parse_property_name)
 
     elif file_prefix == 'tenant_data':
         df['Property Name'] = df['Property'].apply(parse_property_name)

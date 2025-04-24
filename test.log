@@ -4269,3 +4269,120 @@ Stacktrace:
 2025-04-24 12:05:05,891 - INFO - [SUCCESS] CSV URL: file://C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_detail-20250424.csv
 2025-04-24 12:05:06,282 - INFO - Deleted original file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_detail-20250424.csv
 2025-04-24 12:05:08,519 - INFO - [SUCCESS] The entire process completed successfully.
+2025-04-24 14:25:28,450 - INFO - Started Appfolio data process
+2025-04-24 14:25:29,544 - INFO - [INFO] Opening login page...
+2025-04-24 14:25:31,895 - INFO - [INFO] Entered username
+2025-04-24 14:25:32,002 - INFO - [INFO] Entered password
+2025-04-24 14:25:32,085 - INFO - [INFO] Clicked login button
+2025-04-24 14:25:35,091 - INFO - [INFO] 2-Step Verification detected. Retrieving verification code...
+2025-04-24 14:25:35,424 - INFO - [INFO] Requested verification code.
+2025-04-24 14:25:41,233 - INFO - Entered verification code: 957448
+2025-04-24 14:25:43,423 - INFO - Successfully submitted the verification code!
+2025-04-24 14:25:46,424 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/bill_detail?customize=true and downloading CSV...
+2025-04-24 14:26:01,836 - INFO - Update button clicked successfully.
+2025-04-24 14:26:32,024 - INFO - Export CSV button clicked successfully.
+2025-04-24 14:26:32,024 - INFO - CSV export process initiated.
+2025-04-24 14:27:02,025 - INFO -  Waiting for CSV file to be downloaded...
+2025-04-24 14:27:02,027 - INFO -  Latest downloaded file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_detail-20250424.csv
+2025-04-24 14:27:02,027 - INFO - [SUCCESS] CSV file ready: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_detail-20250424.csv
+2025-04-24 14:27:02,027 - INFO - [SUCCESS] CSV URL: file://C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_detail-20250424.csv
+2025-04-24 14:27:02,589 - INFO - Deleted original file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_detail-20250424.csv
+2025-04-24 14:27:04,822 - INFO - [SUCCESS] The entire process completed successfully.
+2025-04-24 14:30:08,011 - INFO - Started Appfolio data process
+2025-04-24 14:30:09,101 - INFO - [INFO] Opening login page...
+2025-04-24 14:30:11,220 - INFO - [INFO] Entered username
+2025-04-24 14:30:11,296 - INFO - [INFO] Entered password
+2025-04-24 14:30:11,379 - INFO - [INFO] Clicked login button
+2025-04-24 14:30:14,384 - INFO - [INFO] 2-Step Verification detected. Retrieving verification code...
+2025-04-24 14:30:14,696 - INFO - [INFO] Requested verification code.
+2025-04-24 14:30:14,910 - INFO - Too many requests. Waiting 10 seconds before retrying...
+2025-04-24 14:30:26,259 - INFO - Entered verification code: 986356
+2025-04-24 14:31:06,612 - INFO - Successfully submitted the verification code!
+2025-04-24 14:31:09,612 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/bill_detail?customize=true and downloading CSV...
+2025-04-24 14:31:24,240 - INFO - Update button clicked successfully.
+2025-04-24 14:31:54,415 - INFO - Export CSV button clicked successfully.
+2025-04-24 14:31:54,416 - INFO - CSV export process initiated.
+2025-04-24 14:32:24,417 - INFO -  Waiting for CSV file to be downloaded...
+2025-04-24 14:32:24,419 - INFO -  Latest downloaded file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_detail-20250424.csv
+2025-04-24 14:32:24,419 - INFO - [SUCCESS] CSV file ready: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_detail-20250424.csv
+2025-04-24 14:32:24,419 - INFO - [SUCCESS] CSV URL: file://C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_detail-20250424.csv
+2025-04-24 14:32:24,677 - INFO -  An error occurred: argument of type 'float' is not iterable
+2025-04-24 14:32:26,971 - INFO - [ERROR] The process encountered an error.
+2025-04-24 14:35:11,233 - INFO - Started Appfolio data process
+2025-04-24 14:35:12,310 - INFO - [INFO] Opening login page...
+2025-04-24 14:35:14,278 - INFO - [INFO] Entered username
+2025-04-24 14:35:14,349 - INFO - [INFO] Entered password
+2025-04-24 14:35:15,164 - INFO - [INFO] Clicked login button
+2025-04-24 14:35:18,169 - INFO - [INFO] 2-Step Verification detected. Retrieving verification code...
+2025-04-24 14:35:18,485 - INFO - [INFO] Requested verification code.
+2025-04-24 14:35:22,046 - INFO - Entered verification code: 206077
+2025-04-24 14:35:22,156 - INFO - Successfully submitted the verification code!
+2025-04-24 14:35:25,157 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/bill_detail?customize=true and downloading CSV...
+2025-04-24 14:35:39,595 - INFO - Update button clicked successfully.
+2025-04-24 14:36:09,791 - INFO - Export CSV button clicked successfully.
+2025-04-24 14:36:09,792 - INFO - CSV export process initiated.
+2025-04-24 14:36:39,792 - INFO -  Waiting for CSV file to be downloaded...
+2025-04-24 14:36:39,795 - INFO -  Latest downloaded file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_detail-20250424 (1).csv
+2025-04-24 14:36:39,795 - INFO - [SUCCESS] CSV file ready: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_detail-20250424 (1).csv
+2025-04-24 14:36:39,795 - INFO - [SUCCESS] CSV URL: file://C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_detail-20250424 (1).csv
+2025-04-24 14:36:40,229 - INFO - Deleted original file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_detail-20250424 (1).csv
+2025-04-24 14:36:42,449 - INFO - [SUCCESS] The entire process completed successfully.
+2025-04-24 14:38:21,423 - INFO - Started Appfolio data process
+2025-04-24 14:38:22,472 - INFO - [INFO] Opening login page...
+2025-04-24 14:38:24,161 - INFO - [INFO] Entered username
+2025-04-24 14:38:24,299 - INFO - [INFO] Entered password
+2025-04-24 14:38:25,191 - INFO - [INFO] Clicked login button
+2025-04-24 14:38:28,196 - INFO - [INFO] 2-Step Verification detected. Retrieving verification code...
+2025-04-24 14:38:28,525 - INFO - [INFO] Requested verification code.
+2025-04-24 14:38:28,759 - INFO - Too many requests. Waiting 10 seconds before retrying...
+2025-04-24 14:38:40,075 - INFO - Entered verification code: 349303
+2025-04-24 14:38:42,100 - INFO - Successfully submitted the verification code!
+2025-04-24 14:38:45,101 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/bill_detail?customize=true and downloading CSV...
+2025-04-24 14:39:00,473 - INFO - Update button clicked successfully.
+2025-04-24 14:39:30,660 - INFO - Export CSV button clicked successfully.
+2025-04-24 14:39:30,660 - INFO - CSV export process initiated.
+2025-04-24 14:40:00,662 - INFO -  Waiting for CSV file to be downloaded...
+2025-04-24 14:40:00,663 - INFO -  Latest downloaded file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_detail-20250424 (1).csv
+2025-04-24 14:40:00,664 - INFO - [SUCCESS] CSV file ready: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_detail-20250424 (1).csv
+2025-04-24 14:40:00,664 - INFO - [SUCCESS] CSV URL: file://C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_detail-20250424 (1).csv
+2025-04-24 14:40:00,826 - INFO -  An error occurred: 'Property'
+2025-04-24 14:40:03,097 - INFO - [ERROR] The process encountered an error.
+2025-04-24 14:40:51,356 - INFO - Started Appfolio data process
+2025-04-24 14:40:52,411 - INFO - [INFO] Opening login page...
+2025-04-24 14:40:54,247 - INFO - [INFO] Entered username
+2025-04-24 14:40:54,403 - INFO - [INFO] Entered password
+2025-04-24 14:40:55,260 - INFO - [INFO] Clicked login button
+2025-04-24 14:40:58,264 - INFO - [INFO] 2-Step Verification detected. Retrieving verification code...
+2025-04-24 14:40:58,590 - INFO - [INFO] Requested verification code.
+2025-04-24 14:40:58,817 - INFO - Too many requests. Waiting 10 seconds before retrying...
+2025-04-24 14:41:10,199 - INFO - Entered verification code: 668130
+2025-04-24 14:41:11,783 - INFO - Successfully submitted the verification code!
+2025-04-24 14:41:14,784 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/bill_detail?customize=true and downloading CSV...
+2025-04-24 14:41:29,310 - INFO - Update button clicked successfully.
+2025-04-24 14:41:59,486 - INFO - Export CSV button clicked successfully.
+2025-04-24 14:41:59,486 - INFO - CSV export process initiated.
+2025-04-24 14:42:29,487 - INFO -  Waiting for CSV file to be downloaded...
+2025-04-24 14:42:29,489 - INFO -  Latest downloaded file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_detail-20250424 (1).csv
+2025-04-24 14:42:29,489 - INFO - [SUCCESS] CSV file ready: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_detail-20250424 (1).csv
+2025-04-24 14:42:29,489 - INFO - [SUCCESS] CSV URL: file://C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_detail-20250424 (1).csv
+2025-04-24 14:42:29,723 - INFO -  An error occurred: 'Property'
+2025-04-24 14:42:31,954 - INFO - [ERROR] The process encountered an error.
+2025-04-24 15:20:55,164 - INFO - Started Appfolio data process
+2025-04-24 15:20:56,232 - INFO - [INFO] Opening login page...
+2025-04-24 15:20:58,145 - INFO - [INFO] Entered username
+2025-04-24 15:20:58,291 - INFO - [INFO] Entered password
+2025-04-24 15:20:58,392 - INFO - [INFO] Clicked login button
+2025-04-24 15:21:01,397 - INFO - [INFO] 2-Step Verification detected. Retrieving verification code...
+2025-04-24 15:21:01,763 - INFO - [INFO] Requested verification code.
+2025-04-24 15:21:05,446 - INFO - Entered verification code: 770480
+2025-04-24 15:21:07,970 - INFO - Successfully submitted the verification code!
+2025-04-24 15:21:10,971 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/bill_detail?customize=true and downloading CSV...
+2025-04-24 15:21:25,562 - INFO - Update button clicked successfully.
+2025-04-24 15:21:55,743 - INFO - Export CSV button clicked successfully.
+2025-04-24 15:21:55,743 - INFO - CSV export process initiated.
+2025-04-24 15:22:25,744 - INFO -  Waiting for CSV file to be downloaded...
+2025-04-24 15:22:25,745 - INFO -  Latest downloaded file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_detail-20250424 (2).csv
+2025-04-24 15:22:25,746 - INFO - [SUCCESS] CSV file ready: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_detail-20250424 (2).csv
+2025-04-24 15:22:25,746 - INFO - [SUCCESS] CSV URL: file://C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_detail-20250424 (2).csv
+2025-04-24 15:22:26,269 - INFO - Deleted original file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_detail-20250424 (2).csv
+2025-04-24 15:22:28,505 - INFO - [SUCCESS] The entire process completed successfully.
