@@ -4250,3 +4250,22 @@ Stacktrace:
 2025-04-23 11:35:10,641 - INFO - [SUCCESS] CSV URL: file://C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_detail-20250331.csv
 2025-04-23 11:35:11,001 - INFO - Deleted original file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_detail-20250331.csv
 2025-04-23 11:35:13,297 - INFO - [SUCCESS] The entire process completed successfully.
+2025-04-24 12:03:34,636 - INFO - Started Appfolio data process
+2025-04-24 12:03:35,750 - INFO - [INFO] Opening login page...
+2025-04-24 12:03:37,671 - INFO - [INFO] Entered username
+2025-04-24 12:03:37,741 - INFO - [INFO] Entered password
+2025-04-24 12:03:38,716 - INFO - [INFO] Clicked login button
+2025-04-24 12:03:41,721 - INFO - [INFO] 2-Step Verification detected. Retrieving verification code...
+2025-04-24 12:03:42,257 - INFO - [INFO] Requested verification code.
+2025-04-24 12:03:45,885 - INFO - Entered verification code: 286981
+2025-04-24 12:03:48,197 - INFO - Successfully submitted the verification code!
+2025-04-24 12:03:51,198 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/bill_detail?customize=true and downloading CSV...
+2025-04-24 12:04:05,671 - INFO - Update button clicked successfully.
+2025-04-24 12:04:35,886 - INFO - Export CSV button clicked successfully.
+2025-04-24 12:04:35,886 - INFO - CSV export process initiated.
+2025-04-24 12:05:05,887 - INFO -  Waiting for CSV file to be downloaded...
+2025-04-24 12:05:05,890 - INFO -  Latest downloaded file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_detail-20250424.csv
+2025-04-24 12:05:05,891 - INFO - [SUCCESS] CSV file ready: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_detail-20250424.csv
+2025-04-24 12:05:05,891 - INFO - [SUCCESS] CSV URL: file://C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_detail-20250424.csv
+2025-04-24 12:05:06,282 - INFO - Deleted original file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_detail-20250424.csv
+2025-04-24 12:05:08,519 - INFO - [SUCCESS] The entire process completed successfully.

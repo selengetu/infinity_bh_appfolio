@@ -299,7 +299,7 @@ def download_csv(driver, page_url, type, file_prefix, target_date=None):
         date_from_input.clear()
         date_from_input.send_keys(formatted_year_ago) 
         date_from_input_to.clear()
-        date_from_input_to.send_keys(formatted_last_day_prev_month) 
+        date_from_input_to.send_keys(formatted_today) 
 
     if file_prefix == 'bill':
        
@@ -315,7 +315,7 @@ def download_csv(driver, page_url, type, file_prefix, target_date=None):
         date_from_input.clear()
         date_from_input.send_keys(formatted_year_ago) 
         date_from_input_to.clear()
-        date_from_input_to.send_keys(formatted_last_day_prev_month) 
+        date_from_input_to.send_keys(formatted_today) 
         time.sleep(5)
 
     if file_prefix == 'leasing':
@@ -329,7 +329,6 @@ def download_csv(driver, page_url, type, file_prefix, target_date=None):
         date_input.clear()
         date_from_input.send_keys(formatted_ninety_days_ago) 
         date_input.send_keys(formatted_today) 
-    print("reached here")
     # Click update and download CSV
     click_update_button(driver)
     time.sleep(30)

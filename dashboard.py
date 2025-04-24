@@ -268,6 +268,14 @@ def show_dashboard():
                 .reset_index(name="Count")
             )
 
+            color_map = {
+                "Current": "lightgrey",
+                "Vacant-Unrented": "steelblue",
+                "Vacant-Rented": "lightblue",
+                "Evict": "red",
+                "Notice-Unrented": "mediumseagreen",
+                "Notice-Rented": "orange"
+            }
             pivot_df = grouped.pivot_table(
                 index="BD/BA",
                 columns="Status",
@@ -281,7 +289,7 @@ def show_dashboard():
                 y="Count",
                 color="Status",
                 barmode="stack",
-                color_discrete_sequence=px.colors.qualitative.Set2,
+                color_discrete_map=color_map,
                 title="📊 Unit Type Breakdown by Status"
             )
 
@@ -299,50 +307,165 @@ def show_dashboard():
 
         with col8:
             # Ensure "Status" column exists
-            if "Status" in dfs["Tenant Data"].columns:
-                status_counts = dfs["Tenant Data"]["Status"].value_counts().reset_index()
+            if "Status" in dfs["Rent Roll"].columns:
+                status_counts = dfs["Rent Roll"]["Status"].value_counts().reset_index()
                 status_counts.columns = ["Status", "Count"]
 
-                # **Create Pie Chart**
-                fig4 = px.pie(status_counts, 
-                values="Count", 
-                names="Status", 
-                title="🏠 Tenant Status Distribution", 
-                hole=0.4,  # Creates a donut-style pie chart
-                color_discrete_sequence=px.colors.qualitative.Set3)  # Custom colors
+                # Normalize to match color map keys
+                status_counts["Status"] = status_counts["Status"].str.strip().str.title().str.replace(" ", "-")
 
-                # 🔹 Improve Layout & Style
-                fig4.update_layout(
-                    width=800, height=600,  # Bigger chart
+                color_map = {
+                    "Current": "lightgrey",
+                    "Vacant-Unrented": "steelblue",
+                    "Vacant-Rented": "lightblue",
+                    "Evict": "red",
+                    "Notice-Unrented": "mediumseagreen",
+                    "Notice-Rented": "orange"
+                }
+
+                fig4 = px.pie(
+                    status_counts,
+                    values="Count",
+                    names="Status",
+                    title="🏠 Tenant Status Distribution",
+                    hole=0.4,
+                    color_discrete_map=color_map
                 )
 
-                # 🔹 Customize Legend
                 fig4.update_layout(
-                    legend=dict(
-                        font=dict(size=14),  # Bigger font for legend
-                        x=1, y=0.9,  # Position legend to the right
-                        xanchor="right"
-                    )
+                    width=800, height=600,
+                    legend=dict(font=dict(size=14), x=1, y=0.9, xanchor="right")
                 )
 
-                # 🔹 Show Percentages & Labels
                 fig4.update_traces(
-                    textinfo="percent+label",  # Display both labels and percentages
-                    pull=[0.1 if i == 0 else 0 for i in range(len(status_counts))],  # Slightly pull out the first slice
+                    textinfo="percent+label",
+                    pull=[0.1 if i == 0 else 0 for i in range(len(status_counts))]
+                )
 
-                )   
-
-                # Display the Pie Chart
                 st.plotly_chart(fig4, use_container_width=True)
                 img_path4 = os.path.join(IMG_DIR, "status.png")
                 fig4.write_image(img_path4)
-    
             else:
                 st.warning("⚠️ 'Status' column not found in dataset.")
 
         col9, col10 = st.columns(2)
 
         with col9:
+            today = datetime.today()
+            df = dfs["Tenant Data"].copy()
+            
+            df['Move-in'] = pd.to_datetime(df['Move-in'], errors='coerce')
+            df = df[df['Move-in'] >= today]
+            # Extract Month-Year
+            df['Move-in Month'] = df['Move-in'].dt.to_period("M").astype(str)
+            movein_counts = (
+                df.groupby('Move-in Month').size().reset_index(name='Count')
+                .rename(columns={'Move-in Month': 'Month'})
+            )
+            movein_counts['Type'] = 'Move-in'
+
+            df1 = dfs["Tenant Data"].copy()
+
+            df1['Lease To'] = pd.to_datetime(df1['Lease To'], errors='coerce')
+            df1 = df1[df1['Lease To'] >= today]
+            
+            df1['Lease To Month'] = df1['Lease To'].dt.to_period("M").astype(str)
+
+            # Count Move-ins
+           
+            # Count Move-outs
+            moveout_counts = (
+                df1.groupby('Lease To Month').size().reset_index(name='Count')
+                .rename(columns={'Lease To Month': 'Month'})
+            )
+            moveout_counts['Type'] = 'Lease To'
+
+            # Combine and convert Month to datetime
+            combined = pd.concat([movein_counts, moveout_counts])
+            combined['Month'] = pd.to_datetime(combined['Month'], format='%Y-%m')
+            combined = combined.sort_values('Month')
+            combined['Month'] = combined['Month'].dt.strftime('%b %Y')
+
+            fig = px.line(
+                combined,
+                x='Month',
+                y='Count',
+                color='Type',
+                markers=True,
+                title="📈 Monthly Move-ins vs Lease To",
+                color_discrete_map={
+                    "Move-in": "green",
+                    "Lease To": "red"
+                }
+            )
+
+            fig.update_layout(
+                xaxis_title="Month",
+                yaxis_title="Number of Units",
+                yaxis=dict(range=[0, 200]),  # 👈 Adjust max value here
+                legend_title="Event Type",
+                width=1000,
+                height=600
+            )
+
+            st.plotly_chart(fig, use_container_width=True)
+        
+
+        with col10:
+
+            df = dfs["Tenant Data"].copy()
+            df['Lease To'] = pd.to_datetime(df['Lease To'], errors='coerce')
+
+            today = datetime.today()
+
+            def categorize_moveout_days(row):
+                if pd.isna(row['Lease To']):
+                    return None
+                delta = (row['Lease To'] - today).days
+                if delta < 0:
+                    return None  # Already moved out
+                elif delta <= 30:
+                    return '0-30 Days'
+                elif delta <= 60:
+                    return '31-60 Days'
+                elif delta <= 90:
+                    return '61-90 Days'
+                elif delta <= 365:
+                    return '91-365 Days'
+                else:
+                    return None
+
+            df['Move Out Bucket'] = df.apply(lambda row: categorize_moveout_days(row), axis=1)
+
+            # Group only by Move Out Bucket
+            grouped = (
+                df[df['Move Out Bucket'].notna()]
+                .groupby(['Move Out Bucket'])
+                .size()
+                .reset_index(name='Count')
+            )
+
+            # Bar chart without Property Name
+            fig = px.bar(
+                grouped,
+                x="Move Out Bucket",
+                y="Count",
+                title="📦 Upcoming Move-Outs",
+                color_discrete_sequence=px.colors.qualitative.Pastel
+            )
+
+            fig.update_layout(
+                xaxis_title="Move Out Timeframe",
+                yaxis_title="Number of Units",
+                width=1000,
+                height=600
+            )
+
+            st.plotly_chart(fig, use_container_width=True)
+
+        col11, col12 = st.columns(2)
+
+        with col11:
             trailing_12months = dfs["Rent Roll 12 Months"]  
             trailing_12months['date_str'] = pd.to_datetime(trailing_12months['date_str'], format='%m-%d-%Y')
             trailing_12months = trailing_12months.sort_values(by='date_str')
@@ -386,127 +509,20 @@ def show_dashboard():
 
             st.plotly_chart(fig, use_container_width=True)
 
-        with col10:
-           
-
-            df = dfs["Rent Roll"].copy()
-            df['Move-out'] = pd.to_datetime(df['Move-out'], errors='coerce')
-
-            today = datetime.today()
-
-            def categorize_moveout_days(row):
-                if pd.isna(row['Move-out']):
-                    return None
-                delta = (row['Move-out'] - today).days
-                if delta < 0:
-                    return None  # Already moved out
-                elif delta <= 30:
-                    return '0-30 Days'
-                elif delta <= 60:
-                    return '31-60 Days'
-                elif delta <= 90:
-                    return '61-90 Days'
-                elif delta <= 365:
-                    return '91-365 Days'
-                else:
-                    return None
-
-                    # Apply the categorization
-            df['Move Out Bucket'] = df.apply(lambda row: categorize_moveout_days(row), axis=1)
-
-            # Group by Room Type and Move Out Bucket
-            grouped = (
-                df[df['Move Out Bucket'].notna()]
-                .groupby(['BD/BA', 'Move Out Bucket'])
-                .size()
-                .reset_index(name='Count')
-            )
-
-            fig = px.bar(
-                grouped,
-                x="Move Out Bucket",
-                y="Count",
-                color="BD/BA",
-                title="📦 Upcoming Move-Outs by Room Type",
-                barmode="stack",
-                color_discrete_sequence=px.colors.qualitative.Pastel
-            )
-
-            fig.update_layout(
-                xaxis_title="Move Out Timeframe",
-                yaxis_title="Number of Units",
-                legend_title="BD/BA",
-                width=1000,
-                height=600
-            )
-
-            st.plotly_chart(fig, use_container_width=True)
-
-
-        col11, col12 = st.columns(2)
-
-        with col11:
-            today = datetime.today()
-            df = dfs["Rent Roll"].copy()
-            
-            df['Move-in'] = pd.to_datetime(df['Move-in'], errors='coerce')
-            df['Move-out'] = pd.to_datetime(df['Move-out'], errors='coerce')
-
-            df = df[df['Move-out'] >= today]
-            # Extract Month-Year
-            df['Move-in Month'] = df['Move-in'].dt.to_period("M").astype(str)
-            df['Move-out Month'] = df['Move-out'].dt.to_period("M").astype(str)
-
-            # Count Move-ins
-            movein_counts = (
-                df.groupby('Move-in Month').size().reset_index(name='Count')
-                .rename(columns={'Move-in Month': 'Month'})
-            )
-            movein_counts['Type'] = 'Move-in'
-
-            # Count Move-outs
-            moveout_counts = (
-                df.groupby('Move-out Month').size().reset_index(name='Count')
-                .rename(columns={'Move-out Month': 'Month'})
-            )
-            moveout_counts['Type'] = 'Move-out'
-
-            # Combine and convert Month to datetime
-            combined = pd.concat([movein_counts, moveout_counts])
-            combined['Month'] = pd.to_datetime(combined['Month'], format='%Y-%m')
-            combined = combined.sort_values('Month')
-            combined['Month'] = combined['Month'].dt.strftime('%b %Y')
-
-
-            
-            fig = px.line(
-                combined,
-                x='Month',
-                y='Count',
-                color='Type',
-                markers=True,
-                title="📈 Monthly Move-ins vs Move-outs",
-                color_discrete_map={
-                    "Move-in": "green",
-                    "Move-out": "red"
-                }
-            )
-
-            fig.update_layout(
-                xaxis_title="Month",
-                yaxis_title="Number of Units",
-                yaxis=dict(range=[0, 200]),  # 👈 Adjust max value here
-                legend_title="Event Type",
-                width=1000,
-                height=600
-            )
-
-            st.plotly_chart(fig, use_container_width=True)
-
         with col12:
             df = dfs["Rent Roll"].copy()
+
+            # Clean the 'Past Due' column: remove $ and commas, convert to float
+            df['Past Due'] = (
+                df['Past Due']
+                .astype(str)  # Convert to string in case of mixed types
+                .str.replace(r'[$,]', '', regex=True)  # Remove $ and commas
+            )
+
+            # Convert to numeric, coercing any invalid entries to NaN, then fill NaN with 0
             df['Past Due'] = pd.to_numeric(df['Past Due'], errors='coerce').fillna(0)
 
+            # Filter for tenants who have any amount past due
             df_delinquent = df[df['Past Due'] > 0]
 
             summary = df_delinquent.groupby('BD/BA').agg(
@@ -596,7 +612,7 @@ def show_dashboard():
                 x=final_df["BD/BA"], 
                 y=final_df["Rent"], 
                 name="Avg Rent",
-                marker_color="blue",
+                marker_color="lightblue",
                 text=final_df["Rent"], 
                 textposition="auto"
             ))
@@ -606,7 +622,7 @@ def show_dashboard():
                 x=final_df["BD/BA"], 
                 y=final_df["Market Rent"], 
                 name="Avg Market Rent",
-                marker_color="green",
+                marker_color="lightgreen",
                 text=final_df["Market Rent"], 
                 textposition="auto"
             ))
@@ -662,7 +678,7 @@ def show_dashboard():
                 "Move-Ins": df_leasing["Move-Ins"].sum(),
                 "Approved": df_leasing["Approved"].sum(),
                 "Rental Applications": df_leasing["Rental Apps"].sum(),
-                # "Completed Shows": df_leasing["Completed Showings"].sum(),
+                "Completed Shows": df_leasing["Completed Showings"].sum(),
                 "Inquiries": df_leasing["Inquiries"].sum(),
             }
 
@@ -768,7 +784,8 @@ def show_dashboard():
 
             custom_stopwords = set(STOPWORDS)
             custom_stopwords.update([
-                "unit", "please", "de", "la", "y", "need", "working"
+                "unit", "please", "de", "la", "y", "need", "working", "lo", "needs", "por", "come", "fix", "que", "se", "en", "el",
+                "agua", "funciona", "cocina"
             ])
 
             # Generate the Word Cloud
@@ -794,29 +811,40 @@ def show_dashboard():
         with col46:
             df_work = dfs["Work Orders"].copy()
 
-            # Use the correct column name for status (adjust if needed)
-            status_col = "Status"  # or "Work Order Status"
+            # Ensure date column is datetime
+            df_work["Created At"] = pd.to_datetime(df_work["Created At"], errors="coerce")
 
-            # Drop blanks and count by status
-            status_counts = df_work[status_col].dropna().value_counts().reset_index()
-            status_counts.columns = ["Status", "Count"]
+            # Drop rows without valid dates or statuses
+            df_work = df_work.dropna(subset=["Created At", "Status"])
 
-            # Create bar chart
+            # Create a "Month" column (e.g., '2025-04')
+            df_work["Month"] = df_work["Created At"].dt.to_period("M").astype(str)
+
+            # Group by Month and Status
+            grouped = (
+                df_work.groupby(["Month", "Status"])
+                .size()
+                .reset_index(name="Count")
+            )
+
             fig = px.bar(
-                status_counts,
-                x="Status",
+                grouped,
+                x="Month",
                 y="Count",
-                title="🔧 Work Orders by Status",
                 color="Status",
-                color_discrete_sequence=px.colors.qualitative.Pastel
+                barmode="stack",
+                title="📅 Monthly Work Orders by Status",
+                color_discrete_sequence=[ "orange", "steelblue", "mediumseagreen", "lightgrey",
+        "indianred", "goldenrod", "cadetblue", "mediumslateblue", "teal", "darkkhaki"]
+           
             )
 
             fig.update_layout(
-                xaxis_title="Work Order Status",
+                xaxis_title="Month",
                 yaxis_title="Number of Work Orders",
-                showlegend=False,
-                width=900,
-                height=500
+                legend_title="Work Order Status",
+                width=1000,
+                height=600
             )
 
             # Show in Streamlit
@@ -957,143 +985,79 @@ def show_dashboard():
 
         with col65:
 
-            # Load your data
-            df = dfs["Purchase Order"].copy()
-
-            # Parse datetime and extract month
-            df['Created At'] = pd.to_datetime(df['Created At'], errors='coerce')
-            df['Month'] = df['Created At'].dt.to_period("M").astype(str)
-
-            # Convert Billed Amount to numeric
-            df['Billed Amount (Line Item)'] = pd.to_numeric(df['Billed Amount (Line Item)'], errors='coerce')
-
-            # Filter only completed orders
-            df_completed = df[df['Completed'] == 'Yes'].copy()
-            df_completed['Billed Amount (Line Item)'] = df_completed['Billed Amount (Line Item)'].fillna(0)
-
-            # Group by Month
-            monthly_summary = df_completed.groupby('Month').agg({
-                'Purchase Order Number': 'nunique',
-                'Billed Amount (Line Item)': 'sum'
-            }).reset_index()
-
-            monthly_summary.columns = ['Month', 'Purchase Order Count', 'Total Billed Amount']
-            monthly_summary = monthly_summary.sort_values('Month')
-
-            # Create dual-axis plot
-            fig = go.Figure()
-
-            # Bar: PO count
-            fig.add_trace(go.Bar(
-                x=monthly_summary['Month'],
-                y=monthly_summary['Purchase Order Count'],
-                name='Purchase Order Count',
-                marker_color='skyblue',
-                text=monthly_summary['Purchase Order Count'],
-                textposition='auto'
-            ))
-
-            # Line: Billed Amount
-            fig.add_trace(go.Scatter(
-                x=monthly_summary['Month'],
-                y=monthly_summary['Total Billed Amount'],
-                name='Billed Amount ($)',
-                yaxis='y2',
-                mode='lines+markers',
-                line=dict(color='darkgreen'),
-                marker=dict(size=8),
-                text=monthly_summary['Total Billed Amount'].map('${:,.0f}'.format),
-                textposition='top center'
-            ))
-
-            # Layout
-            fig.update_layout(
-                title='📦 Completed Purchase Orders & Total Billed Amount by Month',
-                xaxis=dict(title='Month'),
-                yaxis=dict(title='Purchase Orders'),
-                yaxis2=dict(
-                    title='Billed Amount ($)',
-                    overlaying='y',
-                    side='right',
-                    showgrid=False,
-                    tickformat="$.2s"
-                ),
-                legend=dict(title='Metric'),
-                height=600,
-                width=1000
-            )
-
-            st.plotly_chart(fig, use_container_width=True)
-
-        with col66:
-
-            # Load your data
+                    # Load and clean data
             df = dfs["Bill"].copy()
 
             # Parse datetime and extract month
             df['Bill Date'] = pd.to_datetime(df['Bill Date'], errors='coerce')
             df['Month'] = df['Bill Date'].dt.to_period("M").astype(str)
 
-            # Convert Billed Amount to numeric
-            df['Paid'] = pd.to_numeric(df['Paid'], errors='coerce')
+            # Convert amounts to numeric
+            df['Paid'] = pd.to_numeric(df['Paid'], errors='coerce').fillna(0)
+            df['Unpaid'] = pd.to_numeric(df['Unpaid'], errors='coerce').fillna(0)
 
             # Group by Month
             monthly_summary = df.groupby('Month').agg({
-                'Reference': 'nunique',
-                'Paid': 'sum'
-            }).reset_index()
+                'Paid': 'sum',
+                'Unpaid': 'sum',
+                'Reference': 'nunique'  # Count of unique bill references
+            }).reset_index().sort_values('Month')
 
-            monthly_summary.columns = ['Month', 'Reference', 'Paid']
-            monthly_summary = monthly_summary.sort_values('Month')
-
-            # Create dual-axis plot
+            # Stacked bar chart: Paid and Unpaid
             fig = go.Figure()
 
-            # Bar: PO count
             fig.add_trace(go.Bar(
                 x=monthly_summary['Month'],
-                y=monthly_summary['Reference'],
-                name='Reference',
-                marker_color='grey',
-                text=monthly_summary['Reference'],
+                y=monthly_summary['Paid'],
+                name='Paid',
+                marker_color='mediumseagreen',
+                text=monthly_summary['Paid'].map('${:,.0f}'.format),
                 textposition='auto'
             ))
 
-            # Line: Billed Amount
+            fig.add_trace(go.Bar(
+                x=monthly_summary['Month'],
+                y=monthly_summary['Unpaid'],
+                name='Unpaid',
+                marker_color='indianred',
+                text=monthly_summary['Unpaid'].map('${:,.0f}'.format),
+                textposition='auto'
+            ))
+            # Reference Line Chart
             fig.add_trace(go.Scatter(
                 x=monthly_summary['Month'],
-                y=monthly_summary['Paid'],
-                name='Paid ($)',
+                y=monthly_summary['Reference'],
+                name='Reference Count',
                 yaxis='y2',
                 mode='lines+markers',
-                line=dict(color='red'),
-                marker=dict(size=8),
-                text=monthly_summary['Paid'].map('${:,.0f}'.format),
+                line=dict(color='orange', width=3),
+                marker=dict(size=7),
+                text=monthly_summary['Reference'],
                 textposition='top center'
             ))
-
-            # Layout
             fig.update_layout(
-                title='📦 Completed Bills & Paid by Month',
+                barmode='stack',
+                title='💸 Paid vs Unpaid Amounts by Month',
                 xaxis=dict(title='Month'),
-                yaxis=dict(title='Bills'),
+                yaxis=dict(title='Amount ($)', tickformat="$.2s"),
                 yaxis2=dict(
-                    title='Billed Amount ($)',
+                    title='Number of References',
                     overlaying='y',
                     side='right',
-                    showgrid=False,
-                    tickformat="$.2s"
+                    showgrid=False
                 ),
-                legend=dict(title='Metric'),
+                legend=dict(title='Payment Status'),
                 height=600,
                 width=1000
             )
 
+
+            # Show chart in Streamlit
             st.plotly_chart(fig, use_container_width=True)
 
-        col67 = st.columns(1)[0]
 
-        with col67:
+
+        with col66:
 
             # Sample DataFrame: replace with your actual data source
             df = dfs["Bill"].copy()
@@ -1130,7 +1094,7 @@ def show_dashboard():
                 y='Paid',
                 color='Payee Name',
                 markers=True,
-                title="💸 Monthly Spend by Vendor",
+                title="💸 Monthly Spend by Top 10 Vendor",
                 labels={'Paid': 'Amount ($)', 'Month': 'Month'},
             )
 
@@ -1171,6 +1135,6 @@ def show_dashboard():
             st.write(dfs["Purchase Order"])
             st.write(dfs["Bill"])
        
+
 if __name__ == "__main__":
     show_dashboard()
-
