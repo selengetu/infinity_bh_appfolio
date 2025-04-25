@@ -107,34 +107,23 @@ def show_dashboard():
          # Get unique filter values
         properties = dfs["Rent Roll"]["Property Name"].dropna().unique().tolist()
         statuses = dfs["Rent Roll"]["Status"].dropna().unique().tolist()
-        bdba_types = dfs["Rent Roll"]["BD/BA"].dropna().unique().tolist()
 
-        col_prop, col_status, col_bdba = st.columns(3)
+        col_prop = st.columns(3)[0]
 
         with col_prop:
             selected_property = st.selectbox("Filter by Property", ["All"] + properties)
 
-        with col_status:
-            selected_statuses = st.multiselect("Filter by Status", statuses, default=statuses)
-
-        with col_bdba:
-            selected_bdbas = st.multiselect("Filter by BD/BA", bdba_types, default=bdba_types)
-
        # Filter data
         rent_roll = dfs["Rent Roll"].copy()
+        rent_roll1 = dfs["Rent Roll"].copy()
         trailing_12months = dfs["Rent Roll 12 Months"].copy()  
         tenant_data = dfs["Tenant Data"].copy()
 
         if selected_property != "All":
             rent_roll = rent_roll[rent_roll["Property Name"] == selected_property]
+            rent_roll1 = rent_roll1[rent_roll1["Property Name"] == selected_property]
             trailing_12months = trailing_12months[trailing_12months["Property Name"] == selected_property]
             tenant_data = tenant_data[tenant_data["Property Name"] == selected_property]
-
-        rent_roll = rent_roll[rent_roll["Status"].isin(selected_statuses)]
-        rent_roll = rent_roll[rent_roll["BD/BA"].isin(selected_bdbas)]
-        trailing_12months = trailing_12months[trailing_12months["Status"].isin(selected_statuses)]
-        trailing_12months = trailing_12months[trailing_12months["BD/BA"].isin(selected_bdbas)]
-        tenant_data = tenant_data[tenant_data["Status"].isin(selected_statuses)]
 
         # Metric calculations using filtered data
         col1, col2, col3, col4 = st.columns(4)
@@ -610,28 +599,17 @@ def show_dashboard():
     with tab2:
         # Filters
         properties1 = dfs["Rent Roll"]["Property Name"].dropna().unique().tolist()
-        statuses1 = dfs["Rent Roll"]["Status"].dropna().unique().tolist()
-        bdba_types1 = dfs["Rent Roll"]["BD/BA"].dropna().unique().tolist()
 
-        col_prop1, col_status1, col_bdba1 = st.columns(3)
+        col_prop1 = st.columns(3)[0]
 
         with col_prop1:
             selected_property1 = st.selectbox("Filter by Property", ["All"] + properties1, key="property_tab2")
-
-        with col_status1:
-            selected_statuses1 = st.multiselect("Filter by Status", statuses1, default=statuses1, key="status_tab2")
-
-        with col_bdba1:
-            selected_bdbas1 = st.multiselect("Filter by BD/BA", bdba_types1, default=bdba_types1, key="bdba_tab2")
 
         # Filter data
         rent_roll = dfs["Rent Roll"].copy()
 
         if selected_property1 != "All":
             rent_roll = rent_roll[rent_roll["Property Name"] == selected_property1]
-
-        rent_roll = rent_roll[rent_roll["Status"].isin(selected_statuses1)]
-        rent_roll = rent_roll[rent_roll["BD/BA"].isin(selected_bdbas1)]
 
         col26, col27 = st.columns(2)
 
@@ -806,9 +784,11 @@ def show_dashboard():
 
         # Filter data
         df_work = dfs["Work Orders"].copy()
+        df_work1 = dfs["Work Orders"].copy()
 
         if selected_property4 != "All":
             df_work = df_work[df_work["Property Name"] == selected_property4]
+            df_work1 = df_work1[df_work1["Property Name"] == selected_property4]
 
         col45, col46 = st.columns(2)
 
@@ -895,31 +875,21 @@ def show_dashboard():
 
          # Get unique filter values
         properties5 = dfs["Rent Roll"]["Property Name"].dropna().unique().tolist()
-        statuses5 = dfs["Rent Roll"]["Status"].dropna().unique().tolist()
-        bdba_types5 = dfs["Rent Roll"]["BD/BA"].dropna().unique().tolist()
 
-        col_prop5, col_status5, col_bdba5 = st.columns(3)
+        col_prop5 = st.columns(3)[0]
 
         with col_prop5:
             selected_property5 = st.selectbox("Filter by Property", ["All"] + properties5, key="property_tab5")
 
-        with col_status5:
-            selected_statuses5 = st.multiselect("Filter by Status", statuses5, default=statuses5, key="status_tab5")
-
-        with col_bdba5:
-            selected_bdbas5 = st.multiselect("Filter by BD/BA", bdba_types5, default=bdba_types5, key="bdba_tab5")
-
        # Filter data
         rent_roll = dfs["Rent Roll"].copy()
         tenant_data = dfs["Tenant Data"].copy()
+        tenant_data1 = dfs["Tenant Data"].copy()
 
         if selected_property5 != "All":
             rent_roll = rent_roll[rent_roll["Property Name"] == selected_property5]
             tenant_data = tenant_data[tenant_data["Property Name"] == selected_property5]
-
-        rent_roll = rent_roll[rent_roll["Status"].isin(selected_statuses5)]
-        rent_roll = rent_roll[rent_roll["BD/BA"].isin(selected_bdbas5)]
-        tenant_data = tenant_data[tenant_data["Status"].isin(selected_statuses5)]
+            tenant_data = tenant_data[tenant_data["Property Name"] == selected_property5]
 
         col51, col52, col53, col54 = st.columns(4)
 
@@ -1048,9 +1018,11 @@ def show_dashboard():
 
         # Filter data
         bill = dfs["Bill"].copy()
+        bill1 = dfs["Bill"].copy()
 
         if selected_property6 != "All":
             bill = bill[bill["Property Name"] == selected_property6]
+            bill1 = bill1[bill1["Property Name"] == selected_property6]
 
         col65, col66 = st.columns(2)
 
@@ -1173,11 +1145,11 @@ def show_dashboard():
 
         with tab1:
             st.subheader("🏠 Property Performance")
-            st.write(dfs["Rent Roll"])
+            st.write(rent_roll1)
 
         with tab2:
             st.subheader("💰 Rent")
-            st.write(dfs["Rent Roll"])
+            st.write(rent_roll1)
 
         with tab3:
             st.subheader("📝 Leasing")
@@ -1185,16 +1157,15 @@ def show_dashboard():
          
         with tab4:
             st.subheader("🔧 Maintenance")
-            st.write(dfs["Work Orders"])
+            st.write(df_work1)
         
         with tab5:
             st.subheader("🏢 Tenants")
-            st.write(dfs["Tenant Data"])
+            st.write(tenant_data1)
 
         with tab6:
             st.subheader("📄 Billings")
-            st.write(dfs["Purchase Order"])
-            st.write(dfs["Bill"])
+            st.write(bill1)
        
 
 if __name__ == "__main__":
