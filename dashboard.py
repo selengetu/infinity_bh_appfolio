@@ -24,7 +24,6 @@ def show_dashboard():
         "Prospect": "prospect_cleaned",
         "Rent Roll": "rentroll_cleaned",
         "Leasing": "leasing_cleaned",
-        "Purchase Order": "purchase_order_cleaned",
         "Bill": "bill_cleaned",
         "Rent Roll 12 Months": "rentroll_12_months_combined",
     }
@@ -75,7 +74,6 @@ def show_dashboard():
         "Prospect": latest_files.get("Prospect"),
         "Leasing": latest_files.get("Leasing"),
         "Rent Roll": latest_files.get("Rent Roll"),
-        "Purchase Order": latest_files.get("Purchase Order"),
         "Bill": latest_files.get("Bill"),
         "Rent Roll 12 Months": latest_files.get("Rent Roll 12 Months")
     }
@@ -142,15 +140,14 @@ def show_dashboard():
 
         total_move_out = rent_roll["Move-out"].notnull().sum()
         ninety_days_later = today + timedelta(days=90)
-        rent_roll["Move-in"] = pd.to_datetime(rent_roll["Move-in"], errors="coerce")
 
+        tenant_data["Move-in"] = pd.to_datetime(rent_roll["Move-in"], errors="coerce")
         # Filter move-ins between today and 90 days later
         move_in_filtered = rent_roll[
-            (rent_roll["Move-in"] >= today) &
-            (rent_roll["Move-in"] <= ninety_days_later)
+            (tenant_data["Move-in"] >= today) &
+            (tenant_data["Move-in"] <= ninety_days_later) & (tenant_data['Status'] != 'Past')
         ]
-
-        # Count them
+   
         total_move_in = len(move_in_filtered)
 
         # Display metrics

@@ -484,7 +484,6 @@ def get_data_from_appfolio():
         # work_order = download_csv(driver, WORK_ORDER_URL, 1, 'work_order',None)
         # leasing = download_csv(driver, LEASING_FUNNEL_URL, 1, 'leasing',None) 
         # prospect = download_csv(driver, PROSPECT_SOURCE_URL,1, 'prospect',None)
-        # purchase = download_csv(driver, PURCHASE_ORDER_URL, 1,'purchase_order',None)
         bill = download_csv(driver, BILL_URL, 1,'bill',None)
         month_end_dates = get_trailing_month_end_dates(today)
 
@@ -498,10 +497,10 @@ def get_data_from_appfolio():
             if not success:
                 logging.warning(f"Download failed for {date_str}")
 
-        # df_all_rentrolls = union_rentrolls()
-        # output_path = os.path.join(BASE_DOWNLOAD_FOLDER, f"rentroll_12_months_combined_{datetime.today().strftime('%Y%m%d')}.csv")
-        # df_all_rentrolls.to_csv(output_path, index=False, encoding='utf-8-sig')
-        # print(f"[DONE] Saved combined file to: {output_path}")
+        df_all_rentrolls = union_rentrolls()
+        output_path = os.path.join(BASE_DOWNLOAD_FOLDER, f"rentroll_12_months_combined_{datetime.today().strftime('%Y%m%d')}.csv")
+        df_all_rentrolls.to_csv(output_path, index=False, encoding='utf-8-sig')
+        print(f"[DONE] Saved combined file to: {output_path}")
         success = True  # Mark as successful
     except Exception as e:
         print(f" An error occurred: {e}")
