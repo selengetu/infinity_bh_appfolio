@@ -140,14 +140,15 @@ def show_dashboard():
 
         total_move_out = rent_roll["Move-out"].notnull().sum()
         ninety_days_later = today + timedelta(days=90)
+        rent_roll["Move-in"] = pd.to_datetime(rent_roll["Move-in"], errors="coerce")
 
-        tenant_data["Move-in"] = pd.to_datetime(rent_roll["Move-in"], errors="coerce")
         # Filter move-ins between today and 90 days later
         move_in_filtered = rent_roll[
-            (tenant_data["Move-in"] >= today) &
-            (tenant_data["Move-in"] <= ninety_days_later) & (tenant_data['Status'] != 'Past')
+            (rent_roll["Move-in"] >= today) &
+            (rent_roll["Move-in"] <= ninety_days_later)
         ]
-   
+
+        # Count them
         total_move_in = len(move_in_filtered)
 
         # Display metrics
