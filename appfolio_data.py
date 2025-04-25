@@ -479,11 +479,11 @@ def get_data_from_appfolio():
         
         time.sleep(3)  # Allow page to load
 
-        # rentroll = download_csv(driver, LOGIN_URL, 1, 'rentroll', None)
-        # tenant = download_csv(driver, TENANT_URL, 1, 'tenant_data',None)
-        # work_order = download_csv(driver, WORK_ORDER_URL, 1, 'work_order',None)
-        # leasing = download_csv(driver, LEASING_FUNNEL_URL, 1, 'leasing',None) 
-        # prospect = download_csv(driver, PROSPECT_SOURCE_URL,1, 'prospect',None)
+        rentroll = download_csv(driver, LOGIN_URL, 1, 'rentroll', None)
+        tenant = download_csv(driver, TENANT_URL, 1, 'tenant_data',None)
+        work_order = download_csv(driver, WORK_ORDER_URL, 1, 'work_order',None)
+        leasing = download_csv(driver, LEASING_FUNNEL_URL, 1, 'leasing',None) 
+        prospect = download_csv(driver, PROSPECT_SOURCE_URL,1, 'prospect',None)
         bill = download_csv(driver, BILL_URL, 1,'bill',None)
         month_end_dates = get_trailing_month_end_dates(today)
 
