@@ -386,7 +386,7 @@ def show_dashboard():
         with col9:
             
             tenant_data['Move-in'] = pd.to_datetime(tenant_data['Move-in'], errors='coerce')
-            tenant_data1 = tenant_data[tenant_data['Move-in'] >= today]
+            tenant_data1 = tenant_data[tenant_data['Status'] == 'Future']
             # Extract Month-Year
             tenant_data1['Move-in Month'] = tenant_data1['Move-in'].dt.to_period("M").astype(str)
             movein_counts = (
@@ -398,9 +398,9 @@ def show_dashboard():
             tenant_data2 = tenant_data.copy()
 
             tenant_data2['Lease To'] = pd.to_datetime(tenant_data2['Lease To'], errors='coerce')
-            ninety_days_later = today + timedelta(days=90)
-            tenant_data2 = tenant_data2[(tenant_data2['Lease To'] >= today) & (tenant_data2['Lease To'] <= ninety_days_later) &
-            (tenant_data2['Status'] != 'Past')]
+            ninety_days_later = today - timedelta(days=90)
+            tenant_data2 = tenant_data2[(tenant_data2['Lease To'] <= today) & (tenant_data2['Lease To'] >= ninety_days_later) &
+            (tenant_data2['Status'] == 'Past')]
             
             tenant_data2['Lease To Month'] = tenant_data2['Lease To'].dt.to_period("M").astype(str)
 
@@ -447,7 +447,9 @@ def show_dashboard():
         with col10:
 
             tenant_data['Lease To'] = pd.to_datetime(tenant_data['Lease To'], errors='coerce')
+            tenant_data_filtered = tenant_data.dropna(subset=["Property Name", "Unit"])
 
+            tenant_data_filtered = tenant_data_filtered.drop_duplicates(subset=["Property Name", "Unit"])
             def categorize_moveout_days(row):
                 if pd.isna(row['Lease To']):
                     return None
@@ -460,16 +462,15 @@ def show_dashboard():
                     return '31-60 Days'
                 elif delta <= 90:
                     return '61-90 Days'
-                elif delta <= 365:
-                    return '91-365 Days'
+
                 else:
                     return None
-
-            tenant_data['Move Out Bucket'] = tenant_data.apply(lambda row: categorize_moveout_days(row), axis=1)
+            
+            tenant_data_filtered['Move Out Bucket'] = tenant_data.apply(lambda row: categorize_moveout_days(row), axis=1)
 
             # Group only by Move Out Bucket
             grouped = (
-                tenant_data[tenant_data['Move Out Bucket'].notna()]
+                tenant_data_filtered[tenant_data_filtered['Move Out Bucket'].notna()]
                 .groupby(['Move Out Bucket'])
                 .size()
                 .reset_index(name='Count')
