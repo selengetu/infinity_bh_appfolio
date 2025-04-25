@@ -28,7 +28,7 @@ def show_dashboard():
         "Bill": "bill_cleaned",
         "Rent Roll 12 Months": "rentroll_12_months_combined",
     }
-
+    today = datetime.today()
     # Initialize a dictionary to store the latest file for each category
     latest_files = {}
 
@@ -126,7 +126,7 @@ def show_dashboard():
             tenant_data = tenant_data[tenant_data["Property Name"] == selected_property]
 
         # Metric calculations using filtered data
-        col1, col2, col3, col4 = st.columns(4)
+        col1, col2, col3, col4, col05 = st.columns(5)
 
         all_units = rent_roll.shape[0]
         current_resident = rent_roll[rent_roll["Status"] == "Current"].shape[0]
@@ -141,12 +141,24 @@ def show_dashboard():
         total_rent = rent_roll["Rent"].sum()
 
         total_move_out = rent_roll["Move-out"].notnull().sum()
+        ninety_days_later = today + timedelta(days=90)
+        rent_roll["Move-in"] = pd.to_datetime(rent_roll["Move-in"], errors="coerce")
+
+        # Filter move-ins between today and 90 days later
+        move_in_filtered = rent_roll[
+            (rent_roll["Move-in"] >= today) &
+            (rent_roll["Move-in"] <= ninety_days_later)
+        ]
+
+        # Count them
+        total_move_in = len(move_in_filtered)
 
         # Display metrics
         col1.metric(label="🏠 Total Units", value=f"{all_units}")
         col2.metric(label="📊 Occupancy Rate", value=f"{occupied:.2f}%")
         col3.metric(label="💵 Total Rent", value=f"${total_rent:,.0f}")
-        col4.metric(label="🚪 Total Move-outs (Next 60 days)", value=f"{total_move_out}")
+        col4.metric(label="🚪 Total Move-ins (Next 60 days)", value=f"{total_move_in}")
+        col05.metric(label="🚪 Total Move-outs (Next 60 days)", value=f"{total_move_out}")
 
         col5, col6 = st.columns(2)
         
@@ -234,7 +246,9 @@ def show_dashboard():
                     x=df_occ["Month"],
                     y=df_occ["Vacant-Rented"],
                     name="Vacant-Rented",
-                    marker=dict(color="lightblue")
+                    marker=dict(color="lightblue"),
+                    text=df_occ["Vacant-Rented"], 
+                    textposition='auto'   
                 )
             )
 
@@ -244,7 +258,9 @@ def show_dashboard():
                     x=df_occ["Month"],
                     y=df_occ["Vacant-Unrented"],
                     name="Vacant-Unrented",
-                    marker=dict(color="steelblue")
+                    marker=dict(color="steelblue"),
+                    text=df_occ["Vacant-Unrented"],           
+                    textposition='auto'   
                 )
             )
 
@@ -308,7 +324,8 @@ def show_dashboard():
                 color="Status",
                 barmode="stack",
                 color_discrete_map=color_map,
-                title="📊 Unit Type Breakdown by Status"
+                title="📊 Unit Type Breakdown by Status",
+                text="Count" 
             )
 
             fig.update_layout(
@@ -369,7 +386,6 @@ def show_dashboard():
         col9, col10 = st.columns(2)
 
         with col9:
-            today = datetime.today()
             
             tenant_data['Move-in'] = pd.to_datetime(tenant_data['Move-in'], errors='coerce')
             tenant_data1 = tenant_data[tenant_data['Move-in'] >= today]
@@ -384,7 +400,9 @@ def show_dashboard():
             tenant_data2 = tenant_data.copy()
 
             tenant_data2['Lease To'] = pd.to_datetime(tenant_data2['Lease To'], errors='coerce')
-            tenant_data2 = tenant_data2[tenant_data2['Lease To'] >= today]
+            ninety_days_later = today + timedelta(days=90)
+            tenant_data2 = tenant_data2[(tenant_data2['Lease To'] >= today) & (tenant_data2['Lease To'] <= ninety_days_later) &
+            (tenant_data2['Status'] != 'Past')]
             
             tenant_data2['Lease To Month'] = tenant_data2['Lease To'].dt.to_period("M").astype(str)
 
@@ -432,8 +450,6 @@ def show_dashboard():
 
             tenant_data['Lease To'] = pd.to_datetime(tenant_data['Lease To'], errors='coerce')
 
-            today = datetime.today()
-
             def categorize_moveout_days(row):
                 if pd.isna(row['Lease To']):
                     return None
@@ -467,7 +483,8 @@ def show_dashboard():
                 x="Move Out Bucket",
                 y="Count",
                 title="📦 Upcoming Move-Outs",
-                color_discrete_sequence=px.colors.qualitative.Pastel
+                color_discrete_sequence=px.colors.qualitative.Pastel,
+                text="Count"  
             )
 
             fig.update_layout(
@@ -513,7 +530,7 @@ def show_dashboard():
 
             # Layout
             fig.update_layout(
-                title="📊 Monthly Occupancy % and Total Units",
+                title="📊 Evictions by month",
                 xaxis=dict(title="Month", title_font=dict(size=14), tickfont=dict(size=12)),
                 yaxis=dict(title="Evict", title_font=dict(size=14), tickfont=dict(size=12), gridcolor="lightgray"),
                
@@ -555,7 +572,9 @@ def show_dashboard():
                 name='Delinquent $',
                 yaxis='y2',
                 marker_color='blue',
-                opacity=0.4
+                opacity=0.4,
+                text=summary['Delinquent_Amount'].map('${:,.0f}'.format),  # <- Add this
+                textposition='auto'  # <- Add this (can also be 'inside' or 'outside')
             ))
 
             # Line chart for unit count (use y - left side)
@@ -607,9 +626,10 @@ def show_dashboard():
 
         # Filter data
         rent_roll = dfs["Rent Roll"].copy()
-
+        rent_roll2 = dfs["Rent Roll"].copy()
         if selected_property1 != "All":
             rent_roll = rent_roll[rent_roll["Property Name"] == selected_property1]
+            rent_roll2 = rent_roll2[rent_roll2["Property Name"] == selected_property1]
 
         col26, col27 = st.columns(2)
 
@@ -746,7 +766,9 @@ def show_dashboard():
                 x=summary["Source"],
                 y=summary["Guest_Cards"],
                 name="Guest Card Inquiries",
-                marker_color="skyblue"
+                marker_color="skyblue",
+                text=summary["Guest_Cards"],         # <- Add data labels
+                textposition="auto"       
             ))
 
             # Bar 2: Converted Tenants
@@ -754,7 +776,8 @@ def show_dashboard():
                 x=summary["Source"],
                 y=summary["Converted_Tenants"],
                 name="Converted Tenants",
-                marker_color="seagreen"
+                marker_color="seagreen",
+                text=summary["Converted_Tenants"],
             ))
 
             # Layout
@@ -854,6 +877,7 @@ def show_dashboard():
                 y="Count",
                 color="Status",
                 barmode="stack",
+                text="Count",
                 title="📅 Monthly Work Orders by Status",
                 color_discrete_sequence=[ "orange", "steelblue", "mediumseagreen", "lightgrey",
         "indianred", "goldenrod", "cadetblue", "mediumslateblue", "teal", "darkkhaki"]
@@ -889,7 +913,7 @@ def show_dashboard():
         if selected_property5 != "All":
             rent_roll = rent_roll[rent_roll["Property Name"] == selected_property5]
             tenant_data = tenant_data[tenant_data["Property Name"] == selected_property5]
-            tenant_data = tenant_data[tenant_data["Property Name"] == selected_property5]
+            tenant_data1 = tenant_data1[tenant_data1["Property Name"] == selected_property5]
 
         col51, col52, col53, col54 = st.columns(4)
 
@@ -905,7 +929,7 @@ def show_dashboard():
         col53.metric(label="🚪Future tenants (Next 60 days)", value=f"{future}")
         col54.metric(label="⚖️ Eviction Filings per Residentt", value=f"{evictions_per_resident}")
         
-        col55, col56 = st.columns(2)
+        col55= st.columns(1)[0]
 
         with col55:
 
@@ -936,7 +960,9 @@ def show_dashboard():
                 name='Past Due ($)',
                 yaxis='y2',
                 marker_color='indianred',
-                opacity=0.6
+                opacity=0.6,
+                text=summary['Past_Due'].map('${:,.0f}'.format),  # <- Add data labels
+                textposition='auto'  # Can also be 'inside' or 'outside'
             ))
 
             # Line: Late Count
@@ -946,6 +972,8 @@ def show_dashboard():
                 name='Late Count',
                 yaxis='y1',
                 mode='lines+markers',
+                text=summary['Late_Count'],  # <- Add data labels
+                textposition='top center',   # Adjust label placement
                 line=dict(color='green'),
                 marker=dict(size=8)
             ))
@@ -974,6 +1002,7 @@ def show_dashboard():
 
             st.plotly_chart(fig, use_container_width=True)
 
+        col56= st.columns(1)[0]
         with col56:
                         # Group by Property
             summary = (
@@ -985,8 +1014,12 @@ def show_dashboard():
                 .reset_index()
             )
 
-            # Calculate ratio
-            summary['Evictions per Resident'] = summary['Eviction_Filings'] / summary['Total_Residents']
+             # Correct calculation: parentheses ensure correct order
+            summary['Evictions per Resident'] = (summary['Eviction_Filings'] / summary['Total_Residents']) * 100
+
+            summary = summary[summary['Evictions per Resident'] > 0]
+            # Sort by Evictions per Resident (descending)
+            summary = summary.sort_values(by='Evictions per Resident', ascending=False)
 
 
             fig = px.bar(
@@ -995,7 +1028,13 @@ def show_dashboard():
                 y="Evictions per Resident",
                 title="📉 Eviction Filings per Resident by Property",
                 color="Evictions per Resident",
-                color_continuous_scale="OrRd"
+                color_continuous_scale="OrRd",
+                text="Evictions per Resident"
+            )
+
+            fig.update_traces(
+                textposition="auto",
+                texttemplate="%{text:.2f}"  # <- Format with two decimal places
             )
 
             fig.update_layout(
@@ -1024,7 +1063,7 @@ def show_dashboard():
             bill = bill[bill["Property Name"] == selected_property6]
             bill1 = bill1[bill1["Property Name"] == selected_property6]
 
-        col65, col66 = st.columns(2)
+        col65 = st.columns(1)[0]
 
         with col65:
 
@@ -1092,7 +1131,8 @@ def show_dashboard():
             )
             # Show chart in Streamlit
             st.plotly_chart(fig, use_container_width=True)
-
+        
+        col66 = st.columns(1)[0]
         with col66:
 
             # Ensure columns are in correct type
@@ -1149,7 +1189,7 @@ def show_dashboard():
 
         with tab2:
             st.subheader("💰 Rent")
-            st.write(rent_roll1)
+            st.write(rent_roll2)
 
         with tab3:
             st.subheader("📝 Leasing")
