@@ -631,7 +631,7 @@ def show_dashboard():
             rent_roll = rent_roll[rent_roll["Property Name"] == selected_property1]
             rent_roll2 = rent_roll2[rent_roll2["Property Name"] == selected_property1]
 
-        col26, col27 = st.columns(2)
+        col26= st.columns(1)[0]
 
         with col26:
             # Clean Rent and Market Rent columns
@@ -693,8 +693,7 @@ def show_dashboard():
 
             st.plotly_chart(fig3, use_container_width=True)
 
-        with col27:
-            pass  # You can add another visualization or summary here
+       
 
     with tab3:
       
