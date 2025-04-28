@@ -152,7 +152,7 @@ def show_dashboard():
         total_move_in = len(move_in_filtered)
 
         # Display metrics
-        col1.metric(label="🏠 Total Units", value=f"{all_units}")
+        col1.metric(label="🏠 Total Units", value=f"{all_units:,.0f}")
         col2.metric(label="📊 Occupancy Rate", value=f"{occupied:.2f}%")
         col3.metric(label="💵 Total Rent", value=f"${total_rent:,.0f}")
         col4.metric(label="🚪 Total Move-ins (Next 60 days)", value=f"{total_move_in}")
@@ -277,7 +277,6 @@ def show_dashboard():
             
         col7, col8 = st.columns(2)
 
-        # Use col2 and col5 for two separate charts
         with col7:
 
             statuses = [
@@ -333,7 +332,10 @@ def show_dashboard():
                 width=1000,
                 height=600
             )
-
+            fig.update_traces(
+                texttemplate='%{text:,}',  # Add thousand separator
+                textposition='auto'        # Keep the labels positioned automatically
+            )
             st.plotly_chart(fig, use_container_width=True)
 
           
@@ -690,17 +692,31 @@ def show_dashboard():
                 barmode="group"
             )
 
+            fig3.update_traces(
+                selector=dict(type="bar"),
+                texttemplate="$%{text:,}",  # Format as dollar + comma separated
+                textposition="auto"
+            )
+
             st.plotly_chart(fig3, use_container_width=True)
 
-       
-
     with tab3:
+          # Get unique filter values
+        properties3 = dfs["Leasing"]["Property"].dropna().unique().tolist()
+
+        col_prop3 = st.columns(3)[0]
+
+        with col_prop3:
+            selected_property3 = st.selectbox("Filter by Property", ["All"] + properties3, key="property_tab3")
+
+        df_leasing = dfs["Leasing"].copy()
+
+        if selected_property3 != "All":
+            df_leasing = df_leasing[df_leasing["Property"] == selected_property3]
       
         col36, col37 = st.columns(2)
 
         with col36:
-           
-            df_leasing = dfs["Leasing"].copy()
 
             # Sum values across all properties
             funnel_counts = {
@@ -736,6 +752,10 @@ def show_dashboard():
                 height=500,
                 margin=dict(t=50, b=50, l=50, r=50)
             )
+            fig.update_traces(
+                texttemplate="%{x:,}",  # Format number (Count) with thousand separator
+                textposition="inside"   # Keep it inside the funnel blocks
+            )
 
             # Show in Streamlit
             st.plotly_chart(fig, use_container_width=True)
@@ -759,7 +779,7 @@ def show_dashboard():
             # Create bar chart
             fig = go.Figure()
 
-            # Bar 1: Guest Card Inquiries
+            # Bar 1: Guest Card Inquiriess
             fig.add_trace(go.Bar(
                 x=summary["Source"],
                 y=summary["Guest_Cards"],
@@ -787,6 +807,11 @@ def show_dashboard():
                 legend_title="Metric",
                 width=1000,
                 height=600
+            )
+
+            fig.update_traces(
+                texttemplate="%{text:,}",  # Format data labels with thousand separator
+                textposition="auto"        # Keep labels positioned automatically
             )
 
             # Show in Streamlit
@@ -890,6 +915,11 @@ def show_dashboard():
                 height=600
             )
 
+            fig.update_traces(
+                texttemplate="%{text:,}",  # Format label numbers with thousand separator
+                textposition="auto"         # Auto-position the labels nicely
+            )
+
             # Show in Streamlit
             st.plotly_chart(fig, use_container_width=True)
 
@@ -922,10 +952,10 @@ def show_dashboard():
         evictions_per_resident = round(eviction_filings / total_residents, 3)
 
         # Display the metric card
-        col51.metric(label="🏠Current Residents", value=f"{total_residents}")
+        col51.metric(label="🏠Current Residents", value=f"{total_residents:,.0f}")
         col52.metric(label="📊Notice Residents",  value=f"{notice}")
         col53.metric(label="🚪Future tenants (Next 60 days)", value=f"{future}")
-        col54.metric(label="⚖️ Eviction Filings per Residentt", value=f"{evictions_per_resident}")
+        col54.metric(label="⚖️ Eviction Filings per Residentt", value=f"{evictions_per_resident*100:,.2f}")
         
         col55= st.columns(1)[0]
 
