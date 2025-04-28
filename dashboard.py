@@ -393,7 +393,7 @@ def show_dashboard():
             else:
                 st.warning("⚠️ 'Status' column not found in dataset.")
 
-        col9, col10 = st.columns(2)
+        col9, col11 = st.columns(2)
 
         with col9:
             
@@ -462,58 +462,58 @@ def show_dashboard():
             st.plotly_chart(fig, use_container_width=True)
         
 
-        with col10:
+        # with col10:
 
-            tenant_data['Move-out'] = pd.to_datetime(tenant_data['Move-out'], errors='coerce')
-            tenant_data_filtered = tenant_data.dropna(subset=["Property Name", "Unit"])
+        #     tenant_data['Move-out'] = pd.to_datetime(tenant_data['Move-out'], errors='coerce')
+        #     tenant_data_filtered = tenant_data.dropna(subset=["Property Name", "Unit"])
 
-            tenant_data_filtered = tenant_data_filtered.drop_duplicates(subset=["Property Name", "Unit"])
-            def categorize_moveout_days(row):
-                if pd.isna(row['Move-out']):
-                    return None
-                delta = (row['Move-out'] - today).days
-                if delta < 0:
-                    return None  # Already moved out
-                elif delta <= 30:
-                    return '0-30 Days'
-                elif delta <= 60:
-                    return '31-60 Days'
-                elif delta <= 90:
-                    return '61-90 Days'
+        #     def categorize_moveout_days(row):
+        #         if pd.isna(row['Move-out']):
+        #             return None
+        #         delta = (row['Move-out'] - today).days
+        #         if delta < 0:
+        #             return None  # Already moved out
+        #         elif delta <= 30:
+        #             return '0-30 Days'
+        #         elif delta <= 60:
+        #             return '31-60 Days'
+        #         elif delta <= 90:
+        #             return '61-90 Days'
 
-                else:
-                    return None
+        #         else:
+        #             return None
             
-            tenant_data_filtered['Move Out Bucket'] = tenant_data.apply(lambda row: categorize_moveout_days(row), axis=1)
+        #     tenant_data_filtered['Move Out Bucket'] = tenant_data.apply(lambda row: categorize_moveout_days(row), axis=1)
+            
 
-            # Group only by Move Out Bucket
-            grouped = (
-                tenant_data_filtered[tenant_data_filtered['Move Out Bucket'].notna()]
-                .groupby(['Move Out Bucket'])
-                .size()
-                .reset_index(name='Count')
-            )
+        #     # Group only by Move Out Bucket
+        #     grouped = (
+        #         tenant_data_filtered[tenant_data_filtered['Move Out Bucket'].notna()]
+        #         .groupby(['Move Out Bucket'])
+        #         .size()
+        #         .reset_index(name='Count')
+        #     )
 
-            # Bar chart without Property Name
-            fig = px.bar(
-                grouped,
-                x="Move Out Bucket",
-                y="Count",
-                title="📦 Upcoming Move-Outs",
-                color_discrete_sequence=px.colors.qualitative.Pastel,
-                text="Count"  
-            )
+        #     # Bar chart without Property Name
+        #     fig = px.bar(
+        #         grouped,
+        #         x="Move Out Bucket",
+        #         y="Count",
+        #         title="📦 Upcoming Move-Outs",
+        #         color_discrete_sequence=px.colors.qualitative.Pastel,
+        #         text="Count"  
+        #     )
 
-            fig.update_layout(
-                xaxis_title="Move Out Timeframe",
-                yaxis_title="Number of Units",
-                width=1000,
-                height=600
-            )
+        #     fig.update_layout(
+        #         xaxis_title="Move Out Timeframe",
+        #         yaxis_title="Number of Units",
+        #         width=1000,
+        #         height=600
+        #     )
 
-            st.plotly_chart(fig, use_container_width=True)
+        #     st.plotly_chart(fig, use_container_width=True)
 
-        col11, col12 = st.columns(2)
+        
 
         with col11:
             trailing_12months['date_str'] = pd.to_datetime(trailing_12months['date_str'], format='%m-%d-%Y')
@@ -557,7 +557,8 @@ def show_dashboard():
             )
 
             st.plotly_chart(fig, use_container_width=True)
-
+        
+        col12 = st.columns(1)[0]
         with col12:
 
             # Clean the 'Past Due' column: remove $ and commas, convert to float
