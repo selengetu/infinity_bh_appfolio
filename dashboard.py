@@ -137,26 +137,36 @@ def show_dashboard():
         rent_roll["Rent"] = rent_roll["Rent"].replace("[\$,]", "", regex=True)
         rent_roll["Rent"] = pd.to_numeric(rent_roll["Rent"], errors="coerce")
         total_rent = rent_roll["Rent"].sum()
+        
+        tenant_data['Move-out'] = pd.to_datetime(tenant_data['Move-out'], errors='coerce')
+        ninety_days_before = today - timedelta(days=90)
 
-        total_move_out = rent_roll["Move-out"].notnull().sum()
-        ninety_days_later = today + timedelta(days=90)
-        rent_roll["Move-in"] = pd.to_datetime(rent_roll["Move-in"], errors="coerce")
+        # Filter rows where Move-out is after ninety_days_before
+        filtered_move_outs = tenant_data[tenant_data['Move-out'] >= today]
 
-        # Filter move-ins between today and 90 days later
-        move_in_filtered = rent_roll[
-            (rent_roll["Move-in"] >= today) &
-            (rent_roll["Move-in"] <= ninety_days_later)
-        ]
+        distinct_units = filtered_move_outs[['Property Name', 'Unit']].drop_duplicates()
 
-        # Count them
-        total_move_in = len(move_in_filtered)
+        # Count unique apartments moving out
+        total_move_out = len(distinct_units)
+    
+        tenant_data['Move-in'] = pd.to_datetime(tenant_data['Move-in'], errors='coerce')
+        ninety_days_before = today - timedelta(days=90)
+
+        # Filter rows where Move-out is after ninety_days_before
+        filtered_move_ins = tenant_data[tenant_data['Move-in'] >= today]
+        
+        distinct_units_move_in = filtered_move_ins[['Property Name', 'Unit']].drop_duplicates()
+
+        # Count how many tenants moved out
+        total_move_ins = len(distinct_units_move_in)
+        
 
         # Display metrics
         col1.metric(label="🏠 Total Units", value=f"{all_units:,.0f}")
         col2.metric(label="📊 Occupancy Rate", value=f"{occupied:.2f}%")
         col3.metric(label="💵 Total Rent", value=f"${total_rent:,.0f}")
-        col4.metric(label="🚪 Total Move-ins (Next 60 days)", value=f"{total_move_in}")
-        col05.metric(label="🚪 Total Move-outs (Next 60 days)", value=f"{total_move_out}")
+        col4.metric(label="🚪 Total Move-ins (Next 90 days)", value=f"{total_move_ins}")
+        col05.metric(label="🚪 Total Move-outs (Next 90 days)", value=f"{total_move_out}")
 
         col5, col6 = st.columns(2)
         
@@ -389,6 +399,7 @@ def show_dashboard():
             
             tenant_data['Move-in'] = pd.to_datetime(tenant_data['Move-in'], errors='coerce')
             tenant_data1 = tenant_data[tenant_data['Status'] == 'Future']
+            tenant_data1 = tenant_data1.drop_duplicates(subset=['Property Name', 'Unit'])
             # Extract Month-Year
             tenant_data1['Move-in Month'] = tenant_data1['Move-in'].dt.to_period("M").astype(str)
             movein_counts = (
@@ -399,21 +410,20 @@ def show_dashboard():
 
             tenant_data2 = tenant_data.copy()
 
-            tenant_data2['Lease To'] = pd.to_datetime(tenant_data2['Lease To'], errors='coerce')
-            ninety_days_later = today - timedelta(days=90)
-            tenant_data2 = tenant_data2[(tenant_data2['Lease To'] <= today) & (tenant_data2['Lease To'] >= ninety_days_later) &
-            (tenant_data2['Status'] == 'Past')]
+            tenant_data2['Move-out'] = pd.to_datetime(tenant_data2['Move-out'], errors='coerce')
+            ninety_days_before = today - timedelta(days=90)
+            ninety_days_later = today + timedelta(days=90)
+            tenant_data2 = tenant_data2[(tenant_data2['Move-out'] >= ninety_days_before)]
+            tenant_data2 = tenant_data2.drop_duplicates(subset=['Property Name', 'Unit'])
             
-            tenant_data2['Lease To Month'] = tenant_data2['Lease To'].dt.to_period("M").astype(str)
+            tenant_data2['Move-out Month'] = tenant_data2['Move-out'].dt.to_period("M").astype(str)
 
-            # Count Move-ins
-           
             # Count Move-outs
             moveout_counts = (
-                tenant_data2.groupby('Lease To Month').size().reset_index(name='Count')
-                .rename(columns={'Lease To Month': 'Month'})
+                tenant_data2.groupby('Move-out Month').size().reset_index(name='Count')
+                .rename(columns={'Move-out Month': 'Month'})
             )
-            moveout_counts['Type'] = 'Lease To'
+            moveout_counts['Type'] = 'Move-out'
 
             # Combine and convert Month to datetime
             combined = pd.concat([movein_counts, moveout_counts])
@@ -421,26 +431,32 @@ def show_dashboard():
             combined = combined.sort_values('Month')
             combined['Month'] = combined['Month'].dt.strftime('%b %Y')
 
-            fig = px.line(
+            fig = px.bar(
                 combined,
                 x='Month',
                 y='Count',
                 color='Type',
-                markers=True,
-                title="📈 Monthly Move-ins vs Lease To",
+                barmode='group',
+                text='Count',  # Add data labels
+                title="📊 Monthly Move-ins vs Move-outs",
                 color_discrete_map={
                     "Move-in": "green",
-                    "Lease To": "red"
+                    "Move-out": "red"
                 }
             )
 
             fig.update_layout(
                 xaxis_title="Month",
                 yaxis_title="Number of Units",
-                yaxis=dict(range=[0, 200]),  # 👈 Adjust max value here
+                yaxis=dict(range=[0, 200]),  # Optional: adjust y-axis range
                 legend_title="Event Type",
                 width=1000,
                 height=600
+            )
+
+            fig.update_traces(
+                texttemplate='%{text:,}',  # Thousand separator in labels
+                textposition='outside'
             )
 
             st.plotly_chart(fig, use_container_width=True)
@@ -448,14 +464,14 @@ def show_dashboard():
 
         with col10:
 
-            tenant_data['Lease To'] = pd.to_datetime(tenant_data['Lease To'], errors='coerce')
+            tenant_data['Move-out'] = pd.to_datetime(tenant_data['Move-out'], errors='coerce')
             tenant_data_filtered = tenant_data.dropna(subset=["Property Name", "Unit"])
 
             tenant_data_filtered = tenant_data_filtered.drop_duplicates(subset=["Property Name", "Unit"])
             def categorize_moveout_days(row):
-                if pd.isna(row['Lease To']):
+                if pd.isna(row['Move-out']):
                     return None
-                delta = (row['Lease To'] - today).days
+                delta = (row['Move-out'] - today).days
                 if delta < 0:
                     return None  # Already moved out
                 elif delta <= 30:
@@ -632,7 +648,7 @@ def show_dashboard():
             rent_roll = rent_roll[rent_roll["Property Name"] == selected_property1]
             rent_roll2 = rent_roll2[rent_roll2["Property Name"] == selected_property1]
 
-        col26= st.columns(1)[0]
+        col26, col27= st.columns(2)
 
         with col26:
             # Clean Rent and Market Rent columns
@@ -699,6 +715,53 @@ def show_dashboard():
             )
 
             st.plotly_chart(fig3, use_container_width=True)
+
+
+        with col27:
+
+            rent_roll["Rent"] = pd.to_numeric(rent_roll["Rent"].replace(r"[\$,]", "", regex=True), errors="coerce")
+            rent_roll["Market Rent"] = pd.to_numeric(rent_roll["Market Rent"].replace(r"[\$,]", "", regex=True), errors="coerce")
+
+            # Drop rows with missing critical data
+            filtered_df = rent_roll.dropna(subset=["Rent", "Market Rent", "Property Name", "BD/BA"])
+
+            # Group and aggregate
+            summary = (
+                filtered_df.groupby(["Property Name", "BD/BA"])
+                .agg(
+                    Avg_Rent=("Rent", "mean"),
+                    Avg_Market_Rent=("Market Rent", "mean"),
+                    Unit_Count=("BD/BA", "count")
+                )
+                .reset_index()
+            )
+
+            # Calculate Variance
+            summary["Variance"] = summary["Avg_Market_Rent"] - summary["Avg_Rent"]
+
+            # Round values
+            summary = summary.round({"Avg_Rent": 0, "Avg_Market_Rent": 0, "Variance": 0})
+
+            # 🎨 Define style function
+            def highlight_variance(val):
+                if val > 0:
+                    return 'background-color: #FF5C5C'  # light red
+                else:
+                    return ''
+
+            styled_summary = summary.style.format({
+                "Avg_Rent": "${:,.0f}",
+                "Avg_Market_Rent": "${:,.0f}",
+                "Variance": "${:,.0f}",
+                "Unit_Count": "{:,}"
+            }).applymap(highlight_variance, subset=["Variance"])
+
+            # ✨ Header
+            st.subheader("🏘️ Property Leasing Summary: Average Rent, Market Rent & Variances")
+
+            # ✨ Table
+            st.dataframe(styled_summary)
+
 
     with tab3:
           # Get unique filter values

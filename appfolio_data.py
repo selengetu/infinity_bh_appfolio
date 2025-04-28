@@ -351,6 +351,40 @@ def download_csv(driver, page_url, type, file_prefix, target_date=None):
     # Click update and download CSV
     click_update_button(driver)
     time.sleep(30)
+
+    if file_prefix == 'tenant_data': 
+        print('📄 Handling tenant_data columns...')
+
+        # Wait for the search box
+        search_box = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, "//input[@placeholder='Search...']"))
+        )
+        print('🔍 Search input found.')
+
+        # Search for "Move-out"
+        search_box.clear()
+        search_box.send_keys("Move-out")
+        print("🔎 Typed 'Move-out' in search box.")
+        time.sleep(2)
+
+        # Find the "Move-out" text (span)
+        moveout_element = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.XPATH, "//span[@data-ref='eLabel' and text()='Move-out']"))
+        )
+        print("✅ Move-out column appeared.")
+
+        # Scroll into view and click the text directly
+        driver.execute_script("arguments[0].scrollIntoView(true);", moveout_element)
+        time.sleep(1)
+
+        try:
+            moveout_element.click()
+            print("✅ Move-out clicked normally.")
+        except Exception as e:
+            print(f"⚡ Normal click failed: {e}")
+            driver.execute_script("arguments[0].click();", moveout_element)
+            print("✅ Move-out clicked using JavaScript fallback.")
+
     open_dropdown_and_click_csv(driver)
     time.sleep(30)
     
@@ -480,11 +514,11 @@ def get_data_from_appfolio():
         time.sleep(3)  # Allow page to load
 
         # rentroll = download_csv(driver, LOGIN_URL, 1, 'rentroll', None)
-        # tenant = download_csv(driver, TENANT_URL, 1, 'tenant_data',None)
+        tenant = download_csv(driver, TENANT_URL, 1, 'tenant_data',None)
         # work_order = download_csv(driver, WORK_ORDER_URL, 1, 'work_order',None)
         # leasing = download_csv(driver, LEASING_FUNNEL_URL, 1, 'leasing',None) 
         # prospect = download_csv(driver, PROSPECT_SOURCE_URL,1, 'prospect',None)
-        bill = download_csv(driver, BILL_URL, 1,'bill',None)
+        # bill = download_csv(driver, BILL_URL, 1,'bill',None)
         month_end_dates = get_trailing_month_end_dates(today)
 
         for date_str in month_end_dates:

@@ -4908,3 +4908,497 @@ Stacktrace:
 2025-04-28 12:51:21,334 - INFO - [SUCCESS] CSV URL: file://C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_detail-20250428.csv
 2025-04-28 12:51:21,741 - INFO - Deleted original file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_detail-20250428.csv
 2025-04-28 12:51:24,547 - INFO - [SUCCESS] The entire process completed successfully.
+2025-04-28 13:30:19,814 - INFO - Started Appfolio data process
+2025-04-28 13:30:20,863 - INFO - [INFO] Opening login page...
+2025-04-28 13:30:22,724 - INFO - [INFO] Entered username
+2025-04-28 13:30:22,931 - INFO - [INFO] Entered password
+2025-04-28 13:30:23,904 - INFO - [INFO] Clicked login button
+2025-04-28 13:30:26,913 - INFO - [INFO] 2-Step Verification detected. Retrieving verification code...
+2025-04-28 13:30:27,227 - INFO - [INFO] Requested verification code.
+2025-04-28 13:30:30,832 - INFO - Entered verification code: 722206
+2025-04-28 13:30:32,821 - INFO - Successfully submitted the verification code!
+2025-04-28 13:30:35,822 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/bill_detail?customize=true and downloading CSV...
+2025-04-28 13:30:50,268 - INFO - Update button clicked successfully.
+2025-04-28 13:31:30,530 - INFO -  An error occurred: Message: 
+Stacktrace:
+	GetHandleVerifier [0x00007FF7A32C5355+78597]
+	GetHandleVerifier [0x00007FF7A32C53B0+78688]
+	(No symbol) [0x00007FF7A30791AA]
+	(No symbol) [0x00007FF7A30CF149]
+	(No symbol) [0x00007FF7A30CF3FC]
+	(No symbol) [0x00007FF7A3122467]
+	(No symbol) [0x00007FF7A30F712F]
+	(No symbol) [0x00007FF7A311F2BB]
+	(No symbol) [0x00007FF7A30F6EC3]
+	(No symbol) [0x00007FF7A30C03F8]
+	(No symbol) [0x00007FF7A30C1163]
+	GetHandleVerifier [0x00007FF7A356EF0D+2870973]
+	GetHandleVerifier [0x00007FF7A35696B8+2848360]
+	GetHandleVerifier [0x00007FF7A3586993+2967875]
+	GetHandleVerifier [0x00007FF7A32E019A+188746]
+	GetHandleVerifier [0x00007FF7A32E847F+222255]
+	GetHandleVerifier [0x00007FF7A32CD2D4+111236]
+	GetHandleVerifier [0x00007FF7A32CD482+111666]
+	GetHandleVerifier [0x00007FF7A32B35A9+5465]
+	BaseThreadInitThunk [0x00007FF96DB6E8D7+23]
+	RtlUserThreadStart [0x00007FF96FB5BF6C+44]
+
+2025-04-28 13:31:32,757 - INFO - [ERROR] The process encountered an error.
+2025-04-28 13:32:31,787 - INFO - Started Appfolio data process
+2025-04-28 13:32:32,849 - INFO - [INFO] Opening login page...
+2025-04-28 13:32:34,747 - INFO - [INFO] Entered username
+2025-04-28 13:32:34,883 - INFO - [INFO] Entered password
+2025-04-28 13:32:34,947 - INFO - [INFO] Clicked login button
+2025-04-28 13:32:37,953 - INFO - [INFO] 2-Step Verification detected. Retrieving verification code...
+2025-04-28 13:32:38,280 - INFO - [INFO] Requested verification code.
+2025-04-28 13:32:41,829 - INFO - Entered verification code: 369743
+2025-04-28 13:32:43,544 - INFO - Successfully submitted the verification code!
+2025-04-28 13:32:46,545 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/bill_detail?customize=true and downloading CSV...
+2025-04-28 13:33:01,383 - INFO - Update button clicked successfully.
+2025-04-28 13:33:41,619 - INFO -  An error occurred: Message: 
+Stacktrace:
+	GetHandleVerifier [0x00007FF7A32C5355+78597]
+	GetHandleVerifier [0x00007FF7A32C53B0+78688]
+	(No symbol) [0x00007FF7A30791AA]
+	(No symbol) [0x00007FF7A30CF149]
+	(No symbol) [0x00007FF7A30CF3FC]
+	(No symbol) [0x00007FF7A3122467]
+	(No symbol) [0x00007FF7A30F712F]
+	(No symbol) [0x00007FF7A311F2BB]
+	(No symbol) [0x00007FF7A30F6EC3]
+	(No symbol) [0x00007FF7A30C03F8]
+	(No symbol) [0x00007FF7A30C1163]
+	GetHandleVerifier [0x00007FF7A356EF0D+2870973]
+	GetHandleVerifier [0x00007FF7A35696B8+2848360]
+	GetHandleVerifier [0x00007FF7A3586993+2967875]
+	GetHandleVerifier [0x00007FF7A32E019A+188746]
+	GetHandleVerifier [0x00007FF7A32E847F+222255]
+	GetHandleVerifier [0x00007FF7A32CD2D4+111236]
+	GetHandleVerifier [0x00007FF7A32CD482+111666]
+	GetHandleVerifier [0x00007FF7A32B35A9+5465]
+	BaseThreadInitThunk [0x00007FF96DB6E8D7+23]
+	RtlUserThreadStart [0x00007FF96FB5BF6C+44]
+
+2025-04-28 13:33:43,806 - INFO - [ERROR] The process encountered an error.
+2025-04-28 13:36:37,956 - INFO - Started Appfolio data process
+2025-04-28 13:36:39,049 - INFO - [INFO] Opening login page...
+2025-04-28 13:36:41,111 - INFO - [INFO] Entered username
+2025-04-28 13:36:41,215 - INFO - [INFO] Entered password
+2025-04-28 13:36:41,281 - INFO - [INFO] Clicked login button
+2025-04-28 13:36:44,289 - INFO - [INFO] 2-Step Verification detected. Retrieving verification code...
+2025-04-28 13:36:44,709 - INFO - [INFO] Requested verification code.
+2025-04-28 13:36:48,301 - INFO - Entered verification code: 333758
+2025-04-28 13:36:50,156 - INFO - Successfully submitted the verification code!
+2025-04-28 13:36:53,156 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/bill_detail?customize=true and downloading CSV...
+2025-04-28 13:37:07,518 - INFO - Update button clicked successfully.
+2025-04-28 13:37:47,792 - INFO -  An error occurred: Message: 
+Stacktrace:
+	GetHandleVerifier [0x00007FF7A32C5355+78597]
+	GetHandleVerifier [0x00007FF7A32C53B0+78688]
+	(No symbol) [0x00007FF7A30791AA]
+	(No symbol) [0x00007FF7A30CF149]
+	(No symbol) [0x00007FF7A30CF3FC]
+	(No symbol) [0x00007FF7A3122467]
+	(No symbol) [0x00007FF7A30F712F]
+	(No symbol) [0x00007FF7A311F2BB]
+	(No symbol) [0x00007FF7A30F6EC3]
+	(No symbol) [0x00007FF7A30C03F8]
+	(No symbol) [0x00007FF7A30C1163]
+	GetHandleVerifier [0x00007FF7A356EF0D+2870973]
+	GetHandleVerifier [0x00007FF7A35696B8+2848360]
+	GetHandleVerifier [0x00007FF7A3586993+2967875]
+	GetHandleVerifier [0x00007FF7A32E019A+188746]
+	GetHandleVerifier [0x00007FF7A32E847F+222255]
+	GetHandleVerifier [0x00007FF7A32CD2D4+111236]
+	GetHandleVerifier [0x00007FF7A32CD482+111666]
+	GetHandleVerifier [0x00007FF7A32B35A9+5465]
+	BaseThreadInitThunk [0x00007FF96DB6E8D7+23]
+	RtlUserThreadStart [0x00007FF96FB5BF6C+44]
+
+2025-04-28 13:37:50,016 - INFO - [ERROR] The process encountered an error.
+2025-04-28 13:39:16,441 - INFO - Started Appfolio data process
+2025-04-28 13:39:17,513 - INFO - [INFO] Opening login page...
+2025-04-28 13:39:19,341 - INFO - [INFO] Entered username
+2025-04-28 13:39:19,511 - INFO - [INFO] Entered password
+2025-04-28 13:39:20,385 - INFO - [INFO] Clicked login button
+2025-04-28 13:39:23,391 - INFO - [INFO] 2-Step Verification detected. Retrieving verification code...
+2025-04-28 13:39:24,133 - INFO - [INFO] Requested verification code.
+2025-04-28 13:39:29,962 - INFO - Entered verification code: 408047
+2025-04-28 13:39:31,678 - INFO - Successfully submitted the verification code!
+2025-04-28 13:39:36,426 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/bill_detail?customize=true and downloading CSV...
+2025-04-28 13:39:52,191 - INFO - Update button clicked successfully.
+2025-04-28 13:40:32,450 - INFO -  An error occurred: Message: 
+Stacktrace:
+	GetHandleVerifier [0x00007FF7A32C5355+78597]
+	GetHandleVerifier [0x00007FF7A32C53B0+78688]
+	(No symbol) [0x00007FF7A30791AA]
+	(No symbol) [0x00007FF7A30CF149]
+	(No symbol) [0x00007FF7A30CF3FC]
+	(No symbol) [0x00007FF7A3122467]
+	(No symbol) [0x00007FF7A30F712F]
+	(No symbol) [0x00007FF7A311F2BB]
+	(No symbol) [0x00007FF7A30F6EC3]
+	(No symbol) [0x00007FF7A30C03F8]
+	(No symbol) [0x00007FF7A30C1163]
+	GetHandleVerifier [0x00007FF7A356EF0D+2870973]
+	GetHandleVerifier [0x00007FF7A35696B8+2848360]
+	GetHandleVerifier [0x00007FF7A3586993+2967875]
+	GetHandleVerifier [0x00007FF7A32E019A+188746]
+	GetHandleVerifier [0x00007FF7A32E847F+222255]
+	GetHandleVerifier [0x00007FF7A32CD2D4+111236]
+	GetHandleVerifier [0x00007FF7A32CD482+111666]
+	GetHandleVerifier [0x00007FF7A32B35A9+5465]
+	BaseThreadInitThunk [0x00007FF96DB6E8D7+23]
+	RtlUserThreadStart [0x00007FF96FB5BF6C+44]
+
+2025-04-28 13:40:34,690 - INFO - [ERROR] The process encountered an error.
+2025-04-28 13:42:52,266 - INFO - Started Appfolio data process
+2025-04-28 13:42:53,337 - INFO - [INFO] Opening login page...
+2025-04-28 13:42:55,482 - INFO - [INFO] Entered username
+2025-04-28 13:42:55,554 - INFO - [INFO] Entered password
+2025-04-28 13:42:56,525 - INFO - [INFO] Clicked login button
+2025-04-28 13:42:59,531 - INFO - [INFO] 2-Step Verification detected. Retrieving verification code...
+2025-04-28 13:42:59,858 - INFO - [INFO] Requested verification code.
+2025-04-28 13:43:03,415 - INFO - Entered verification code: 532994
+2025-04-28 13:43:05,178 - INFO - Successfully submitted the verification code!
+2025-04-28 13:43:08,179 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/bill_detail?customize=true and downloading CSV...
+2025-04-28 13:43:22,539 - INFO - Update button clicked successfully.
+2025-04-28 13:44:08,130 - INFO - Export CSV button clicked successfully.
+2025-04-28 13:44:08,131 - INFO - CSV export process initiated.
+2025-04-28 13:44:38,132 - INFO -  Waiting for CSV file to be downloaded...
+2025-04-28 13:44:38,133 - INFO -  Latest downloaded file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_detail-20250428.csv
+2025-04-28 13:44:38,133 - INFO - [SUCCESS] CSV file ready: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_detail-20250428.csv
+2025-04-28 13:44:38,133 - INFO - [SUCCESS] CSV URL: file://C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_detail-20250428.csv
+2025-04-28 13:44:38,578 - INFO - Deleted original file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_detail-20250428.csv
+2025-04-28 13:44:41,138 - INFO - [SUCCESS] The entire process completed successfully.
+2025-04-28 13:49:43,177 - INFO - Started Appfolio data process
+2025-04-28 13:49:44,229 - INFO - [INFO] Opening login page...
+2025-04-28 13:49:46,018 - INFO - [INFO] Entered username
+2025-04-28 13:49:46,173 - INFO - [INFO] Entered password
+2025-04-28 13:49:46,983 - INFO - [INFO] Clicked login button
+2025-04-28 13:49:49,989 - INFO - [INFO] 2-Step Verification detected. Retrieving verification code...
+2025-04-28 13:49:50,332 - INFO - [INFO] Requested verification code.
+2025-04-28 13:49:53,907 - INFO - Entered verification code: 390915
+2025-04-28 13:49:55,776 - INFO - Successfully submitted the verification code!
+2025-04-28 13:49:58,777 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/bill_detail?customize=true and downloading CSV...
+2025-04-28 13:50:13,172 - INFO - Update button clicked successfully.
+2025-04-28 13:50:48,610 - INFO - Export CSV button clicked successfully.
+2025-04-28 13:50:48,610 - INFO - CSV export process initiated.
+2025-04-28 13:51:18,611 - INFO -  Waiting for CSV file to be downloaded...
+2025-04-28 13:51:18,613 - INFO -  Latest downloaded file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_cleaned_20250428_134438.csv
+2025-04-28 13:51:18,613 - INFO - [SUCCESS] CSV file ready: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_cleaned_20250428_134438.csv
+2025-04-28 13:51:18,613 - INFO - [SUCCESS] CSV URL: file://C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_cleaned_20250428_134438.csv
+2025-04-28 13:51:19,150 - INFO - Deleted original file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_cleaned_20250428_134438.csv
+2025-04-28 13:51:21,572 - INFO - [SUCCESS] The entire process completed successfully.
+2025-04-28 13:52:27,283 - INFO - Started Appfolio data process
+2025-04-28 13:52:28,339 - INFO - [INFO] Opening login page...
+2025-04-28 13:52:30,192 - INFO - [INFO] Entered username
+2025-04-28 13:52:30,288 - INFO - [INFO] Entered password
+2025-04-28 13:52:30,450 - INFO - [INFO] Clicked login button
+2025-04-28 13:52:33,460 - INFO - [INFO] 2-Step Verification detected. Retrieving verification code...
+2025-04-28 13:52:33,779 - INFO - [INFO] Requested verification code.
+2025-04-28 13:52:37,317 - INFO - Entered verification code: 187927
+2025-04-28 13:52:39,214 - INFO - Successfully submitted the verification code!
+2025-04-28 13:52:42,215 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/bill_detail?customize=true and downloading CSV...
+2025-04-28 13:52:56,643 - INFO - Update button clicked successfully.
+2025-04-28 13:53:26,647 - INFO - An error occurred: Message: invalid session id: session deleted as the browser has closed the connection
+from disconnected: not connected to DevTools
+  (Session info: chrome=135.0.7049.115)
+Stacktrace:
+	GetHandleVerifier [0x00007FF7A32C5355+78597]
+	GetHandleVerifier [0x00007FF7A32C53B0+78688]
+	(No symbol) [0x00007FF7A30791AA]
+	(No symbol) [0x00007FF7A3064EF5]
+	(No symbol) [0x00007FF7A3089F04]
+	(No symbol) [0x00007FF7A30FED0F]
+	(No symbol) [0x00007FF7A311EBB2]
+	(No symbol) [0x00007FF7A30F6EC3]
+	(No symbol) [0x00007FF7A30C03F8]
+	(No symbol) [0x00007FF7A30C1163]
+	GetHandleVerifier [0x00007FF7A356EF0D+2870973]
+	GetHandleVerifier [0x00007FF7A35696B8+2848360]
+	GetHandleVerifier [0x00007FF7A3586993+2967875]
+	GetHandleVerifier [0x00007FF7A32E019A+188746]
+	GetHandleVerifier [0x00007FF7A32E847F+222255]
+	GetHandleVerifier [0x00007FF7A32CD2D4+111236]
+	GetHandleVerifier [0x00007FF7A32CD482+111666]
+	GetHandleVerifier [0x00007FF7A32B35A9+5465]
+	BaseThreadInitThunk [0x00007FF96DB6E8D7+23]
+	RtlUserThreadStart [0x00007FF96FB5BF6C+44]
+
+2025-04-28 13:53:56,648 - INFO -  Waiting for CSV file to be downloaded...
+2025-04-28 13:53:56,650 - INFO -  Latest downloaded file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_cleaned_20250428_135118.csv
+2025-04-28 13:53:56,650 - INFO - [SUCCESS] CSV file ready: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_cleaned_20250428_135118.csv
+2025-04-28 13:53:56,651 - INFO - [SUCCESS] CSV URL: file://C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_cleaned_20250428_135118.csv
+2025-04-28 13:53:57,063 - INFO - Deleted original file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_cleaned_20250428_135118.csv
+2025-04-28 13:53:59,406 - INFO - [SUCCESS] The entire process completed successfully.
+2025-04-28 13:54:13,407 - INFO - Started Appfolio data process
+2025-04-28 13:54:14,474 - INFO - [INFO] Opening login page...
+2025-04-28 13:54:16,570 - INFO - [INFO] Entered username
+2025-04-28 13:54:16,663 - INFO - [INFO] Entered password
+2025-04-28 13:54:17,514 - INFO - [INFO] Clicked login button
+2025-04-28 13:54:20,519 - INFO - [INFO] 2-Step Verification detected. Retrieving verification code...
+2025-04-28 13:54:20,849 - INFO - [INFO] Requested verification code.
+2025-04-28 13:54:26,686 - INFO - Entered verification code: 422238
+2025-04-28 13:54:26,776 - INFO - Successfully submitted the verification code!
+2025-04-28 13:54:29,776 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/rent_roll?customize=true and downloading CSV...
+2025-04-28 13:54:33,450 - INFO - Update button clicked successfully.
+2025-04-28 13:55:14,184 - INFO - Export CSV button clicked successfully.
+2025-04-28 13:55:14,184 - INFO - CSV export process initiated.
+2025-04-28 13:55:44,185 - INFO -  Waiting for CSV file to be downloaded...
+2025-04-28 13:55:44,185 - INFO -  Latest downloaded file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\rent_roll-20250428.csv
+2025-04-28 13:55:44,186 - INFO - [SUCCESS] CSV file ready: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\rent_roll-20250428.csv
+2025-04-28 13:55:44,186 - INFO - [SUCCESS] CSV URL: file://C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\rent_roll-20250428.csv
+2025-04-28 13:55:44,221 - INFO - Deleted original file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\rent_roll-20250428.csv
+2025-04-28 13:55:46,769 - INFO - [SUCCESS] The entire process completed successfully.
+2025-04-28 13:57:31,999 - INFO - Started Appfolio data process
+2025-04-28 13:57:33,043 - INFO - [INFO] Opening login page...
+2025-04-28 13:57:34,984 - INFO - [INFO] Entered username
+2025-04-28 13:57:35,054 - INFO - [INFO] Entered password
+2025-04-28 13:57:36,020 - INFO - [INFO] Clicked login button
+2025-04-28 13:57:39,027 - INFO - [INFO] 2-Step Verification detected. Retrieving verification code...
+2025-04-28 13:57:39,334 - INFO - [INFO] Requested verification code.
+2025-04-28 13:57:39,557 - INFO - Too many requests. Waiting 10 seconds before retrying...
+2025-04-28 13:57:50,899 - INFO - Entered verification code: 422952
+2025-04-28 13:57:52,538 - INFO - Successfully submitted the verification code!
+2025-04-28 13:57:55,539 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/rent_roll?customize=true and downloading CSV...
+2025-04-28 13:57:59,143 - INFO - Update button clicked successfully.
+2025-04-28 13:58:43,869 - INFO - Export CSV button clicked successfully.
+2025-04-28 13:58:43,869 - INFO - CSV export process initiated.
+2025-04-28 13:59:13,870 - INFO -  Waiting for CSV file to be downloaded...
+2025-04-28 13:59:13,870 - INFO -  Latest downloaded file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\rent_roll-20250428.csv
+2025-04-28 13:59:13,870 - INFO - [SUCCESS] CSV file ready: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\rent_roll-20250428.csv
+2025-04-28 13:59:13,870 - INFO - [SUCCESS] CSV URL: file://C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\rent_roll-20250428.csv
+2025-04-28 13:59:13,923 - INFO - Deleted original file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\rent_roll-20250428.csv
+2025-04-28 13:59:16,513 - INFO - [SUCCESS] The entire process completed successfully.
+2025-04-28 14:00:53,012 - INFO - Started Appfolio data process
+2025-04-28 14:00:54,083 - INFO - [INFO] Opening login page...
+2025-04-28 14:00:56,049 - INFO - [INFO] Entered username
+2025-04-28 14:00:56,132 - INFO - [INFO] Entered password
+2025-04-28 14:00:56,955 - INFO - [INFO] Clicked login button
+2025-04-28 14:00:59,960 - INFO - [INFO] 2-Step Verification detected. Retrieving verification code...
+2025-04-28 14:01:00,300 - INFO - [INFO] Requested verification code.
+2025-04-28 14:01:00,566 - INFO - Too many requests. Waiting 10 seconds before retrying...
+2025-04-28 14:01:11,922 - INFO - Entered verification code: 179585
+2025-04-28 14:01:13,997 - INFO - Successfully submitted the verification code!
+2025-04-28 14:01:16,997 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/rent_roll?customize=true and downloading CSV...
+2025-04-28 14:01:20,607 - INFO - Update button clicked successfully.
+2025-04-28 14:01:51,772 - INFO -  An error occurred: Message: no such element: Unable to locate element: {"method":"xpath","selector":"../../div[@data-ref='cbSelect']/div[@data-ref='eWrapper']/input"}
+  (Session info: chrome=135.0.7049.115); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#no-such-element-exception
+Stacktrace:
+	GetHandleVerifier [0x00007FF7A32C5355+78597]
+	GetHandleVerifier [0x00007FF7A32C53B0+78688]
+	(No symbol) [0x00007FF7A30791AA]
+	(No symbol) [0x00007FF7A30CF149]
+	(No symbol) [0x00007FF7A30CF3FC]
+	(No symbol) [0x00007FF7A30C1BEC]
+	(No symbol) [0x00007FF7A30F712F]
+	(No symbol) [0x00007FF7A30C1AB6]
+	(No symbol) [0x00007FF7A30F7300]
+	(No symbol) [0x00007FF7A311F2BB]
+	(No symbol) [0x00007FF7A30F6EC3]
+	(No symbol) [0x00007FF7A30C03F8]
+	(No symbol) [0x00007FF7A30C1163]
+	GetHandleVerifier [0x00007FF7A356EF0D+2870973]
+	GetHandleVerifier [0x00007FF7A35696B8+2848360]
+	GetHandleVerifier [0x00007FF7A3586993+2967875]
+	GetHandleVerifier [0x00007FF7A32E019A+188746]
+	GetHandleVerifier [0x00007FF7A32E847F+222255]
+	GetHandleVerifier [0x00007FF7A32CD2D4+111236]
+	GetHandleVerifier [0x00007FF7A32CD482+111666]
+	GetHandleVerifier [0x00007FF7A32B35A9+5465]
+	BaseThreadInitThunk [0x00007FF96DB6E8D7+23]
+	RtlUserThreadStart [0x00007FF96FB5BF6C+44]
+
+2025-04-28 14:01:53,973 - INFO - [ERROR] The process encountered an error.
+2025-04-28 14:03:52,185 - INFO - Started Appfolio data process
+2025-04-28 14:03:53,232 - INFO - [INFO] Opening login page...
+2025-04-28 14:03:55,394 - INFO - [INFO] Entered username
+2025-04-28 14:03:55,485 - INFO - [INFO] Entered password
+2025-04-28 14:03:56,991 - INFO - [INFO] Clicked login button
+2025-04-28 14:03:59,997 - INFO - [INFO] 2-Step Verification detected. Retrieving verification code...
+2025-04-28 14:04:00,335 - INFO - [INFO] Requested verification code.
+2025-04-28 14:04:06,122 - INFO - Entered verification code: 475156
+2025-04-28 14:04:06,214 - INFO - Successfully submitted the verification code!
+2025-04-28 14:04:09,215 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/rent_roll?customize=true and downloading CSV...
+2025-04-28 14:04:13,056 - INFO - Update button clicked successfully.
+2025-04-28 14:04:47,211 - INFO -  An error occurred: Message: no such element: Unable to locate element: {"method":"xpath","selector":"./ancestor::div[@class='ag-column-select-column']//input[@type='checkbox']"}
+  (Session info: chrome=135.0.7049.115); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#no-such-element-exception
+Stacktrace:
+	GetHandleVerifier [0x00007FF7A32C5355+78597]
+	GetHandleVerifier [0x00007FF7A32C53B0+78688]
+	(No symbol) [0x00007FF7A30791AA]
+	(No symbol) [0x00007FF7A30CF149]
+	(No symbol) [0x00007FF7A30CF3FC]
+	(No symbol) [0x00007FF7A30C1BEC]
+	(No symbol) [0x00007FF7A30F712F]
+	(No symbol) [0x00007FF7A30C1AB6]
+	(No symbol) [0x00007FF7A30F7300]
+	(No symbol) [0x00007FF7A311F2BB]
+	(No symbol) [0x00007FF7A30F6EC3]
+	(No symbol) [0x00007FF7A30C03F8]
+	(No symbol) [0x00007FF7A30C1163]
+	GetHandleVerifier [0x00007FF7A356EF0D+2870973]
+	GetHandleVerifier [0x00007FF7A35696B8+2848360]
+	GetHandleVerifier [0x00007FF7A3586993+2967875]
+	GetHandleVerifier [0x00007FF7A32E019A+188746]
+	GetHandleVerifier [0x00007FF7A32E847F+222255]
+	GetHandleVerifier [0x00007FF7A32CD2D4+111236]
+	GetHandleVerifier [0x00007FF7A32CD482+111666]
+	GetHandleVerifier [0x00007FF7A32B35A9+5465]
+	BaseThreadInitThunk [0x00007FF96DB6E8D7+23]
+	RtlUserThreadStart [0x00007FF96FB5BF6C+44]
+
+2025-04-28 14:04:49,414 - INFO - [ERROR] The process encountered an error.
+2025-04-28 14:06:42,036 - INFO - Started Appfolio data process
+2025-04-28 14:06:43,089 - INFO - [INFO] Opening login page...
+2025-04-28 14:06:45,280 - INFO - [INFO] Entered username
+2025-04-28 14:06:45,453 - INFO - [INFO] Entered password
+2025-04-28 14:06:46,342 - INFO - [INFO] Clicked login button
+2025-04-28 14:06:49,349 - INFO - [INFO] 2-Step Verification detected. Retrieving verification code...
+2025-04-28 14:06:49,694 - INFO - [INFO] Requested verification code.
+2025-04-28 14:06:49,917 - INFO - Too many requests. Waiting 10 seconds before retrying...
+2025-04-28 14:07:01,292 - INFO - Entered verification code: 686146
+2025-04-28 14:07:03,059 - INFO - Successfully submitted the verification code!
+2025-04-28 14:07:06,061 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/rent_roll?customize=true and downloading CSV...
+2025-04-28 14:07:09,727 - INFO - Update button clicked successfully.
+2025-04-28 14:07:41,863 - INFO -  An error occurred: Message: no such element: Unable to locate element: {"method":"xpath","selector":"../../../div[@data-ref='cbSelect']//input[@type='checkbox']"}
+  (Session info: chrome=135.0.7049.115); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#no-such-element-exception
+Stacktrace:
+	GetHandleVerifier [0x00007FF7A32C5355+78597]
+	GetHandleVerifier [0x00007FF7A32C53B0+78688]
+	(No symbol) [0x00007FF7A30791AA]
+	(No symbol) [0x00007FF7A30CF149]
+	(No symbol) [0x00007FF7A30CF3FC]
+	(No symbol) [0x00007FF7A30C1BEC]
+	(No symbol) [0x00007FF7A30F712F]
+	(No symbol) [0x00007FF7A30C1AB6]
+	(No symbol) [0x00007FF7A30F7300]
+	(No symbol) [0x00007FF7A311F2BB]
+	(No symbol) [0x00007FF7A30F6EC3]
+	(No symbol) [0x00007FF7A30C03F8]
+	(No symbol) [0x00007FF7A30C1163]
+	GetHandleVerifier [0x00007FF7A356EF0D+2870973]
+	GetHandleVerifier [0x00007FF7A35696B8+2848360]
+	GetHandleVerifier [0x00007FF7A3586993+2967875]
+	GetHandleVerifier [0x00007FF7A32E019A+188746]
+	GetHandleVerifier [0x00007FF7A32E847F+222255]
+	GetHandleVerifier [0x00007FF7A32CD2D4+111236]
+	GetHandleVerifier [0x00007FF7A32CD482+111666]
+	GetHandleVerifier [0x00007FF7A32B35A9+5465]
+	BaseThreadInitThunk [0x00007FF96DB6E8D7+23]
+	RtlUserThreadStart [0x00007FF96FB5BF6C+44]
+
+2025-04-28 14:07:44,065 - INFO - [ERROR] The process encountered an error.
+2025-04-28 14:08:17,256 - INFO - Started Appfolio data process
+2025-04-28 14:08:18,325 - INFO - [INFO] Opening login page...
+2025-04-28 14:08:20,347 - INFO - [INFO] Entered username
+2025-04-28 14:08:20,495 - INFO - [INFO] Entered password
+2025-04-28 14:08:21,540 - INFO - [INFO] Clicked login button
+2025-04-28 14:08:24,547 - INFO - [INFO] 2-Step Verification detected. Retrieving verification code...
+2025-04-28 14:08:24,898 - INFO - [INFO] Requested verification code.
+2025-04-28 14:08:25,111 - INFO - Too many requests. Waiting 10 seconds before retrying...
+2025-04-28 14:08:36,453 - INFO - Entered verification code: 817201
+2025-04-28 14:08:38,005 - INFO - Successfully submitted the verification code!
+2025-04-28 14:08:41,007 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/tenant_directory?customize=true and downloading CSV...
+2025-04-28 14:08:44,740 - INFO - Update button clicked successfully.
+2025-04-28 14:09:14,934 - INFO - Export CSV button clicked successfully.
+2025-04-28 14:09:14,934 - INFO - CSV export process initiated.
+2025-04-28 14:09:44,935 - INFO -  Waiting for CSV file to be downloaded...
+2025-04-28 14:09:44,937 - INFO -  Latest downloaded file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\tenant_directory-20250428.csv
+2025-04-28 14:09:44,937 - INFO - [SUCCESS] CSV file ready: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\tenant_directory-20250428.csv
+2025-04-28 14:09:44,937 - INFO - [SUCCESS] CSV URL: file://C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\tenant_directory-20250428.csv
+2025-04-28 14:09:45,074 - INFO - Deleted original file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\tenant_directory-20250428.csv
+2025-04-28 14:09:47,629 - INFO - [SUCCESS] The entire process completed successfully.
+2025-04-28 14:10:00,425 - INFO - Started Appfolio data process
+2025-04-28 14:10:01,504 - INFO - [INFO] Opening login page...
+2025-04-28 14:10:03,522 - INFO - [INFO] Entered username
+2025-04-28 14:10:03,598 - INFO - [INFO] Entered password
+2025-04-28 14:10:04,587 - INFO - [INFO] Clicked login button
+2025-04-28 14:10:07,593 - INFO - [INFO] 2-Step Verification detected. Retrieving verification code...
+2025-04-28 14:10:07,909 - INFO - [INFO] Requested verification code.
+2025-04-28 14:10:11,491 - INFO - Entered verification code: 794948
+2025-04-28 14:10:11,607 - INFO - Successfully submitted the verification code!
+2025-04-28 14:10:14,608 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/tenant_directory?customize=true and downloading CSV...
+2025-04-28 14:10:18,290 - INFO - Update button clicked successfully.
+2025-04-28 14:11:18,291 - INFO -  Waiting for CSV file to be downloaded...
+2025-04-28 14:11:18,292 - INFO -  Latest downloaded file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\tenant_data_cleaned_20250428_140944.csv
+2025-04-28 14:11:18,292 - INFO - [SUCCESS] CSV file ready: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\tenant_data_cleaned_20250428_140944.csv
+2025-04-28 14:11:18,292 - INFO - [SUCCESS] CSV URL: file://C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\tenant_data_cleaned_20250428_140944.csv
+2025-04-28 14:11:18,450 - INFO - Deleted original file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\tenant_data_cleaned_20250428_140944.csv
+2025-04-28 14:11:20,884 - INFO - [SUCCESS] The entire process completed successfully.
+2025-04-28 14:11:58,339 - INFO - Started Appfolio data process
+2025-04-28 14:11:59,395 - INFO - [INFO] Opening login page...
+2025-04-28 14:12:01,188 - INFO - [INFO] Entered username
+2025-04-28 14:12:01,324 - INFO - [INFO] Entered password
+2025-04-28 14:12:01,397 - INFO - [INFO] Clicked login button
+2025-04-28 14:12:04,406 - INFO - [INFO] 2-Step Verification detected. Retrieving verification code...
+2025-04-28 14:12:05,949 - INFO - [INFO] Requested verification code.
+2025-04-28 14:12:11,721 - INFO - Entered verification code: 332734
+2025-04-28 14:12:13,345 - INFO - Successfully submitted the verification code!
+2025-04-28 14:12:16,346 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/tenant_directory?customize=true and downloading CSV...
+2025-04-28 14:12:20,039 - INFO - Update button clicked successfully.
+2025-04-28 14:12:52,185 - INFO -  An error occurred: Message: no such element: Unable to locate element: {"method":"xpath","selector":"../../../div[@data-ref='cbSelect']//input[@type='checkbox']"}
+  (Session info: chrome=135.0.7049.115); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#no-such-element-exception
+Stacktrace:
+	GetHandleVerifier [0x00007FF7A32C5355+78597]
+	GetHandleVerifier [0x00007FF7A32C53B0+78688]
+	(No symbol) [0x00007FF7A30791AA]
+	(No symbol) [0x00007FF7A30CF149]
+	(No symbol) [0x00007FF7A30CF3FC]
+	(No symbol) [0x00007FF7A30C1BEC]
+	(No symbol) [0x00007FF7A30F712F]
+	(No symbol) [0x00007FF7A30C1AB6]
+	(No symbol) [0x00007FF7A30F7300]
+	(No symbol) [0x00007FF7A311F2BB]
+	(No symbol) [0x00007FF7A30F6EC3]
+	(No symbol) [0x00007FF7A30C03F8]
+	(No symbol) [0x00007FF7A30C1163]
+	GetHandleVerifier [0x00007FF7A356EF0D+2870973]
+	GetHandleVerifier [0x00007FF7A35696B8+2848360]
+	GetHandleVerifier [0x00007FF7A3586993+2967875]
+	GetHandleVerifier [0x00007FF7A32E019A+188746]
+	GetHandleVerifier [0x00007FF7A32E847F+222255]
+	GetHandleVerifier [0x00007FF7A32CD2D4+111236]
+	GetHandleVerifier [0x00007FF7A32CD482+111666]
+	GetHandleVerifier [0x00007FF7A32B35A9+5465]
+	BaseThreadInitThunk [0x00007FF96DB6E8D7+23]
+	RtlUserThreadStart [0x00007FF96FB5BF6C+44]
+
+2025-04-28 14:12:54,387 - INFO - [ERROR] The process encountered an error.
+2025-04-28 14:14:25,359 - INFO - Started Appfolio data process
+2025-04-28 14:14:26,440 - INFO - [INFO] Opening login page...
+2025-04-28 14:14:28,322 - INFO - [INFO] Entered username
+2025-04-28 14:14:28,399 - INFO - [INFO] Entered password
+2025-04-28 14:14:29,380 - INFO - [INFO] Clicked login button
+2025-04-28 14:14:32,384 - INFO - [INFO] 2-Step Verification detected. Retrieving verification code...
+2025-04-28 14:14:32,714 - INFO - [INFO] Requested verification code.
+2025-04-28 14:14:38,513 - INFO - Entered verification code: 117907
+2025-04-28 14:14:38,593 - INFO - Successfully submitted the verification code!
+2025-04-28 14:14:41,594 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/tenant_directory?customize=true and downloading CSV...
+2025-04-28 14:14:45,435 - INFO - Update button clicked successfully.
+2025-04-28 14:15:48,712 - INFO -  Waiting for CSV file to be downloaded...
+2025-04-28 14:15:48,714 - INFO -  Latest downloaded file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\tenant_data_cleaned_20250428_141118.csv
+2025-04-28 14:15:48,714 - INFO - [SUCCESS] CSV file ready: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\tenant_data_cleaned_20250428_141118.csv
+2025-04-28 14:15:48,714 - INFO - [SUCCESS] CSV URL: file://C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\tenant_data_cleaned_20250428_141118.csv
+2025-04-28 14:15:48,858 - INFO - Deleted original file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\tenant_data_cleaned_20250428_141118.csv
+2025-04-28 14:15:51,293 - INFO - [SUCCESS] The entire process completed successfully.
+2025-04-28 14:27:57,727 - INFO - Started Appfolio data process
+2025-04-28 14:27:58,786 - INFO - [INFO] Opening login page...
+2025-04-28 14:28:00,538 - INFO - [INFO] Entered username
+2025-04-28 14:28:00,705 - INFO - [INFO] Entered password
+2025-04-28 14:28:01,529 - INFO - [INFO] Clicked login button
+2025-04-28 14:28:04,536 - INFO - [INFO] 2-Step Verification detected. Retrieving verification code...
+2025-04-28 14:28:04,951 - INFO - [INFO] Requested verification code.
+2025-04-28 14:28:08,493 - INFO - Entered verification code: 469734
+2025-04-28 14:28:10,468 - INFO - Successfully submitted the verification code!
+2025-04-28 14:28:13,468 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/tenant_directory?customize=true and downloading CSV...
+2025-04-28 14:28:17,508 - INFO - Update button clicked successfully.
+2025-04-28 14:28:51,104 - INFO - Export CSV button clicked successfully.
+2025-04-28 14:28:51,105 - INFO - CSV export process initiated.
+2025-04-28 14:29:21,105 - INFO -  Waiting for CSV file to be downloaded...
+2025-04-28 14:29:21,106 - INFO -  Latest downloaded file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\tenant_directory-20250428.csv
+2025-04-28 14:29:21,106 - INFO - [SUCCESS] CSV file ready: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\tenant_directory-20250428.csv
+2025-04-28 14:29:21,106 - INFO - [SUCCESS] CSV URL: file://C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\tenant_directory-20250428.csv
+2025-04-28 14:29:21,260 - INFO - Deleted original file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\tenant_directory-20250428.csv
+2025-04-28 14:29:23,812 - INFO - [SUCCESS] The entire process completed successfully.
