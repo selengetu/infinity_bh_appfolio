@@ -878,14 +878,20 @@ def show_dashboard():
 
         with col46:
 
-            # Ensure date column is datetime
             df_work["Created At"] = pd.to_datetime(df_work["Created At"], errors="coerce")
-
-            # Drop rows without valid dates or statuses
             df_work = df_work.dropna(subset=["Created At", "Status"])
 
-            # Create a "Month" column (e.g., '2025-04')
-            df_work["Month"] = df_work["Created At"].dt.to_period("M").astype(str)
+            # Create proper Month column
+            df_work["Month"] = df_work["Created At"].dt.to_period("M").dt.to_timestamp()
+            df_work["Month"] = df_work["Month"].dt.strftime('%b %Y')
+
+            # Step 1: Create a full month list
+            full_months = pd.period_range(
+                start=df_work["Created At"].min().to_period('M'),
+                end=df_work["Created At"].max().to_period('M'),
+                freq='M'
+            ).to_timestamp()
+            full_months = full_months.strftime('%b %Y').tolist()
 
             # Group by Month and Status
             grouped = (
@@ -894,6 +900,24 @@ def show_dashboard():
                 .reset_index(name="Count")
             )
 
+            # Step 2: Expand full grid (Month x Status)
+            all_statuses = grouped["Status"].unique()
+
+            full_index = pd.MultiIndex.from_product(
+                [full_months, all_statuses],
+                names=["Month", "Status"]
+            )
+
+            grouped = grouped.set_index(["Month", "Status"]).reindex(full_index, fill_value=0).reset_index()
+
+            # Step 3: Force Month order
+            grouped["Month"] = pd.Categorical(
+                grouped["Month"],
+                categories=full_months,
+                ordered=True
+            )
+
+            # Plot
             fig = px.bar(
                 grouped,
                 x="Month",
@@ -902,9 +926,10 @@ def show_dashboard():
                 barmode="stack",
                 text="Count",
                 title="📅 Monthly Work Orders by Status",
-                color_discrete_sequence=[ "orange", "steelblue", "mediumseagreen", "lightgrey",
-        "indianred", "goldenrod", "cadetblue", "mediumslateblue", "teal", "darkkhaki"]
-           
+                color_discrete_sequence=[
+                    "orange", "steelblue", "mediumseagreen", "lightgrey",
+                    "indianred", "goldenrod", "cadetblue", "mediumslateblue", "teal", "darkkhaki"
+                ]
             )
 
             fig.update_layout(
@@ -916,11 +941,10 @@ def show_dashboard():
             )
 
             fig.update_traces(
-                texttemplate="%{text:,}",  # Format label numbers with thousand separator
-                textposition="auto"         # Auto-position the labels nicely
+                texttemplate="%{text:,}",
+                textposition="auto"
             )
 
-            # Show in Streamlit
             st.plotly_chart(fig, use_container_width=True)
 
     with tab5:
@@ -962,45 +986,40 @@ def show_dashboard():
         with col55:
 
             # Clean columns
+            rent_roll['Past Due'] = (
+                rent_roll['Past Due']
+                .astype(str)  # ensure it is string first
+                .str.replace(r'[\$,]', '', regex=True)  # remove $ and commas
+            )
             rent_roll['Past Due'] = pd.to_numeric(rent_roll['Past Due'], errors='coerce').fillna(0)
             rent_roll['Late Count'] = pd.to_numeric(rent_roll['Late Count'], errors='coerce').fillna(0)
-
-            # Filter for tenants with Late Count > 0
-            df_late = rent_roll[rent_roll['Late Count'] > 0]
-
-           
-            # Group by Tenant (or Unit if better)
-            summary = df_late.groupby("Tenant").agg(
-                Past_Due=('Past Due', 'sum'),
-                Late_Count=('Late Count', 'sum')
-            ).reset_index()
-
-            # Sort by most Past Due
-            summary = summary.sort_values(by="Past_Due", ascending=False).head(30)  # top 30 tenants
-           
+            
+            df_late = rent_roll[rent_roll['Past Due'] >500]
+            df_late = df_late.sort_values(by="Late Count", ascending=False).head(30)  # top 30 tenants
+            print(df_late)
             # Plotly dual-axis chart
             fig = go.Figure()
 
             # Bar: Past Due $
             fig.add_trace(go.Bar(
-                x=summary['Tenant'],
-                y=summary['Past_Due'],
+                x=df_late['Tenant'],
+                y=df_late['Past Due'],
                 name='Past Due ($)',
                 yaxis='y2',
                 marker_color='indianred',
                 opacity=0.6,
-                text=summary['Past_Due'].map('${:,.0f}'.format),  # <- Add data labels
+                text=df_late['Past Due'].map('${:,.0f}'.format),  # <- Add data labels
                 textposition='auto'  # Can also be 'inside' or 'outside'
             ))
 
             # Line: Late Count
             fig.add_trace(go.Scatter(
-                x=summary['Tenant'],
-                y=summary['Late_Count'],
+                x=df_late['Tenant'],
+                y=df_late['Late Count'],
                 name='Late Count',
                 yaxis='y1',
                 mode='lines+markers',
-                text=summary['Late_Count'],  # <- Add data labels
+                text=df_late['Late Count'],  # <- Add data labels
                 textposition='top center',   # Adjust label placement
                 line=dict(color='green'),
                 marker=dict(size=8)
@@ -1098,6 +1117,18 @@ def show_dashboard():
             # Parse datetime and extract month
             bill['Bill Date'] = pd.to_datetime(bill['Bill Date'], errors='coerce')
             bill['Month'] = bill['Bill Date'].dt.to_period("M").astype(str)
+
+            bill['Paid'] = (
+                bill['Paid']
+                .astype(str)  # Convert to string in case of mixed types
+                .str.replace(r'[$,]', '', regex=True)  # Remove $ and commas
+            )
+
+            bill['Unpaid'] = (
+                bill['Unpaid']
+                .astype(str)  # Convert to string in case of mixed types
+                .str.replace(r'[$,]', '', regex=True)  # Remove $ and commas
+            )
 
             # Convert amounts to numeric
             bill['Paid'] = pd.to_numeric(bill['Paid'], errors='coerce').fillna(0)

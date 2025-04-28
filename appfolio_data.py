@@ -51,12 +51,14 @@ first_day_of_month = today.replace(day=1)
 last_day_of_prev_month = first_day_of_month - timedelta(days=1)
 
 one_year_ago = last_day_of_prev_month - timedelta(days=365)
+one_year_ago_first_day = first_day_of_month - timedelta(days=365)
 
 formatted_today = today.strftime("%m/%d/%Y")
 formatted_ninety_days_ago = ninety_days_ago.strftime("%m/%d/%Y")
 formatted_first_day_of_month = first_day_of_month.strftime("%m/%d/%Y")
 formatted_last_day_prev_month = last_day_of_prev_month.strftime("%m/%d/%Y")
 formatted_year_ago = one_year_ago.strftime("%m/%d/%Y")
+formatted_one_year_ago_first_day = one_year_ago_first_day.strftime("%m/%d/%Y")
 
 
 def get_trailing_month_end_dates(today):
@@ -233,9 +235,7 @@ def clean_csv(file_path,file_prefix, type):
         # Detect header rows that start with '->'
         header_mask = df[first_col].astype(str).str.strip().str.startswith('->')
         header_indices = header_mask[header_mask].index
-
         
-
         # Drop those header rows
         df = df.drop(index=header_indices).reset_index(drop=True)
 
@@ -332,7 +332,7 @@ def download_csv(driver, page_url, type, file_prefix, target_date=None):
         time.sleep(5)
 
         date_from_input.clear()
-        date_from_input.send_keys(formatted_year_ago) 
+        date_from_input.send_keys(formatted_one_year_ago_first_day) 
         date_from_input_to.clear()
         date_from_input_to.send_keys(formatted_today) 
         time.sleep(5)
@@ -479,11 +479,11 @@ def get_data_from_appfolio():
         
         time.sleep(3)  # Allow page to load
 
-        rentroll = download_csv(driver, LOGIN_URL, 1, 'rentroll', None)
-        tenant = download_csv(driver, TENANT_URL, 1, 'tenant_data',None)
-        work_order = download_csv(driver, WORK_ORDER_URL, 1, 'work_order',None)
-        leasing = download_csv(driver, LEASING_FUNNEL_URL, 1, 'leasing',None) 
-        prospect = download_csv(driver, PROSPECT_SOURCE_URL,1, 'prospect',None)
+        # rentroll = download_csv(driver, LOGIN_URL, 1, 'rentroll', None)
+        # tenant = download_csv(driver, TENANT_URL, 1, 'tenant_data',None)
+        # work_order = download_csv(driver, WORK_ORDER_URL, 1, 'work_order',None)
+        # leasing = download_csv(driver, LEASING_FUNNEL_URL, 1, 'leasing',None) 
+        # prospect = download_csv(driver, PROSPECT_SOURCE_URL,1, 'prospect',None)
         bill = download_csv(driver, BILL_URL, 1,'bill',None)
         month_end_dates = get_trailing_month_end_dates(today)
 

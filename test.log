@@ -4625,3 +4625,286 @@ Stacktrace:
 2025-04-25 12:57:16,204 - INFO - [SUCCESS] CSV URL: file://C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\rent_roll-20250425.csv
 2025-04-25 12:57:16,250 - INFO - Deleted original file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\rent_roll-20250425.csv
 2025-04-25 12:57:18,977 - INFO - [SUCCESS] The entire process completed successfully.
+2025-04-28 10:27:40,482 - INFO - Started Appfolio data process
+2025-04-28 10:27:41,601 - INFO - [INFO] Opening login page...
+2025-04-28 10:27:43,392 - INFO - [INFO] Entered username
+2025-04-28 10:27:43,470 - INFO - [INFO] Entered password
+2025-04-28 10:27:44,479 - INFO - [INFO] Clicked login button
+2025-04-28 10:27:47,485 - INFO - [INFO] 2-Step Verification detected. Retrieving verification code...
+2025-04-28 10:27:52,162 - INFO - [INFO] Requested verification code.
+2025-04-28 10:29:02,632 - INFO - API Error: Response ended prematurely
+2025-04-28 10:29:56,141 - INFO -  Failed to retrieve a new verification code within the time limit.
+2025-04-28 10:29:56,142 - INFO - No new verification code received.
+2025-04-28 10:30:02,442 - WARNING - Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000020482BDFDD0>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')': /session/4ccf1a049f5f76f4e59e2277b49123d4
+2025-04-28 10:30:06,546 - WARNING - Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000020482BF42D0>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')': /session/4ccf1a049f5f76f4e59e2277b49123d4
+2025-04-28 10:30:10,633 - WARNING - Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000020482BF6710>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')': /session/4ccf1a049f5f76f4e59e2277b49123d4
+2025-04-28 10:30:18,749 - INFO - [ERROR] The process encountered an error.
+2025-04-28 10:31:55,635 - INFO - Started Appfolio data process
+2025-04-28 10:31:56,702 - INFO - [INFO] Opening login page...
+2025-04-28 10:31:58,524 - INFO - [INFO] Entered username
+2025-04-28 10:31:58,680 - INFO - [INFO] Entered password
+2025-04-28 10:31:59,535 - INFO - [INFO] Clicked login button
+2025-04-28 10:32:02,543 - INFO - [INFO] 2-Step Verification detected. Retrieving verification code...
+2025-04-28 10:32:47,407 - INFO -  An error occurred: Message: 
+Stacktrace:
+	GetHandleVerifier [0x00007FF7A32C5355+78597]
+	GetHandleVerifier [0x00007FF7A32C53B0+78688]
+	(No symbol) [0x00007FF7A30791AA]
+	(No symbol) [0x00007FF7A30CF149]
+	(No symbol) [0x00007FF7A30CF3FC]
+	(No symbol) [0x00007FF7A3122467]
+	(No symbol) [0x00007FF7A30F712F]
+	(No symbol) [0x00007FF7A311F2BB]
+	(No symbol) [0x00007FF7A30F6EC3]
+	(No symbol) [0x00007FF7A30C03F8]
+	(No symbol) [0x00007FF7A30C1163]
+	GetHandleVerifier [0x00007FF7A356EF0D+2870973]
+	GetHandleVerifier [0x00007FF7A35696B8+2848360]
+	GetHandleVerifier [0x00007FF7A3586993+2967875]
+	GetHandleVerifier [0x00007FF7A32E019A+188746]
+	GetHandleVerifier [0x00007FF7A32E847F+222255]
+	GetHandleVerifier [0x00007FF7A32CD2D4+111236]
+	GetHandleVerifier [0x00007FF7A32CD482+111666]
+	GetHandleVerifier [0x00007FF7A32B35A9+5465]
+	BaseThreadInitThunk [0x00007FF96DB6E8D7+23]
+	RtlUserThreadStart [0x00007FF96FB5BF6C+44]
+
+2025-04-28 10:32:49,625 - INFO - [ERROR] The process encountered an error.
+2025-04-28 10:34:09,495 - INFO - Started Appfolio data process
+2025-04-28 10:34:10,573 - INFO - [INFO] Opening login page...
+2025-04-28 10:34:12,510 - INFO - [INFO] Entered username
+2025-04-28 10:34:12,665 - INFO - [INFO] Entered password
+2025-04-28 10:34:13,726 - INFO - [INFO] Clicked login button
+2025-04-28 10:34:16,735 - INFO - [INFO] 2-Step Verification detected. Retrieving verification code...
+2025-04-28 10:34:19,094 - INFO - [INFO] Requested verification code.
+2025-04-28 10:37:10,399 - INFO - API Error: 502 Server Error: Bad Gateway for url: https://api-app2.simpletexting.com/v2/api/messages?page=0&size=1
+2025-04-28 10:37:10,597 - INFO - API Error: 502 Server Error: Bad Gateway for url: https://api-app2.simpletexting.com/v2/api/messages?page=0&size=1
+2025-04-28 10:38:10,892 - INFO - API Error: 504 Server Error: Gateway Time-out for url: https://api-app2.simpletexting.com/v2/api/messages?page=0&size=1
+2025-04-28 10:38:10,892 - INFO - Failed to retrieve messages after multiple attempts.
+2025-04-28 10:38:15,200 - INFO - Entered verification code: 297384
+2025-04-28 10:38:15,279 - INFO - Successfully submitted the verification code!
+2025-04-28 10:38:18,281 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/rent_roll?customize=true and downloading CSV...
+2025-04-28 10:38:31,879 - INFO - An error occurred: Message: 
+Stacktrace:
+	GetHandleVerifier [0x00007FF7A32C5355+78597]
+	GetHandleVerifier [0x00007FF7A32C53B0+78688]
+	(No symbol) [0x00007FF7A30791AA]
+	(No symbol) [0x00007FF7A30CF149]
+	(No symbol) [0x00007FF7A30CF3FC]
+	(No symbol) [0x00007FF7A3122467]
+	(No symbol) [0x00007FF7A30F712F]
+	(No symbol) [0x00007FF7A311F2BB]
+	(No symbol) [0x00007FF7A30F6EC3]
+	(No symbol) [0x00007FF7A30C03F8]
+	(No symbol) [0x00007FF7A30C1163]
+	GetHandleVerifier [0x00007FF7A356EF0D+2870973]
+	GetHandleVerifier [0x00007FF7A35696B8+2848360]
+	GetHandleVerifier [0x00007FF7A3586993+2967875]
+	GetHandleVerifier [0x00007FF7A32E019A+188746]
+	GetHandleVerifier [0x00007FF7A32E847F+222255]
+	GetHandleVerifier [0x00007FF7A32CD2D4+111236]
+	GetHandleVerifier [0x00007FF7A32CD482+111666]
+	GetHandleVerifier [0x00007FF7A32B35A9+5465]
+	BaseThreadInitThunk [0x00007FF96DB6E8D7+23]
+	RtlUserThreadStart [0x00007FF96FB5BF6C+44]
+
+2025-04-28 10:39:01,881 - INFO - An error occurred: Message: invalid session id: session deleted as the browser has closed the connection
+from disconnected: not connected to DevTools
+  (Session info: chrome=135.0.7049.115)
+Stacktrace:
+	GetHandleVerifier [0x00007FF7A32C5355+78597]
+	GetHandleVerifier [0x00007FF7A32C53B0+78688]
+	(No symbol) [0x00007FF7A30791AA]
+	(No symbol) [0x00007FF7A3064EF5]
+	(No symbol) [0x00007FF7A3089F04]
+	(No symbol) [0x00007FF7A30FED0F]
+	(No symbol) [0x00007FF7A311EBB2]
+	(No symbol) [0x00007FF7A30F6EC3]
+	(No symbol) [0x00007FF7A30C03F8]
+	(No symbol) [0x00007FF7A30C1163]
+	GetHandleVerifier [0x00007FF7A356EF0D+2870973]
+	GetHandleVerifier [0x00007FF7A35696B8+2848360]
+	GetHandleVerifier [0x00007FF7A3586993+2967875]
+	GetHandleVerifier [0x00007FF7A32E019A+188746]
+	GetHandleVerifier [0x00007FF7A32E847F+222255]
+	GetHandleVerifier [0x00007FF7A32CD2D4+111236]
+	GetHandleVerifier [0x00007FF7A32CD482+111666]
+	GetHandleVerifier [0x00007FF7A32B35A9+5465]
+	BaseThreadInitThunk [0x00007FF96DB6E8D7+23]
+	RtlUserThreadStart [0x00007FF96FB5BF6C+44]
+
+2025-04-28 10:39:31,882 - INFO -  Waiting for CSV file to be downloaded...
+2025-04-28 10:40:01,891 - INFO -  An error occurred:  No CSV files found in the downloads folder after waiting.
+2025-04-28 10:40:03,916 - INFO - [ERROR] The process encountered an error.
+2025-04-28 10:50:05,958 - INFO - Started Appfolio data process
+2025-04-28 10:50:07,055 - INFO - [INFO] Opening login page...
+2025-04-28 10:50:09,033 - INFO - [INFO] Entered username
+2025-04-28 10:50:09,102 - INFO - [INFO] Entered password
+2025-04-28 10:50:09,991 - INFO - [INFO] Clicked login button
+2025-04-28 10:50:12,996 - INFO - [INFO] 2-Step Verification detected. Retrieving verification code...
+2025-04-28 10:51:05,589 - INFO - API Error: Response ended prematurely
+2025-04-28 10:52:05,978 - INFO - API Error: 504 Server Error: Gateway Time-out for url: https://api-app2.simpletexting.com/v2/api/messages?page=0&size=1
+2025-04-28 10:53:06,288 - INFO - API Error: 504 Server Error: Gateway Time-out for url: https://api-app2.simpletexting.com/v2/api/messages?page=0&size=1
+2025-04-28 10:53:06,288 - INFO - Failed to retrieve messages after multiple attempts.
+2025-04-28 10:53:06,399 - INFO - [INFO] Requested verification code.
+2025-04-28 10:53:25,165 - INFO - Entered verification code: 630066
+2025-04-28 10:53:26,094 - INFO - Successfully submitted the verification code!
+2025-04-28 10:53:29,094 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/rent_roll?customize=true and downloading CSV...
+2025-04-28 10:53:42,759 - INFO - An error occurred: Message: 
+Stacktrace:
+	GetHandleVerifier [0x00007FF7A32C5355+78597]
+	GetHandleVerifier [0x00007FF7A32C53B0+78688]
+	(No symbol) [0x00007FF7A30791AA]
+	(No symbol) [0x00007FF7A30CF149]
+	(No symbol) [0x00007FF7A30CF3FC]
+	(No symbol) [0x00007FF7A3122467]
+	(No symbol) [0x00007FF7A30F712F]
+	(No symbol) [0x00007FF7A311F2BB]
+	(No symbol) [0x00007FF7A30F6EC3]
+	(No symbol) [0x00007FF7A30C03F8]
+	(No symbol) [0x00007FF7A30C1163]
+	GetHandleVerifier [0x00007FF7A356EF0D+2870973]
+	GetHandleVerifier [0x00007FF7A35696B8+2848360]
+	GetHandleVerifier [0x00007FF7A3586993+2967875]
+	GetHandleVerifier [0x00007FF7A32E019A+188746]
+	GetHandleVerifier [0x00007FF7A32E847F+222255]
+	GetHandleVerifier [0x00007FF7A32CD2D4+111236]
+	GetHandleVerifier [0x00007FF7A32CD482+111666]
+	GetHandleVerifier [0x00007FF7A32B35A9+5465]
+	BaseThreadInitThunk [0x00007FF96DB6E8D7+23]
+	RtlUserThreadStart [0x00007FF96FB5BF6C+44]
+
+2025-04-28 10:54:23,000 - INFO - An error occurred: Message: 
+Stacktrace:
+	GetHandleVerifier [0x00007FF7A32C5355+78597]
+	GetHandleVerifier [0x00007FF7A32C53B0+78688]
+	(No symbol) [0x00007FF7A30791AA]
+	(No symbol) [0x00007FF7A30CF149]
+	(No symbol) [0x00007FF7A30CF3FC]
+	(No symbol) [0x00007FF7A3122467]
+	(No symbol) [0x00007FF7A30F712F]
+	(No symbol) [0x00007FF7A311F2BB]
+	(No symbol) [0x00007FF7A30F6EC3]
+	(No symbol) [0x00007FF7A30C03F8]
+	(No symbol) [0x00007FF7A30C1163]
+	GetHandleVerifier [0x00007FF7A356EF0D+2870973]
+	GetHandleVerifier [0x00007FF7A35696B8+2848360]
+	GetHandleVerifier [0x00007FF7A3586993+2967875]
+	GetHandleVerifier [0x00007FF7A32E019A+188746]
+	GetHandleVerifier [0x00007FF7A32E847F+222255]
+	GetHandleVerifier [0x00007FF7A32CD2D4+111236]
+	GetHandleVerifier [0x00007FF7A32CD482+111666]
+	GetHandleVerifier [0x00007FF7A32B35A9+5465]
+	BaseThreadInitThunk [0x00007FF96DB6E8D7+23]
+	RtlUserThreadStart [0x00007FF96FB5BF6C+44]
+
+2025-04-28 10:54:53,001 - INFO -  Waiting for CSV file to be downloaded...
+2025-04-28 10:55:23,009 - INFO -  An error occurred:  No CSV files found in the downloads folder after waiting.
+2025-04-28 10:55:25,228 - INFO - [ERROR] The process encountered an error.
+2025-04-28 12:08:35,910 - INFO - Started Appfolio data process
+2025-04-28 12:08:36,961 - INFO - [INFO] Opening login page...
+2025-04-28 12:08:39,186 - INFO - [INFO] Entered username
+2025-04-28 12:08:39,258 - INFO - [INFO] Entered password
+2025-04-28 12:08:40,308 - INFO - [INFO] Clicked login button
+2025-04-28 12:08:43,318 - INFO - [INFO] 2-Step Verification detected. Retrieving verification code...
+2025-04-28 12:08:44,208 - INFO - [INFO] Requested verification code.
+2025-04-28 12:08:49,008 - INFO - Entered verification code: 231457
+2025-04-28 12:08:49,078 - INFO - Successfully submitted the verification code!
+2025-04-28 12:08:52,078 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/rent_roll?customize=true and downloading CSV...
+2025-04-28 12:08:55,701 - INFO - Update button clicked successfully.
+2025-04-28 12:09:25,936 - INFO - Export CSV button clicked successfully.
+2025-04-28 12:09:25,936 - INFO - CSV export process initiated.
+2025-04-28 12:09:55,936 - INFO -  Waiting for CSV file to be downloaded...
+2025-04-28 12:09:55,937 - INFO -  Latest downloaded file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\rent_roll-20250428.csv
+2025-04-28 12:09:55,937 - INFO - [SUCCESS] CSV file ready: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\rent_roll-20250428.csv
+2025-04-28 12:09:55,937 - INFO - [SUCCESS] CSV URL: file://C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\rent_roll-20250428.csv
+2025-04-28 12:09:55,990 - INFO - Deleted original file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\rent_roll-20250428.csv
+2025-04-28 12:09:55,991 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/tenant_directory?customize=true and downloading CSV...
+2025-04-28 12:09:59,792 - INFO - Update button clicked successfully.
+2025-04-28 12:10:30,080 - INFO - Export CSV button clicked successfully.
+2025-04-28 12:10:30,081 - INFO - CSV export process initiated.
+2025-04-28 12:11:00,082 - INFO -  Waiting for CSV file to be downloaded...
+2025-04-28 12:11:00,083 - INFO -  Latest downloaded file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\tenant_directory-20250428.csv
+2025-04-28 12:11:00,083 - INFO - [SUCCESS] CSV file ready: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\tenant_directory-20250428.csv
+2025-04-28 12:11:00,083 - INFO - [SUCCESS] CSV URL: file://C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\tenant_directory-20250428.csv
+2025-04-28 12:11:00,263 - INFO - Deleted original file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\tenant_directory-20250428.csv
+2025-04-28 12:11:00,263 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/work_order?customize=true and downloading CSV...
+2025-04-28 12:11:04,245 - INFO - Update button clicked successfully.
+2025-04-28 12:11:34,423 - INFO - Export CSV button clicked successfully.
+2025-04-28 12:11:34,424 - INFO - CSV export process initiated.
+2025-04-28 12:12:04,425 - INFO -  Waiting for CSV file to be downloaded...
+2025-04-28 12:12:04,426 - INFO -  Latest downloaded file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\work_order-20250428.csv
+2025-04-28 12:12:04,426 - INFO - [SUCCESS] CSV file ready: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\work_order-20250428.csv
+2025-04-28 12:12:04,426 - INFO - [SUCCESS] CSV URL: file://C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\work_order-20250428.csv
+2025-04-28 12:12:04,490 - INFO - Deleted original file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\work_order-20250428.csv
+2025-04-28 12:12:04,490 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/leasing_funnel_performance?customize=true and downloading CSV...
+2025-04-28 12:12:08,754 - INFO - Update button clicked successfully.
+2025-04-28 12:12:38,968 - INFO - Export CSV button clicked successfully.
+2025-04-28 12:12:38,968 - INFO - CSV export process initiated.
+2025-04-28 12:13:08,968 - INFO -  Waiting for CSV file to be downloaded...
+2025-04-28 12:13:08,969 - INFO -  Latest downloaded file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\leasing_funnel_performance-20250428.csv
+2025-04-28 12:13:08,969 - INFO - [SUCCESS] CSV file ready: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\leasing_funnel_performance-20250428.csv
+2025-04-28 12:13:08,969 - INFO - [SUCCESS] CSV URL: file://C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\leasing_funnel_performance-20250428.csv
+2025-04-28 12:13:08,986 - INFO - Deleted original file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\leasing_funnel_performance-20250428.csv
+2025-04-28 12:13:08,986 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/prospect_source_tracking?customize=true and downloading CSV...
+2025-04-28 12:13:12,587 - INFO - Update button clicked successfully.
+2025-04-28 12:13:42,759 - INFO - Export CSV button clicked successfully.
+2025-04-28 12:13:42,759 - INFO - CSV export process initiated.
+2025-04-28 12:14:12,759 - INFO -  Waiting for CSV file to be downloaded...
+2025-04-28 12:14:12,760 - INFO -  Latest downloaded file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\prospect_source_tracking-20250428.csv
+2025-04-28 12:14:12,760 - INFO - [SUCCESS] CSV file ready: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\prospect_source_tracking-20250428.csv
+2025-04-28 12:14:12,760 - INFO - [SUCCESS] CSV URL: file://C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\prospect_source_tracking-20250428.csv
+2025-04-28 12:14:12,777 - INFO - Deleted original file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\prospect_source_tracking-20250428.csv
+2025-04-28 12:14:12,777 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/bill_detail?customize=true and downloading CSV...
+2025-04-28 12:14:27,264 - INFO - Update button clicked successfully.
+2025-04-28 12:14:57,525 - INFO - Export CSV button clicked successfully.
+2025-04-28 12:14:57,525 - INFO - CSV export process initiated.
+2025-04-28 12:15:27,526 - INFO -  Waiting for CSV file to be downloaded...
+2025-04-28 12:15:27,526 - INFO -  Latest downloaded file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\prospect_cleaned_20250428_121412.csv
+2025-04-28 12:15:27,527 - INFO - [SUCCESS] CSV file ready: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\prospect_cleaned_20250428_121412.csv
+2025-04-28 12:15:27,527 - INFO - [SUCCESS] CSV URL: file://C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\prospect_cleaned_20250428_121412.csv
+2025-04-28 12:15:27,547 - INFO -  An error occurred: 'Reference'
+2025-04-28 12:15:29,766 - INFO - [ERROR] The process encountered an error.
+2025-04-28 12:17:36,812 - INFO - Started Appfolio data process
+2025-04-28 12:17:37,877 - INFO - [INFO] Opening login page...
+2025-04-28 12:17:39,701 - INFO - [INFO] Entered username
+2025-04-28 12:17:39,768 - INFO - [INFO] Entered password
+2025-04-28 12:17:39,929 - INFO - [INFO] Clicked login button
+2025-04-28 12:17:42,937 - INFO - [INFO] 2-Step Verification detected. Retrieving verification code...
+2025-04-28 12:17:43,367 - INFO - [INFO] Requested verification code.
+2025-04-28 12:17:49,239 - INFO - Entered verification code: 877128
+2025-04-28 12:17:49,313 - INFO - Successfully submitted the verification code!
+2025-04-28 12:17:52,315 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/bill_detail?customize=true and downloading CSV...
+2025-04-28 12:18:06,605 - INFO - Update button clicked successfully.
+2025-04-28 12:18:36,787 - INFO - Export CSV button clicked successfully.
+2025-04-28 12:18:36,788 - INFO - CSV export process initiated.
+2025-04-28 12:19:06,789 - INFO -  Waiting for CSV file to be downloaded...
+2025-04-28 12:19:06,790 - INFO -  Latest downloaded file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_detail-20250428.csv
+2025-04-28 12:19:06,790 - INFO - [SUCCESS] CSV file ready: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_detail-20250428.csv
+2025-04-28 12:19:06,790 - INFO - [SUCCESS] CSV URL: file://C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_detail-20250428.csv
+2025-04-28 12:19:07,192 - INFO - Deleted original file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_detail-20250428.csv
+2025-04-28 12:19:07,192 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/rent_roll?customize=true and downloading CSV...
+2025-04-28 12:19:10,804 - INFO - Set date to 03-31-2025
+2025-04-28 12:19:10,874 - INFO - Update button clicked successfully.
+2025-04-28 12:19:41,068 - INFO - Export CSV button clicked successfully.
+2025-04-28 12:19:41,068 - INFO - CSV export process initiated.
+2025-04-28 12:20:08,612 - WARNING - Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ConnectionResetError(10054, 'An existing connection was forcibly closed by the remote host', None, 10054, None)': /session/fff260344d08342c96d77c4085f1a9b3
+2025-04-28 12:49:53,657 - INFO - Started Appfolio data process
+2025-04-28 12:49:54,728 - INFO - [INFO] Opening login page...
+2025-04-28 12:49:56,528 - INFO - [INFO] Entered username
+2025-04-28 12:49:56,672 - INFO - [INFO] Entered password
+2025-04-28 12:49:56,735 - INFO - [INFO] Clicked login button
+2025-04-28 12:49:59,741 - INFO - [INFO] 2-Step Verification detected. Retrieving verification code...
+2025-04-28 12:50:00,097 - INFO - [INFO] Requested verification code.
+2025-04-28 12:50:03,650 - INFO - Entered verification code: 780602
+2025-04-28 12:50:03,718 - INFO - Successfully submitted the verification code!
+2025-04-28 12:50:06,719 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/bill_detail?customize=true and downloading CSV...
+2025-04-28 12:50:21,164 - INFO - Update button clicked successfully.
+2025-04-28 12:50:51,331 - INFO - Export CSV button clicked successfully.
+2025-04-28 12:50:51,331 - INFO - CSV export process initiated.
+2025-04-28 12:51:21,332 - INFO -  Waiting for CSV file to be downloaded...
+2025-04-28 12:51:21,333 - INFO -  Latest downloaded file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_detail-20250428.csv
+2025-04-28 12:51:21,334 - INFO - [SUCCESS] CSV file ready: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_detail-20250428.csv
+2025-04-28 12:51:21,334 - INFO - [SUCCESS] CSV URL: file://C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_detail-20250428.csv
+2025-04-28 12:51:21,741 - INFO - Deleted original file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_detail-20250428.csv
+2025-04-28 12:51:24,547 - INFO - [SUCCESS] The entire process completed successfully.
