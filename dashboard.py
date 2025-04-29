@@ -88,6 +88,8 @@ def show_dashboard():
     IMG_DIR = "plotly_images"
     os.makedirs(IMG_DIR, exist_ok=True)
 
+    region_df = pd.read_csv("region_list.csv")
+
     # 🔹 Generate and Save Plotly Charts as Images
     image_paths = []
     # 🔹 3. Display DataFrames in Tabs
@@ -102,14 +104,6 @@ def show_dashboard():
         ])
 
     with tab1:
-         # Get unique filter values
-        properties = dfs["Rent Roll"]["Property Name"].dropna().unique().tolist()
-        statuses = dfs["Rent Roll"]["Status"].dropna().unique().tolist()
-
-        col_prop = st.columns(3)[0]
-
-        with col_prop:
-            selected_property = st.selectbox("Filter by Property", ["All"] + properties)
 
        # Filter data
         rent_roll = dfs["Rent Roll"].copy()
@@ -117,11 +111,35 @@ def show_dashboard():
         trailing_12months = dfs["Rent Roll 12 Months"].copy()  
         tenant_data = dfs["Tenant Data"].copy()
 
+        rent_roll = rent_roll.merge(region_df, on="Property Name", how="left")
+        rent_roll1 = rent_roll1.merge(region_df, on="Property Name", how="left")
+        trailing_12months = trailing_12months.merge(region_df, on="Property Name", how="left")
+        tenant_data = tenant_data.merge(region_df, on="Property Name", how="left")
+
+        properties = dfs["Rent Roll"]["Property Name"].dropna().unique().tolist()
+        regions = rent_roll["Region"].dropna().unique().tolist()
+        statuses = dfs["Rent Roll"]["Status"].dropna().unique().tolist()
+
+        col_prop,col_region, col_s= st.columns(3)
+
+        with col_prop:
+            selected_property = st.selectbox("Filter by Property", ["All"] + properties)
+
+        with col_region:
+            selected_region = st.selectbox("Filter by Region", ["All"] + regions)
+        
+
         if selected_property != "All":
             rent_roll = rent_roll[rent_roll["Property Name"] == selected_property]
             rent_roll1 = rent_roll1[rent_roll1["Property Name"] == selected_property]
             trailing_12months = trailing_12months[trailing_12months["Property Name"] == selected_property]
             tenant_data = tenant_data[tenant_data["Property Name"] == selected_property]
+
+        if selected_region != "All":
+            rent_roll = rent_roll[rent_roll["Region"] == selected_region]
+            rent_roll1 = rent_roll1[rent_roll1["Region"] == selected_region]
+            trailing_12months = trailing_12months[trailing_12months["Region"] == selected_region]
+            tenant_data = tenant_data[tenant_data["Region"] == selected_region]
 
         # Metric calculations using filtered data
         col1, col2, col3, col4, col05 = st.columns(5)
@@ -353,13 +371,13 @@ def show_dashboard():
             for trace in fig.data:
                 if trace.type == "bar":
                     trace.texttemplate = "%{text:,}"
-                    trace.textposition = "auto"
+                    trace.textposition = "inside"
 
             # Add total labels as overlay
             fig.add_trace(
                 go.Scatter(
                     x=totals["BD/BA"],
-                    y=totals["Total"]+55,
+                    y=totals["Total"],
                     mode="text",
                     text=totals["Total"].map('{:,}'.format),
                     textposition="top center",  
@@ -389,7 +407,7 @@ def show_dashboard():
                 # Normalize to match color map keys
                 status_counts["Status"] = status_counts["Status"].str.strip().str.title().str.replace(" ", "-")
 
-                color_map = {
+                color_map1 = {
                     "Current": "lightgrey",
                     "Vacant-Unrented": "steelblue",
                     "Vacant-Rented": "lightblue",
@@ -404,7 +422,8 @@ def show_dashboard():
                     names="Status",
                     title="🏠 Tenant Status Distribution",
                     hole=0.4,
-                    color_discrete_map=color_map
+                    color="Status",
+                    color_discrete_map=color_map1
                 )
 
                 fig4.update_layout(
@@ -664,20 +683,32 @@ def show_dashboard():
 
 
     with tab2:
-        # Filters
-        properties1 = dfs["Rent Roll"]["Property Name"].dropna().unique().tolist()
+         # Filter data
+        rent_roll = dfs["Rent Roll"].copy()
+        rent_roll2 = dfs["Rent Roll"].copy()
 
-        col_prop1 = st.columns(3)[0]
+        rent_roll = rent_roll.merge(region_df, on="Property Name", how="left")
+        rent_roll2 = rent_roll2.merge(region_df, on="Property Name", how="left")
+
+        properties1 = dfs["Rent Roll"]["Property Name"].dropna().unique().tolist()
+        regions1 = rent_roll["Region"].dropna().unique().tolist()
+
+        col_prop1, col_region1,col_s1 = st.columns(3)
 
         with col_prop1:
             selected_property1 = st.selectbox("Filter by Property", ["All"] + properties1, key="property_tab2")
 
-        # Filter data
-        rent_roll = dfs["Rent Roll"].copy()
-        rent_roll2 = dfs["Rent Roll"].copy()
+        with col_region1:
+            selected_region1 = st.selectbox("Filter by Region", ["All"] + regions1, key="region_tab2")
+       
+
         if selected_property1 != "All":
             rent_roll = rent_roll[rent_roll["Property Name"] == selected_property1]
             rent_roll2 = rent_roll2[rent_roll2["Property Name"] == selected_property1]
+
+        if selected_region1 != "All":
+            rent_roll = rent_roll[rent_roll["Region"] == selected_region1]
+            rent_roll2 = rent_roll2[rent_roll2["Region"] == selected_region1]
 
         col26, col27= st.columns(2)
 
@@ -802,16 +833,27 @@ def show_dashboard():
 
 
     with tab3:
+        df_leasing = dfs["Leasing"].copy()
+        df_leasing1 = dfs["Leasing"].copy()
+        
+        df_leasing = df_leasing.merge(region_df, left_on="Property", right_on="Property Name", how="left")
+        df_leasing1 = df_leasing1.merge(region_df, left_on="Property", right_on="Property Name", how="left")
+
           # Get unique filter values
         properties3 = dfs["Leasing"]["Property"].dropna().unique().tolist()
+        regions3 = df_leasing["Region"].dropna().unique().tolist()
 
-        col_prop3 = st.columns(3)[0]
+        col_prop3,col_region3,col_s3 = st.columns(3)
 
         with col_prop3:
             selected_property3 = st.selectbox("Filter by Property", ["All"] + properties3, key="property_tab3")
 
-        df_leasing = dfs["Leasing"].copy()
-        df_leasing1 = dfs["Leasing"].copy()
+        with col_region3:
+            selected_region3 = st.selectbox("Filter by Region", ["All"] + regions3, key="region_tab3")
+
+        if selected_region3 != "All":
+            df_leasing = df_leasing[df_leasing["Region"] == selected_region3]
+            df_leasing1 = df_leasing1[df_leasing1["Region"] == selected_region3]
 
         if selected_property3 != "All":
             df_leasing = df_leasing[df_leasing["Property"] == selected_property3]
@@ -923,21 +965,31 @@ def show_dashboard():
 
     with tab4:
         
-         # Filters
-        properties4 = dfs["Rent Roll"]["Property Name"].dropna().unique().tolist()
+        df_work = dfs["Work Orders"].copy()
+        df_work1 = dfs["Work Orders"].copy()
 
-        col_prop4 = st.columns(3)[0]
+        df_work = df_work.merge(region_df, on="Property Name", how="left")
+        df_work1 = df_work1.merge(region_df, on="Property Name", how="left")
+
+        properties4 = dfs["Rent Roll"]["Property Name"].dropna().unique().tolist()
+        region4 = df_work["Region"].dropna().unique().tolist()
+
+        col_prop4, col_region4,col_s4 = st.columns(3)
 
         with col_prop4:
             selected_property4 = st.selectbox("Filter by Property", ["All"] + properties4, key="property_tab4")
 
-        # Filter data
-        df_work = dfs["Work Orders"].copy()
-        df_work1 = dfs["Work Orders"].copy()
+        with col_region4:
+            selected_region4 = st.selectbox("Filter by Region", ["All"] + region4, key="region_tab4")
+
 
         if selected_property4 != "All":
             df_work = df_work[df_work["Property Name"] == selected_property4]
             df_work1 = df_work1[df_work1["Property Name"] == selected_property4]
+
+        if selected_region4 != "All":
+            df_work = df_work[df_work["Region"] == selected_region4]
+            df_work1 = df_work1[df_work1["Region"] == selected_region4]
 
         col45, col46 = st.columns(2)
 
@@ -1037,15 +1089,14 @@ def show_dashboard():
                 ]
             )
 
-
             fig.add_trace(
                 go.Scatter(
                     x=monthly_totals["Month"],
-                    y=monthly_totals["Total"]+200,
+                    y=monthly_totals["Total"],
                     mode="text",
                     text=monthly_totals["Total"].map('{:,}'.format),
-                    textposition="bottom center",
-                    textfont=dict(size=12, family="Arial Black", color="steelblue"),
+                    textposition="top center",
+                    textfont=dict(size=12),
                     showlegend=False
                 )
             )
@@ -1059,7 +1110,7 @@ def show_dashboard():
 
             fig.update_traces(
                 texttemplate="%{text:,}",
-                textposition="auto",
+                textposition="inside",
                 selector=dict(type="bar")
             )
 
@@ -1067,23 +1118,34 @@ def show_dashboard():
 
     with tab5:
 
-         # Get unique filter values
-        properties5 = dfs["Rent Roll"]["Property Name"].dropna().unique().tolist()
-
-        col_prop5 = st.columns(3)[0]
-
-        with col_prop5:
-            selected_property5 = st.selectbox("Filter by Property", ["All"] + properties5, key="property_tab5")
-
-       # Filter data
         rent_roll = dfs["Rent Roll"].copy()
         tenant_data = dfs["Tenant Data"].copy()
         tenant_data1 = dfs["Tenant Data"].copy()
+
+        rent_roll = rent_roll.merge(region_df, on="Property Name", how="left")
+        tenant_data = tenant_data.merge(region_df, on="Property Name", how="left")
+        tenant_data1 = tenant_data1.merge(region_df, on="Property Name", how="left")
+    
+        properties5 = dfs["Rent Roll"]["Property Name"].dropna().unique().tolist()
+        region5 = rent_roll["Region"].dropna().unique().tolist()
+
+        col_prop5, col_region5,col_s5 = st.columns(3)
+
+        with col_prop5:
+            selected_property5 = st.selectbox("Filter by Property", ["All"] + properties5, key="property_tab5")
+        
+        with col_region5:
+            selected_region5 = st.selectbox("Filter by Region", ["All"] + region5, key="region_tab5")
 
         if selected_property5 != "All":
             rent_roll = rent_roll[rent_roll["Property Name"] == selected_property5]
             tenant_data = tenant_data[tenant_data["Property Name"] == selected_property5]
             tenant_data1 = tenant_data1[tenant_data1["Property Name"] == selected_property5]
+
+        if selected_region5 != "All":
+            rent_roll = rent_roll[rent_roll["Region"] == selected_region5]
+            tenant_data = tenant_data[tenant_data["Region"] == selected_region5]
+            tenant_data1 = tenant_data1[tenant_data1["Region"] == selected_region5]
 
         col51, col52, col53, col54 = st.columns(4)
 
@@ -1114,7 +1176,7 @@ def show_dashboard():
             
             df_late = rent_roll[rent_roll['Past Due'] >500]
             df_late = df_late.sort_values(by="Past Due", ascending=False).head(30)  # top 30 tenants
-            print(df_late)
+ 
             # Plotly dual-axis chart
             fig = go.Figure()
 
@@ -1204,21 +1266,27 @@ def show_dashboard():
             st.plotly_chart(fig, use_container_width=True)
 
     with tab6:
-          # Filters
+        
+        bill = dfs["Bill"].copy()
+        bill1 = dfs["Bill"].copy()
+
+        bill = bill.merge(region_df, on="Property Name", how="left")
+        bill1 = bill1.merge(region_df, on="Property Name", how="left")
+
         properties6 = dfs["Bill"]["Property Name"].dropna().unique().tolist()
         properties06 = dfs["Bill"]["Payee Name"].dropna().unique().tolist()
+        region6 = bill["Region"].dropna().unique().tolist()
 
-        col_prop6, col_prop06, col_prop006 = st.columns(3)
+        col_prop6,col_region6, col_prop06= st.columns(3)
 
         with col_prop6:
             selected_property6 = st.selectbox("Filter by Property", ["All"] + properties6, key="property_tab6")
         
         with col_prop06:
             selected_property06 = st.selectbox("Filter by Payee", ["All"] + properties06, key="property_tab06")
-
-        # Filter data
-        bill = dfs["Bill"].copy()
-        bill1 = dfs["Bill"].copy()
+            
+        with col_region6:
+            selected_region6 = st.selectbox("Filter by Region", ["All"] + region6, key="region_tab6")
 
         if selected_property6 != "All":
             bill = bill[bill["Property Name"] == selected_property6]
@@ -1227,6 +1295,10 @@ def show_dashboard():
         if selected_property06 != "All":
             bill = bill[bill["Payee Name"] == selected_property06]
             bill1 = bill1[bill1["Payee Name"] == selected_property06]
+
+        if selected_region6 != "All":
+            bill = bill[bill["Region"] == selected_region6]
+            bill = bill[bill["Region"] == selected_region6]
 
         col65 = st.columns(1)[0]
 
