@@ -198,12 +198,14 @@ def show_dashboard():
                 go.Scatter(
                     x=df_occ["Month"],
                     y=df_occ["Occupancy %"],
-                    mode="lines+markers",
+                    mode="lines+markers+text",
                     name="Occupancy %",
                     line=dict(color="green"),
                     marker=dict(size=8),
-                    text=df_occ["Occupancy %"],
-                    textposition="top center"
+                    text=df_occ["Occupancy %"].map(lambda x: f"{x:.1f}%"),
+                    textposition="top center",
+                    textfont=dict(size=12),
+                    hovertemplate="Occupancy: %{y}%<extra></extra>"
                 )
             )
 
@@ -245,6 +247,7 @@ def show_dashboard():
                 })
 
             df_occ = pd.DataFrame(summary)
+            df_occ["Total Vacant"] = df_occ["Vacant-Rented"] + df_occ["Vacant-Unrented"]
 
             fig = go.Figure()
 
@@ -271,6 +274,21 @@ def show_dashboard():
                     textposition='auto'   
                 )
             )
+            # Add total vacant labels on top
+            fig.add_trace(
+                go.Scatter(
+                    x=df_occ["Month"],
+                    y=df_occ["Vacant-Rented"] + df_occ["Vacant-Unrented"],
+                    mode='text+markers',
+                    text=df_occ["Total Vacant"].map('{:,}'.format),
+                    textposition="top center",
+                    marker=dict(opacity=0),  # Hide the markers
+                    hoverinfo='skip',
+                    showlegend=False,
+                    textfont=dict(size=12, color="steelblue",family="Arial Black" ),
+                )
+            )
+
 
             # Layout
             fig.update_layout(
@@ -290,12 +308,12 @@ def show_dashboard():
         with col7:
 
             statuses = [
-            "Current",
-            "Notice-Rented",
-            "Notice-Unrented",
-            "Evict",
-            "Vacant-Rented",
-            "Vacant-Unrented"
+                "Current",
+                "Notice-Rented",
+                "Notice-Unrented",
+                "Evict",
+                "Vacant-Rented",
+                "Vacant-Unrented"
             ]
 
             # Filter only relevant statuses
@@ -309,6 +327,8 @@ def show_dashboard():
                 .reset_index(name="Count")
             )
 
+            totals = grouped.groupby("BD/BA")["Count"].sum().reset_index(name="Total")
+
             color_map = {
                 "Current": "lightgrey",
                 "Vacant-Unrented": "steelblue",
@@ -317,12 +337,6 @@ def show_dashboard():
                 "Notice-Unrented": "mediumseagreen",
                 "Notice-Rented": "orange"
             }
-            pivot_df = grouped.pivot_table(
-                index="BD/BA",
-                columns="Status",
-                values="Count",
-                fill_value=0
-            ).reset_index()
 
             fig = px.bar(
                 grouped,
@@ -332,7 +346,26 @@ def show_dashboard():
                 barmode="stack",
                 color_discrete_map=color_map,
                 title="📊 Unit Type Breakdown by Status",
-                text="Count" 
+                text="Count"
+            )
+
+            # Apply auto text position ONLY to bar traces
+            for trace in fig.data:
+                if trace.type == "bar":
+                    trace.texttemplate = "%{text:,}"
+                    trace.textposition = "auto"
+
+            # Add total labels as overlay
+            fig.add_trace(
+                go.Scatter(
+                    x=totals["BD/BA"],
+                    y=totals["Total"]+55,
+                    mode="text",
+                    text=totals["Total"].map('{:,}'.format),
+                    textposition="top center",  
+                    textfont=dict(size=12, color="steelblue",family="Arial Black" ),
+                    showlegend=False
+                )
             )
 
             fig.update_layout(
@@ -342,10 +375,7 @@ def show_dashboard():
                 width=1000,
                 height=600
             )
-            fig.update_traces(
-                texttemplate='%{text:,}',  # Add thousand separator
-                textposition='auto'        # Keep the labels positioned automatically
-            )
+
             st.plotly_chart(fig, use_container_width=True)
 
           
@@ -536,7 +566,7 @@ def show_dashboard():
                 go.Scatter(
                     x=df_occ["Month"],
                     y=df_occ["Evict"],
-                    mode="lines+markers",
+                    mode="lines+markers+text",
                     name="Evict",
                     line=dict(color="orange"),
                     marker=dict(size=8),
@@ -572,7 +602,7 @@ def show_dashboard():
             rent_roll['Past Due'] = pd.to_numeric(rent_roll['Past Due'], errors='coerce').fillna(0)
 
             # Filter for tenants who have any amount past due
-            df_delinquent = rent_roll[rent_roll['Past Due'] > 0]
+            df_delinquent = rent_roll[rent_roll['Past Due'] > 500]
 
             summary = df_delinquent.groupby('BD/BA').agg(
                 Delinquent_Units=('Unit', 'count'),
@@ -592,7 +622,7 @@ def show_dashboard():
                 marker_color='blue',
                 opacity=0.4,
                 text=summary['Delinquent_Amount'].map('${:,.0f}'.format),  # <- Add this
-                textposition='auto'  # <- Add this (can also be 'inside' or 'outside')
+                textposition='auto'
             ))
 
             # Line chart for unit count (use y - left side)
@@ -691,9 +721,11 @@ def show_dashboard():
                 x=final_df["BD/BA"], 
                 y=final_df["Unit Count"], 
                 name="Unit Count",
-                mode="lines+markers",
+                mode="lines+markers+text",
                 yaxis="y2",
                 line=dict(color="red", width=2),
+                text=final_df["Unit Count"],  # 👈 Use col11 as label
+                textposition="top center",
                 marker=dict(size=8),
             ))
 
@@ -737,24 +769,29 @@ def show_dashboard():
                 .reset_index()
             )
 
+            summary = summary.rename(columns={
+                "Avg_Rent": "Avg Rent",
+                "Avg_Market_Rent": "Avg Market Rent",
+                "Unit_Count": "Unit Count"
+            })
             # Calculate Variance
-            summary["Variance"] = summary["Avg_Market_Rent"] - summary["Avg_Rent"]
+            summary["Variance"] =  summary["Avg Rent"] - summary["Avg Market Rent"]
 
             # Round values
             summary = summary.round({"Avg_Rent": 0, "Avg_Market_Rent": 0, "Variance": 0})
 
             # 🎨 Define style function
             def highlight_variance(val):
-                if val > 0:
+                if val < 0:
                     return 'background-color: #FF5C5C'  # light red
                 else:
                     return ''
 
             styled_summary = summary.style.format({
-                "Avg_Rent": "${:,.0f}",
-                "Avg_Market_Rent": "${:,.0f}",
+                "Avg Rent": "${:,.0f}",
+                "Avg Market Rent": "${:,.0f}",
                 "Variance": "${:,.0f}",
-                "Unit_Count": "{:,}"
+                "Unit Count": "{:,}"
             }).applymap(highlight_variance, subset=["Variance"])
 
             # ✨ Header
@@ -774,9 +811,11 @@ def show_dashboard():
             selected_property3 = st.selectbox("Filter by Property", ["All"] + properties3, key="property_tab3")
 
         df_leasing = dfs["Leasing"].copy()
+        df_leasing1 = dfs["Leasing"].copy()
 
         if selected_property3 != "All":
             df_leasing = df_leasing[df_leasing["Property"] == selected_property3]
+            df_leasing1 = df_leasing1[df_leasing1["Property"] == selected_property3]
       
         col36, col37 = st.columns(2)
 
@@ -817,8 +856,8 @@ def show_dashboard():
                 margin=dict(t=50, b=50, l=50, r=50)
             )
             fig.update_traces(
-                texttemplate="%{x:,}",  # Format number (Count) with thousand separator
-                textposition="inside"   # Keep it inside the funnel blocks
+                texttemplate="%{x:,}",  
+                textposition="inside"   
             )
 
             # Show in Streamlit
@@ -981,6 +1020,8 @@ def show_dashboard():
                 ordered=True
             )
 
+            monthly_totals = grouped.groupby("Month")["Count"].sum().reset_index(name="Total")
+
             # Plot
             fig = px.bar(
                 grouped,
@@ -996,6 +1037,18 @@ def show_dashboard():
                 ]
             )
 
+
+            fig.add_trace(
+                go.Scatter(
+                    x=monthly_totals["Month"],
+                    y=monthly_totals["Total"]+200,
+                    mode="text",
+                    text=monthly_totals["Total"].map('{:,}'.format),
+                    textposition="bottom center",
+                    textfont=dict(size=12, family="Arial Black", color="steelblue"),
+                    showlegend=False
+                )
+            )
             fig.update_layout(
                 xaxis_title="Month",
                 yaxis_title="Number of Work Orders",
@@ -1006,7 +1059,8 @@ def show_dashboard():
 
             fig.update_traces(
                 texttemplate="%{text:,}",
-                textposition="auto"
+                textposition="auto",
+                selector=dict(type="bar")
             )
 
             st.plotly_chart(fig, use_container_width=True)
@@ -1035,15 +1089,15 @@ def show_dashboard():
 
         total_residents = rent_roll[rent_roll['Status'] == 'Current'].shape[0] # or df.shape[0] if 1 row per resident
         eviction_filings = rent_roll[rent_roll['Status'] == 'Evict'].shape[0]
-        notice = rent_roll[rent_roll['Status'] == 'Notice'].shape[0]
-        future = rent_roll[rent_roll['Status'] == 'Future'].shape[0]
+        notice = tenant_data[tenant_data['Status'] == 'Notice'].shape[0]
+        future = tenant_data[tenant_data['Status'] == 'Future'].shape[0]
         evictions_per_resident = round(eviction_filings / total_residents, 3)
 
         # Display the metric card
-        col51.metric(label="🏠Current Residents", value=f"{total_residents:,.0f}")
+        col51.metric(label="🏠Current Occupied Units", value=f"{total_residents:,.0f}")
         col52.metric(label="📊Notice Residents",  value=f"{notice}")
-        col53.metric(label="🚪Future tenants (Next 60 days)", value=f"{future}")
-        col54.metric(label="⚖️ Eviction Filings per Residentt", value=f"{evictions_per_resident*100:,.2f}")
+        col53.metric(label="🚪Future tenants", value=f"{future}")
+        col54.metric(label="⚖️ Evictions", value=f"{eviction_filings}")
         
         col55= st.columns(1)[0]
 
@@ -1059,7 +1113,7 @@ def show_dashboard():
             rent_roll['Late Count'] = pd.to_numeric(rent_roll['Late Count'], errors='coerce').fillna(0)
             
             df_late = rent_roll[rent_roll['Past Due'] >500]
-            df_late = df_late.sort_values(by="Late Count", ascending=False).head(30)  # top 30 tenants
+            df_late = df_late.sort_values(by="Past Due", ascending=False).head(30)  # top 30 tenants
             print(df_late)
             # Plotly dual-axis chart
             fig = go.Figure()
@@ -1073,7 +1127,7 @@ def show_dashboard():
                 marker_color='indianred',
                 opacity=0.6,
                 text=df_late['Past Due'].map('${:,.0f}'.format),  # <- Add data labels
-                textposition='auto'  # Can also be 'inside' or 'outside'
+                textposition='auto' 
             ))
 
             # Line: Late Count
@@ -1125,32 +1179,24 @@ def show_dashboard():
                 .reset_index()
             )
 
-             # Correct calculation: parentheses ensure correct order
-            summary['Evictions per Resident'] = (summary['Eviction_Filings'] / summary['Total_Residents']) * 100
-
-            summary = summary[summary['Evictions per Resident'] > 0]
+            summary = summary[summary['Eviction_Filings'] > 0]
             # Sort by Evictions per Resident (descending)
-            summary = summary.sort_values(by='Evictions per Resident', ascending=False)
+            summary = summary.sort_values(by='Eviction_Filings', ascending=False)
 
 
             fig = px.bar(
                 summary,
                 x="Property Name",
-                y="Evictions per Resident",
-                title="📉 Eviction Filings per Resident by Property",
-                color="Evictions per Resident",
+                y="Eviction_Filings",
+                title="📉 Eviction_Filings by Property",
+                color="Eviction_Filings",
                 color_continuous_scale="OrRd",
-                text="Evictions per Resident"
-            )
-
-            fig.update_traces(
-                textposition="auto",
-                texttemplate="%{text:.2f}"  # <- Format with two decimal places
+                text="Eviction_Filings"
             )
 
             fig.update_layout(
                 xaxis_title="Property",
-                yaxis_title="Evictions per Resident",
+                yaxis_title="Eviction_Filings",
                 width=1000,
                 height=600
             )
@@ -1160,11 +1206,15 @@ def show_dashboard():
     with tab6:
           # Filters
         properties6 = dfs["Bill"]["Property Name"].dropna().unique().tolist()
+        properties06 = dfs["Bill"]["Payee Name"].dropna().unique().tolist()
 
-        col_prop6 = st.columns(3)[0]
+        col_prop6, col_prop06, col_prop006 = st.columns(3)
 
         with col_prop6:
             selected_property6 = st.selectbox("Filter by Property", ["All"] + properties6, key="property_tab6")
+        
+        with col_prop06:
+            selected_property06 = st.selectbox("Filter by Payee", ["All"] + properties06, key="property_tab06")
 
         # Filter data
         bill = dfs["Bill"].copy()
@@ -1174,27 +1224,28 @@ def show_dashboard():
             bill = bill[bill["Property Name"] == selected_property6]
             bill1 = bill1[bill1["Property Name"] == selected_property6]
 
+        if selected_property06 != "All":
+            bill = bill[bill["Payee Name"] == selected_property06]
+            bill1 = bill1[bill1["Payee Name"] == selected_property06]
+
         col65 = st.columns(1)[0]
 
         with col65:
 
-            # Parse datetime and extract month
             bill['Bill Date'] = pd.to_datetime(bill['Bill Date'], errors='coerce')
             bill['Month'] = bill['Bill Date'].dt.to_period("M").astype(str)
 
+            # Clean Paid and Unpaid columns
             bill['Paid'] = (
-                bill['Paid']
-                .astype(str)  # Convert to string in case of mixed types
-                .str.replace(r'[$,]', '', regex=True)  # Remove $ and commas
+                bill['Paid'].astype(str)
+                .str.replace(r'[$,]', '', regex=True)
             )
 
             bill['Unpaid'] = (
-                bill['Unpaid']
-                .astype(str)  # Convert to string in case of mixed types
-                .str.replace(r'[$,]', '', regex=True)  # Remove $ and commas
+                bill['Unpaid'].astype(str)
+                .str.replace(r'[$,]', '', regex=True)
             )
 
-            # Convert amounts to numeric
             bill['Paid'] = pd.to_numeric(bill['Paid'], errors='coerce').fillna(0)
             bill['Unpaid'] = pd.to_numeric(bill['Unpaid'], errors='coerce').fillna(0)
 
@@ -1202,41 +1253,59 @@ def show_dashboard():
             monthly_summary = bill.groupby('Month').agg({
                 'Paid': 'sum',
                 'Unpaid': 'sum',
-                'Reference': 'nunique'  # Count of unique bill references
+                'Reference': 'nunique'
             }).reset_index().sort_values('Month')
 
-            # Stacked bar chart: Paid and Unpaid
+            # Add a new Total column
+            monthly_summary["Total Amount"] = monthly_summary["Paid"] + monthly_summary["Unpaid"]
+
+            # Stacked bar chart
             fig = go.Figure()
 
+            # Paid Bar
             fig.add_trace(go.Bar(
                 x=monthly_summary['Month'],
                 y=monthly_summary['Paid'],
                 name='Paid',
                 marker_color='mediumseagreen',
                 text=monthly_summary['Paid'].map('${:,.0f}'.format),
-                textposition='auto'
+                textposition='inside'
             ))
 
+            # Unpaid Bar
             fig.add_trace(go.Bar(
                 x=monthly_summary['Month'],
                 y=monthly_summary['Unpaid'],
                 name='Unpaid',
                 marker_color='indianred',
                 text=monthly_summary['Unpaid'].map('${:,.0f}'.format),
-                textposition='auto'
+                textposition='inside'
             ))
-            # Reference Line Chart
+
+            # Line chart for Reference Count
             fig.add_trace(go.Scatter(
                 x=monthly_summary['Month'],
                 y=monthly_summary['Reference'],
                 name='Reference Count',
                 yaxis='y2',
-                mode='lines+markers',
+                mode='lines+markers+text',
                 line=dict(color='orange', width=3),
-                marker=dict(size=7),
-                text=monthly_summary['Reference'],
-                textposition='top center'
+                marker=dict(size=8),
+               
             ))
+
+
+            fig.add_trace(go.Scatter(
+                x=monthly_summary['Month'],
+                y=monthly_summary['Total Amount']+250,
+                mode='text',
+                text=monthly_summary['Total Amount'].map('${:,.0f}'.format),
+                textposition='top center',
+                textfont=dict(size=12, color="steelblue",family="Arial Black" ),
+                showlegend=False  # No legend needed
+            ))
+
+            # Layout
             fig.update_layout(
                 barmode='stack',
                 title='💸 Paid vs Unpaid Amounts by Month',
@@ -1252,7 +1321,8 @@ def show_dashboard():
                 height=600,
                 width=1000
             )
-            # Show chart in Streamlit
+
+            # Show chart
             st.plotly_chart(fig, use_container_width=True)
         
         col66 = st.columns(1)[0]
@@ -1316,7 +1386,7 @@ def show_dashboard():
 
         with tab3:
             st.subheader("📝 Leasing")
-            st.write(dfs["Leasing"])
+            st.write(df_leasing1)
          
         with tab4:
             st.subheader("🔧 Maintenance")
