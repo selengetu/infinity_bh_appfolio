@@ -1301,7 +1301,7 @@ def show_dashboard():
                 mode='text',
                 text=monthly_summary['Total Amount'].map('${:,.0f}'.format),
                 textposition='top center',
-                textfont=dict(size=12, color="steelblue",family="Arial Black" ),
+                textfont=dict(size=12, color="mediumseagreen",family="Arial Black" ),
                 showlegend=False  # No legend needed
             ))
 
