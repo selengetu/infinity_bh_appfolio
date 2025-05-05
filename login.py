@@ -1,7 +1,7 @@
 import streamlit as st
 import dashboard  # Import the dashboard module
 # Set page layout
-st.set_page_config(page_title="Appfolio Dashboards", layout="wide")
+st.set_page_config(page_title="Appfolio Dashboards", layout="wide", page_icon="logo.png")
 
 def check_login(email, password):
     users = [
