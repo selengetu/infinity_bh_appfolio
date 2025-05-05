@@ -4,13 +4,15 @@ import dashboard  # Import the dashboard module
 st.set_page_config(page_title="Appfolio Dashboards", layout="wide")
 
 def check_login(email, password):
-    default_user = {
-        "email": "aaron@zuckermanautomationgroup.com",
-        "password": "Pass12345",
-        "name": "Test User"
-    }
-    if email == default_user["email"] and password == default_user["password"]:
-        return {"name": default_user["name"], "email": default_user["email"]}
+    users = [
+        {"email": "aaron@zuckermanautomationgroup.com", "password": "Pass12345", "name": "Aaron"},
+        {"email": "justin@infinitybh.com ", "password": "Infinity1", "name": "Justin"},
+    ]
+
+    for user in users:
+        if email == user["email"] and password == user["password"]:
+            return {"name": user["name"], "email": user["email"]}
+
     return None
 
 def main():
