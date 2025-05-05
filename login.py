@@ -5,7 +5,7 @@ st.set_page_config(page_title="Appfolio Dashboards", layout="wide")
 
 def check_login(email, password):
     default_user = {
-        "email": "test@zag.com",
+        "email": "aaron@zuckermanautomationgroup.com",
         "password": "Pass12345",
         "name": "Test User"
     }
