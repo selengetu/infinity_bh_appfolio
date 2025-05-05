@@ -9,7 +9,6 @@ def check_login(email, password):
         "password": "Pass12345",
         "name": "Test User"
     }
-
     if email == default_user["email"] and password == default_user["password"]:
         return {"name": default_user["name"], "email": default_user["email"]}
     return None
