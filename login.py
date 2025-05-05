@@ -6,7 +6,7 @@ st.set_page_config(page_title="Appfolio Dashboards", layout="wide")
 def check_login(email, password):
     users = [
         {"email": "aaron@zuckermanautomationgroup.com", "password": "Pass12345", "name": "Aaron"},
-        {"email": "justin@infinitybh.com ", "password": "Infinity1", "name": "Justin"},
+        {"email": "justin@infinitybh.com", "password": "Infinity1", "name": "Justin"},
     ]
 
     for user in users:
