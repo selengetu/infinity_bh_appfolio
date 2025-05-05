@@ -10,7 +10,7 @@ from datetime import datetime, timedelta
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud, STOPWORDS
 
-# st.set_page_config(page_title="Infinity BH Dashboards", layout="wide")
+st.set_page_config(page_title="Infinity BH Dashboards", layout="wide")
 
 def show_dashboard():
     
@@ -96,7 +96,7 @@ def show_dashboard():
     if dfs:
         tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
             "🏠 Property Performance", 
-            "💰 Rent", 
+            "💰 Financials", 
             "📝 Leasing", 
             "🔧 Maintenance", 
             "🏢 Tenants", 
@@ -229,7 +229,7 @@ def show_dashboard():
 
             # Layout
             fig.update_layout(
-                title="📊 Monthly Occupancy % and Total Units",
+                title="📊 Monthly Occupancy Trend",
                 xaxis=dict(title="Month", title_font=dict(size=14), tickfont=dict(size=12)),
                 yaxis=dict(title="Occupancy %", title_font=dict(size=14), tickfont=dict(size=12), gridcolor="lightgray"),
                 yaxis2=dict(
@@ -761,7 +761,7 @@ def show_dashboard():
             ))
 
             fig3.update_layout(
-                title="📊 Avg Rent vs. Market Rent with Unit Count by BD/BA",
+                title="📊 Average In Place rent vs Current Asking Rent",
                 xaxis=dict(title="Bedroom/Bathroom", tickangle=-45, tickfont=dict(size=12)),
                 yaxis=dict(title="Amount ($)", gridcolor="lightgray"),
                 yaxis2=dict(title="Unit Count", overlaying="y", side="right", showgrid=False),
@@ -1471,7 +1471,16 @@ def show_dashboard():
         with tab6:
             st.subheader("📄 Billings")
             st.write(bill1)
-       
 
-# if __name__ == "__main__":
-#     show_dashboard()
+    st.markdown(
+        """
+       <div style="text-align: center; font-size: 0.9rem; color: #4a4a4a;">
+        Copyright © 2025 <a href="https://zuckermanautomationgroup.com" target="_blank">zuckermanautomationgroup.com</a> |
+        Powered by Zuckerman Automation Group
+    </div>
+        """,
+        unsafe_allow_html=True
+    )    
+
+if __name__ == "__main__":
+    show_dashboard()
