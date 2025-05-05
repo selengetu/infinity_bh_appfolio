@@ -1,8 +1,18 @@
 import streamlit as st
-from utils import check_login  # Import the check_login function
 import dashboard  # Import the dashboard module
 # Set page layout
 st.set_page_config(page_title="Appfolio Dashboards", layout="wide")
+
+def check_login(email, password):
+    default_user = {
+        "email": "test@zag.com",
+        "password": "Pass12345",
+        "name": "Test User"
+    }
+
+    if email == default_user["email"] and password == default_user["password"]:
+        return {"name": default_user["name"], "email": default_user["email"]}
+    return None
 
 def main():
     # Initialize session state
