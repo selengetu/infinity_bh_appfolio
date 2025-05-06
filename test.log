@@ -5402,3 +5402,70 @@ Stacktrace:
 2025-04-28 14:29:21,106 - INFO - [SUCCESS] CSV URL: file://C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\tenant_directory-20250428.csv
 2025-04-28 14:29:21,260 - INFO - Deleted original file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\tenant_directory-20250428.csv
 2025-04-28 14:29:23,812 - INFO - [SUCCESS] The entire process completed successfully.
+2025-05-06 12:51:41,156 - INFO - Started Appfolio data process
+2025-05-06 12:51:42,317 - INFO - [INFO] Opening login page...
+2025-05-06 12:51:46,311 - INFO - [INFO] Entered username
+2025-05-06 12:51:46,383 - INFO - [INFO] Entered password
+2025-05-06 12:51:47,227 - INFO - [INFO] Clicked login button
+2025-05-06 12:51:50,233 - INFO - [INFO] 2-Step Verification detected. Retrieving verification code...
+2025-05-06 12:51:50,628 - INFO - [INFO] Requested verification code.
+2025-05-06 12:51:54,199 - INFO - Entered verification code: 604475
+2025-05-06 12:51:56,178 - INFO - Successfully submitted the verification code!
+2025-05-06 12:51:59,178 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/bill_detail?customize=true and downloading CSV...
+2025-05-06 12:52:13,524 - INFO - Update button clicked successfully.
+2025-05-06 12:52:43,756 - INFO - An error occurred: Message: stale element reference: stale element not found in the current frame
+  (Session info: chrome=136.0.7103.48); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#stale-element-reference-exception
+Stacktrace:
+	GetHandleVerifier [0x00007FF6DADB5355+78597]
+	GetHandleVerifier [0x00007FF6DADB53B0+78688]
+	(No symbol) [0x00007FF6DAB691AA]
+	(No symbol) [0x00007FF6DAB70ABC]
+	(No symbol) [0x00007FF6DAB73B1C]
+	(No symbol) [0x00007FF6DAB73BEF]
+	(No symbol) [0x00007FF6DABC4139]
+	(No symbol) [0x00007FF6DABC1AE1]
+	(No symbol) [0x00007FF6DABC0A42]
+	(No symbol) [0x00007FF6DABB259C]
+	(No symbol) [0x00007FF6DABE70EA]
+	(No symbol) [0x00007FF6DABB1AB6]
+	(No symbol) [0x00007FF6DABE7300]
+	(No symbol) [0x00007FF6DAC0F2BB]
+	(No symbol) [0x00007FF6DABE6EC3]
+	(No symbol) [0x00007FF6DABB03F8]
+	(No symbol) [0x00007FF6DABB1163]
+	GetHandleVerifier [0x00007FF6DB05EF0D+2870973]
+	GetHandleVerifier [0x00007FF6DB0596B8+2848360]
+	GetHandleVerifier [0x00007FF6DB076993+2967875]
+	GetHandleVerifier [0x00007FF6DADD019A+188746]
+	GetHandleVerifier [0x00007FF6DADD847F+222255]
+	GetHandleVerifier [0x00007FF6DADBD2D4+111236]
+	GetHandleVerifier [0x00007FF6DADBD482+111666]
+	GetHandleVerifier [0x00007FF6DADA35A9+5465]
+	BaseThreadInitThunk [0x00007FF96DB6E8D7+23]
+	RtlUserThreadStart [0x00007FF96FB5BF6C+44]
+
+2025-05-06 12:53:13,757 - INFO -  Waiting for CSV file to be downloaded...
+2025-05-06 12:53:13,758 - INFO -  Latest downloaded file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\tenant_data_cleaned_20250428_142921.csv
+2025-05-06 12:53:13,758 - INFO - [SUCCESS] CSV file ready: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\tenant_data_cleaned_20250428_142921.csv
+2025-05-06 12:53:13,758 - INFO - [SUCCESS] CSV URL: file://C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\tenant_data_cleaned_20250428_142921.csv
+2025-05-06 12:53:13,840 - INFO -  An error occurred: 'Reference'
+2025-05-06 12:53:16,081 - INFO - [ERROR] The process encountered an error.
+2025-05-06 12:54:18,071 - INFO - Started Appfolio data process
+2025-05-06 12:54:19,198 - INFO - [INFO] Opening login page...
+2025-05-06 12:54:21,116 - INFO - [INFO] Entered username
+2025-05-06 12:54:21,262 - INFO - [INFO] Entered password
+2025-05-06 12:54:21,345 - INFO - [INFO] Clicked login button
+2025-05-06 12:54:24,351 - INFO - [INFO] 2-Step Verification detected. Retrieving verification code...
+2025-05-06 12:54:24,661 - INFO - [INFO] Requested verification code.
+2025-05-06 12:54:28,208 - INFO - Entered verification code: 241215
+2025-05-06 12:54:28,282 - INFO - Successfully submitted the verification code!
+2025-05-06 12:54:31,283 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/bill_detail?customize=true and downloading CSV...
+2025-05-06 12:54:45,926 - INFO - Update button clicked successfully.
+2025-05-06 12:55:16,123 - INFO - Export CSV button clicked successfully.
+2025-05-06 12:55:16,124 - INFO - CSV export process initiated.
+2025-05-06 12:55:46,124 - INFO -  Waiting for CSV file to be downloaded...
+2025-05-06 12:55:46,126 - INFO -  Latest downloaded file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_detail-20250506.csv
+2025-05-06 12:55:46,126 - INFO - [SUCCESS] CSV file ready: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_detail-20250506.csv
+2025-05-06 12:55:46,126 - INFO - [SUCCESS] CSV URL: file://C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_detail-20250506.csv
+2025-05-06 12:55:46,601 - INFO - Deleted original file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_detail-20250506.csv
+2025-05-06 12:55:49,401 - INFO - [SUCCESS] The entire process completed successfully.
