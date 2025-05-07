@@ -191,8 +191,9 @@ def parse_property_name_with_string(value: str):
         return text
         
 def parse_property_name(full_str: str) -> str:
-    return full_str.split(' - ')[0].strip() if ' - ' in full_str else full_str.strip()
-
+    if isinstance(full_str, str):
+        return full_str.split(' - ')[0].strip() if ' - ' in full_str else full_str.strip()
+    return ""
 def is_summary_like(row):
     # Join row values into a string and check for summary patterns
     text = " ".join(str(x) for x in row if pd.notna(x)).lower()
@@ -247,6 +248,17 @@ def clean_csv(file_path,file_prefix, type):
         # Parse and fill 'Property Name' from header lines
         df['Property Name'] = df['Property'].apply(parse_property_name)
         df["GL Account Name"] = df["GL Account"].str.split(" - ", n=1).str[1]
+
+    elif file_prefix == 'guest':
+        first_col = df.columns[0]
+
+        # Detect header rows that start with '->'
+        header_mask = df[first_col].astype(str).str.strip().str.startswith('->')
+        header_indices = header_mask[header_mask].index
+        
+        # Drop those header rows
+        df = df.drop(index=header_indices).reset_index(drop=True)
+        df['Property Name'] = df['Property'].apply(parse_property_name)
 
     elif file_prefix == 'tenant_data':
         df['Property Name'] = df['Property'].apply(parse_property_name)
@@ -515,23 +527,24 @@ def get_data_from_appfolio():
         
         time.sleep(3)  # Allow page to load
 
-        # rentroll = download_csv(driver, LOGIN_URL, 1, 'rentroll', None)
-        # tenant = download_csv(driver, TENANT_URL, 1, 'tenant_data',None)
-        # work_order = download_csv(driver, WORK_ORDER_URL, 1, 'work_order',None)
-        # leasing = download_csv(driver, LEASING_FUNNEL_URL, 1, 'leasing',None) 
-        # prospect = download_csv(driver, PROSPECT_SOURCE_URL,1, 'prospect',None)
+        rentroll = download_csv(driver, LOGIN_URL, 1, 'rentroll', None)
+        tenant = download_csv(driver, TENANT_URL, 1, 'tenant_data',None)
+        work_order = download_csv(driver, WORK_ORDER_URL, 1, 'work_order',None)
+        leasing = download_csv(driver, LEASING_FUNNEL_URL, 1, 'leasing',None) 
+        prospect = download_csv(driver, PROSPECT_SOURCE_URL,1, 'prospect',None)
         bill = download_csv(driver, BILL_URL, 1,'bill',None)
-        # month_end_dates = get_trailing_month_end_dates(today)
+        guest = download_csv(driver, GUEST_CARD_URL, 1,'guest',None)
+        month_end_dates = get_trailing_month_end_dates(today)
 
-        # for date_str in month_end_dates:
-        #     prefix = f"rentroll_{date_str.replace('/', '-')}_cleaned_"
-        #     if any(fname.startswith(prefix) for fname in os.listdir(BASE_DOWNLOAD_FOLDER)):
-        #         print(f"[SKIPPED] Found existing file for {date_str}")
-        #         continue
+        for date_str in month_end_dates:
+            prefix = f"rentroll_{date_str.replace('/', '-')}_cleaned_"
+            if any(fname.startswith(prefix) for fname in os.listdir(BASE_DOWNLOAD_FOLDER)):
+                print(f"[SKIPPED] Found existing file for {date_str}")
+                continue
 
-        #     success = download_csv(driver, LOGIN_URL, 2,  f"rentroll_{date_str.replace('/', '-')}", target_date=date_str)
-        #     if not success:
-        #         logging.warning(f"Download failed for {date_str}")
+            success = download_csv(driver, LOGIN_URL, 2,  f"rentroll_{date_str.replace('/', '-')}", target_date=date_str)
+            if not success:
+                logging.warning(f"Download failed for {date_str}")
 
         df_all_rentrolls = union_rentrolls()
         output_path = os.path.join(BASE_DOWNLOAD_FOLDER, f"rentroll_12_months_combined_{datetime.today().strftime('%Y%m%d')}.csv")
@@ -554,7 +567,7 @@ def get_data_from_appfolio():
 
 
 if __name__ == "__main__":
-    filepath = r"C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_cleaned_20250506_125546.csv"
-    clean_csv(filepath, 'bill',1)
+    filepath = r"C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\guest_card_inquiries-20250506.csv"
+    clean_csv(filepath, 'guest',1)
     # get_data_from_appfolio()
 

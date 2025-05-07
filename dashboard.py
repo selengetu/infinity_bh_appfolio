@@ -25,6 +25,7 @@ def show_dashboard():
         "Rent Roll": "rentroll_cleaned",
         "Leasing": "leasing_cleaned",
         "Bill": "bill_cleaned",
+        "Guest": "guest_cleaned",
         "Rent Roll 12 Months": "rentroll_12_months_combined",
     }
     today = datetime.today()
@@ -75,6 +76,7 @@ def show_dashboard():
         "Leasing": latest_files.get("Leasing"),
         "Rent Roll": latest_files.get("Rent Roll"),
         "Bill": latest_files.get("Bill"),
+        "Guest": latest_files.get("Guest"),
         "Rent Roll 12 Months": latest_files.get("Rent Roll 12 Months")
     }
     # 🔹 2. Load DataFrames
@@ -143,7 +145,7 @@ def show_dashboard():
 
         # Metric calculations using filtered data
         col1,col01,col02,col2,col3, col4 = st.columns(6)
-
+        tenant_data['Lease To'] = pd.to_datetime(tenant_data['Lease To'], errors='coerce')
         all_units = rent_roll.shape[0]
         current_resident = rent_roll[rent_roll["Status"] == "Current"].shape[0]
         notice = rent_roll[rent_roll["Status"] == "Notice-Unrented"].shape[0]
@@ -151,8 +153,16 @@ def show_dashboard():
         evict = rent_roll[rent_roll["Status"] == "Evict"].shape[0]
         vacant_rented = rent_roll[rent_roll["Status"] == "Vacant-Rented"].shape[0]
         vacant_unrented = rent_roll[rent_roll["Status"] == "Vacant-Unrented"].shape[0]
+        future = tenant_data[tenant_data["Status"] == "Future"].shape[0]
+        current_nonrenew = tenant_data[
+            (tenant_data["Status"] == "Current") &
+            (tenant_data["Lease To"] >= today) &
+            (tenant_data["Tenant Tags"].str.contains(r'non[\s-]?renew|not[\s-]?renew', case=False, na=False))
+        ].shape[0]
+        
         total_vacant = vacant_rented+vacant_unrented
         occupied = current_resident + evict + notice + notice_re
+        future_rate = ((current_resident + evict + notice + notice_re + future- current_nonrenew)/ all_units) * 100 if all_units > 0 else 0
         occupied_rate = ((current_resident + evict + notice + notice_re) / all_units) * 100 if all_units > 0 else 0
 
         # Convert rent columns
@@ -188,7 +198,7 @@ def show_dashboard():
         col1.metric(label="🏘️ Total Units", value=f"{all_units:,.0f}")
         col01.metric(label="✅ Total Occupied", value=f"{occupied}")
         col02.metric(label="🌀 Total Vacant", value=f"{total_vacant}")
-        col2.metric(label="📈 Future Occupancy Rate", value=f"{occupied_rate:.2f}%")
+        col2.metric(label="📈 Future Occupancy Rate", value=f"{future_rate:,.2f}%")
         col3.metric(label="📥 Move-ins (Next 90 days)", value=f"{total_move_ins}")
         col4.metric(label="📤 Move-outs (Next 90 days)", value=f"{total_move_out}")
 
@@ -852,14 +862,14 @@ def show_dashboard():
 
 
     with tab3:
-        df_leasing = dfs["Leasing"].copy()
-        df_leasing1 = dfs["Leasing"].copy()
+        df_guest= dfs["Guest"].copy()
+        df_guest1 = dfs["Guest"].copy()
         
-        df_leasing = df_leasing.merge(region_df, left_on="Property", right_on="Property Name", how="left")
-        df_leasing1 = df_leasing1.merge(region_df, left_on="Property", right_on="Property Name", how="left")
+        df_guest = df_guest.merge(region_df, left_on="Property", right_on="Property Name", how="left")
+        df_guest1 = df_guest1.merge(region_df, left_on="Property", right_on="Property Name", how="left")
 
-        properties3 =  sorted(df_leasing["Property"].dropna().unique().tolist() , key=str.lower)
-        regions3=  sorted(df_leasing["Region"].dropna().unique().tolist(), key=str.lower)
+        properties3 =  sorted(df_guest["Property"].dropna().unique().tolist() , key=str.lower)
+        regions3=  sorted(df_guest["Region"].dropna().unique().tolist(), key=str.lower)
 
         col_prop3,col_region3,col_s3 = st.columns(3)
 
@@ -870,12 +880,12 @@ def show_dashboard():
             selected_region3 = st.selectbox("Filter by Region", ["All"] + regions3, key="region_tab3")
 
         if selected_region3 != "All":
-            df_leasing = df_leasing[df_leasing["Region"] == selected_region3]
-            df_leasing1 = df_leasing1[df_leasing1["Region"] == selected_region3]
+            df_guest = df_guest[df_guest["Region"] == selected_region3]
+            df_guest1 = df_guest1[df_guest1["Region"] == selected_region3]
 
         if selected_property3 != "All":
-            df_leasing = df_leasing[df_leasing["Property"] == selected_property3]
-            df_leasing1 = df_leasing1[df_leasing1["Property"] == selected_property3]
+            df_guest = df_guest[df_guest["Property"] == selected_property3]
+            df_guest1 = df_guest1[df_guest1["Property"] == selected_property3]
       
         col36, col37 = st.columns(2)
 
@@ -883,11 +893,10 @@ def show_dashboard():
 
             # Sum values across all properties
             funnel_counts = {
-                "Move-Ins": df_leasing["Move-Ins"].sum(),
-                "Approved": df_leasing["Approved"].sum(),
-                "Rental Applications": df_leasing["Rental Apps"].sum(),
-                "Completed Shows": df_leasing["Completed Showings"].sum(),
-                "Inquiries": df_leasing["Inquiries"].sum(),
+                "Move-Ins": df_guest["Move In Preference"].count(),
+                "Rental Applications": df_guest["Rental Application ID"].count(),
+                "Completed Shows": df_guest["Showings"].sum(),
+                "Inquiries": df_guest["Inquiry ID"].count(),
             }
 
             # Convert to DataFrame
@@ -925,19 +934,19 @@ def show_dashboard():
 
         with col37:
         
-            df_prospect = dfs["Prospect"].copy()
+            df_guest = dfs["Guest"].copy()
 
             # Clean data
-            df_prospect['Source'] = df_prospect['Source'].fillna("Unknown")
+            df_guest['Source'] = df_guest['Source'].fillna("Unknown")
 
             # Group by Source
-            summary = df_prospect.groupby("Source").agg(
-                Guest_Cards=('Guest Card Inquiries', 'sum'),
-                Converted_Tenants=('Converted Tenants', 'sum')
+            summary = df_guest.groupby("Source").agg(
+                Guest_Cards=('Inquiry ID', 'count'),
+                Converted_Tenants=('Move In Preference', 'count')
             ).reset_index()
 
             # Sort by most Guest Cards
-            summary = summary.sort_values(by="Converted_Tenants", ascending=False).head(10)
+            summary = summary.sort_values(by="Guest_Cards", ascending=False).head(10)
 
             # Create bar chart
             fig = go.Figure()
@@ -1394,34 +1403,38 @@ def show_dashboard():
             bill['Bill Date'] = pd.to_datetime(bill['Bill Date'], errors='coerce')
             bill['Month'] = bill['Bill Date'].dt.to_period("M").astype(str)
 
-            # Clean Paid and Unpaid columns
-            bill['Paid'] = (
-                bill['Paid'].astype(str)
-                .str.replace(r'[$,]', '', regex=True)
-            )
-
-            bill['Unpaid'] = (
-                bill['Unpaid'].astype(str)
-                .str.replace(r'[$,]', '', regex=True)
-            )
-
+            bill['Paid'] = bill['Paid'].astype(str).str.replace(r'[$,]', '', regex=True)
+            bill['Unpaid'] = bill['Unpaid'].astype(str).str.replace(r'[$,]', '', regex=True)
             bill['Paid'] = pd.to_numeric(bill['Paid'], errors='coerce').fillna(0)
             bill['Unpaid'] = pd.to_numeric(bill['Unpaid'], errors='coerce').fillna(0)
 
-            # Group by Month
+            # Normalize Approval Status
+            bill['Approval Status'] = bill['Approval Status'].fillna("Unapproved")
+            bill['Approval Status'] = bill['Approval Status'].str.strip().str.lower()
+
+            # Create flags
+            bill['Is_Approved'] = bill['Approval Status'].str.contains("approved", case=False, na=False)
+
+            # Split unpaid amounts
+            bill['Unpaid_Approved'] = bill.apply(lambda row: row['Unpaid'] if row['Is_Approved'] else 0, axis=1)
+            bill['Unpaid_Unapproved'] = bill.apply(lambda row: row['Unpaid'] if not row['Is_Approved'] else 0, axis=1)
+
+            # Group by month
             monthly_summary = bill.groupby('Month').agg({
                 'Paid': 'sum',
-                'Unpaid': 'sum',
+                'Unpaid_Approved': 'sum',
+                'Unpaid_Unapproved': 'sum',
                 'Reference': 'nunique'
             }).reset_index().sort_values('Month')
 
-            # Add a new Total column
-            monthly_summary["Total Amount"] = monthly_summary["Paid"] + monthly_summary["Unpaid"]
+            monthly_summary['Total Amount'] = (
+                monthly_summary['Paid'] + monthly_summary['Unpaid_Approved'] + monthly_summary['Unpaid_Unapproved']
+            )
 
-            # Stacked bar chart
+            # Create figure
             fig = go.Figure()
 
-            # Paid Bar
+            # Paid
             fig.add_trace(go.Bar(
                 x=monthly_summary['Month'],
                 y=monthly_summary['Paid'],
@@ -1431,43 +1444,52 @@ def show_dashboard():
                 textposition='inside'
             ))
 
-            # Unpaid Bar
+            # Unpaid - Approved
             fig.add_trace(go.Bar(
                 x=monthly_summary['Month'],
-                y=monthly_summary['Unpaid'],
-                name='Unpaid',
+                y=monthly_summary['Unpaid_Approved'],
+                name='Unpaid - Approved',
                 marker_color='indianred',
-                text=monthly_summary['Unpaid'].map('${:,.0f}'.format),
+                text=monthly_summary['Unpaid_Approved'].map('${:,.0f}'.format),
                 textposition='inside'
             ))
 
-            # Line chart for Reference Count
+            # Unpaid - Unapproved
+            fig.add_trace(go.Bar(
+                x=monthly_summary['Month'],
+                y=monthly_summary['Unpaid_Unapproved'],
+                name='Unpaid - Unapproved',
+                marker_color='orange',
+                text=monthly_summary['Unpaid_Unapproved'].map('${:,.0f}'.format),
+                textposition='inside'
+            ))
+
+            # Reference count (secondary axis)
             fig.add_trace(go.Scatter(
                 x=monthly_summary['Month'],
                 y=monthly_summary['Reference'],
                 name='Reference Count',
                 yaxis='y2',
                 mode='lines+markers+text',
-                line=dict(color='orange', width=3),
+                line=dict(color='gray', width=3),
                 marker=dict(size=8),
-               
             ))
 
-
+            # Total label on top
             fig.add_trace(go.Scatter(
                 x=monthly_summary['Month'],
-                y=monthly_summary['Total Amount']+250,
+                y=monthly_summary['Total Amount'] + 250,
                 mode='text',
                 text=monthly_summary['Total Amount'].map('${:,.0f}'.format),
                 textposition='top center',
-                textfont=dict(size=12, color="mediumseagreen",family="Arial Black" ),
-                showlegend=False  # No legend needed
+                textfont=dict(size=12, color="mediumseagreen", family="Arial Black"),
+                showlegend=False
             ))
 
             # Layout
             fig.update_layout(
                 barmode='stack',
-                title='💸 Paid vs Unpaid Amounts by Month',
+                title='💸 Paid vs Unpaid Amounts by Month (Split by Approval)',
                 xaxis=dict(title='Month'),
                 yaxis=dict(title='Amount ($)', tickformat="$.2s"),
                 yaxis2=dict(
@@ -1481,10 +1503,10 @@ def show_dashboard():
                 width=1000
             )
 
-            # Show chart
             st.plotly_chart(fig, use_container_width=True)
         
         col66 = st.columns(1)[0]
+        col67 = st.columns(1)[0]
         with col66:
 
             # Ensure columns are in correct type
@@ -1535,6 +1557,112 @@ def show_dashboard():
 
             st.plotly_chart(fig, use_container_width=True)
 
+        with col67:
+            # Clean and prepare columns
+            bill['Paid'] = pd.to_numeric(bill['Paid'], errors='coerce').fillna(0)
+            bill['Unpaid'] = pd.to_numeric(bill['Unpaid'], errors='coerce').fillna(0)
+            bill['Approval Status'] = bill['Approval Status'].fillna("Unapproved").str.strip().str.lower()
+            bill['Payee Name'] = bill['Payee Name'].fillna("Unknown")
+
+            # Create boolean flag for approval
+            bill['Is_Approved'] = bill['Approval Status'].str.contains("approved", case=False, na=False)
+
+            # Split unpaid
+            bill['Unpaid_Approved'] = bill.apply(lambda row: row['Unpaid'] if row['Is_Approved'] else 0, axis=1)
+            bill['Unpaid_Unapproved'] = bill.apply(lambda row: row['Unpaid'] if not row['Is_Approved'] else 0, axis=1)
+
+            # Group by vendor
+            summary = (
+                bill.groupby('Payee Name')
+                .agg({
+                    'Paid': 'sum',
+                    'Unpaid_Approved': 'sum',
+                    'Unpaid_Unapproved': 'sum',
+                    'Reference': 'nunique'
+                })
+                .reset_index()
+            )
+
+            summary['Unpaid_Total'] = summary['Unpaid_Approved'] + summary['Unpaid_Unapproved']
+            summary['Total_Activity'] = summary['Unpaid_Total'] + summary['Paid']
+            top_vendors = summary.sort_values('Unpaid_Total', ascending=False).head(10)
+
+            # Plot
+            fig = go.Figure()
+
+            # Bar: Paid
+            fig.add_trace(go.Bar(
+                x=top_vendors['Payee Name'],
+                y=top_vendors['Paid'],
+                name='Paid',
+                marker_color='mediumseagreen',
+                offsetgroup=0,
+                text=top_vendors['Paid'].map('${:,.0f}'.format),
+                textposition='auto'
+            ))
+
+            # Bar: Unpaid - Approved
+            fig.add_trace(go.Bar(
+                x=top_vendors['Payee Name'],
+                y=top_vendors['Unpaid_Approved'],
+                name='Unpaid - Approved',
+                marker_color='indianred',
+                offsetgroup=1,
+                base=0,
+                text=top_vendors['Unpaid_Approved'].map('${:,.0f}'.format),
+                textposition='inside'
+            ))
+
+            # Bar: Unpaid - Unapproved (stacked on approved)
+            fig.add_trace(go.Bar(
+                x=top_vendors['Payee Name'],
+                y=top_vendors['Unpaid_Unapproved'],
+                name='Unpaid - Unapproved',
+                marker_color='orange',
+                offsetgroup=1,
+                base=top_vendors['Unpaid_Approved'],
+                text=top_vendors['Unpaid_Unapproved'].map('${:,.0f}'.format),
+                textposition='inside'
+            ))
+
+            # Line: Reference Count
+            fig.add_trace(go.Scatter(
+                x=top_vendors['Payee Name'],
+                y=top_vendors['Reference'],
+                name='Reference Count',
+                yaxis='y2',
+                mode='lines+markers+text',
+                text=top_vendors['Reference'],
+                textposition='top center',
+                line=dict(color='blue', width=2),
+                marker=dict(size=8),
+            ))
+
+            # Layout
+            fig.update_layout(
+                title="💵 Paid vs Unpaid by Vendor (Stacked) + Reference Count",
+                xaxis_title="Vendor",
+                yaxis=dict(title="Amount ($)", tickformat="$.2s"),
+                yaxis2=dict(
+                    title="Reference Count",
+                    overlaying='y',
+                    side='right',
+                    showgrid=False
+                ),
+                barmode='relative',
+                bargap=0.35,
+                legend_title="Category",
+                xaxis_tickangle=-45,
+                width=1100,
+                height=600,
+                hovermode="x unified"
+            )
+
+            st.plotly_chart(fig, use_container_width=True)
+
+
+
+
         with tab1:
             st.subheader("🏠 Property Performance")
             st.write(rent_roll1)
@@ -1545,7 +1673,7 @@ def show_dashboard():
 
         with tab3:
             st.subheader("📝 Leasing")
-            st.write(df_leasing1)
+            st.write(df_guest1)
          
         with tab4:
             st.subheader("🔧 Maintenance")
