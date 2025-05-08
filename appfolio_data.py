@@ -34,6 +34,7 @@ TENANT_URL = os.getenv('TENANT_URL')
 PURCHASE_ORDER_URL = os.getenv('PURCHASE_ORDER_URL')
 PROSPECT_SOURCE_URL = os.getenv('PROSPECT_SOURCE_URL')
 GUEST_CARD_URL = os.getenv('GUEST_CARD_URL')
+LEDGER_URL = os.getenv('LEDGER_URL')
 BILL_URL = os.getenv('BILL_URL')
 USERNAME = os.getenv('APPFOLIO_USERNAME')
 PASSWORD = os.getenv('APPFOLIO_PASSWORD')
@@ -269,6 +270,33 @@ def clean_csv(file_path,file_prefix, type):
     
     elif file_prefix == 'leasing':
         pass
+
+    elif file_prefix == 'general_ledger':
+        
+        first_col = df.columns[0]
+        header_mask = df[first_col].astype(str).str.strip().str.startswith('->')
+        header_indices = header_mask[header_mask].index
+        df = df.drop(index=header_indices).reset_index(drop=True)
+
+        # Extract Property Name
+        df['Property Name'] = df['Property'].apply(parse_property_name)
+
+        # Remove known unwanted keywords
+        keywords_to_remove = ["Starting Balance", "Net Change", ""]
+        df = df[~df["Property"].str.strip().isin(keywords_to_remove)].reset_index(drop=True)
+
+        # Drop rows that are completely empty
+        df.dropna(how='all', inplace=True)
+
+        # Drop rows where the "Property" column is empty or just whitespace
+        df = df[df["Property"].str.strip() != ""].reset_index(drop=True)
+        df = df[df["Date"].str.strip() != ""].reset_index(drop=True)
+        df = df[df["Property Name"].str.strip() != ""].reset_index(drop=True)
+
+
+        # Reset index for a cleaner output
+        df.reset_index(drop=True, inplace=True)
+
 
     else:         
         print(file_prefix)
@@ -534,6 +562,7 @@ def get_data_from_appfolio():
         prospect = download_csv(driver, PROSPECT_SOURCE_URL,1, 'prospect',None)
         bill = download_csv(driver, BILL_URL, 1,'bill',None)
         guest = download_csv(driver, GUEST_CARD_URL, 1,'guest',None)
+        general_ledger = download_csv(driver, LEDGER_URL, 1,'general_ledger',None)
         month_end_dates = get_trailing_month_end_dates(today)
 
         for date_str in month_end_dates:
@@ -567,7 +596,7 @@ def get_data_from_appfolio():
 
 
 if __name__ == "__main__":
-    filepath = r"C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\guest_card_inquiries-20250506.csv"
-    clean_csv(filepath, 'guest',1)
+    filepath = r"C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\general_ledger-20250508.csv"
+    clean_csv(filepath, 'general_ledger',1)
     # get_data_from_appfolio()
 
