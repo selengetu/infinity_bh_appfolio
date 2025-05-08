@@ -26,7 +26,8 @@ def show_dashboard():
         "Leasing": "leasing_cleaned",
         "Bill": "bill_cleaned",
         "Guest": "guest_cleaned",
-        "General Ledger": "general_ledger_cleaned",
+        "General Ledger1": "general_ledger1_cleaned",
+        "General Ledger2": "general_ledger2_cleaned",
         "Rent Roll 12 Months": "rentroll_12_months_combined",
     }
     today = datetime.today()
@@ -78,7 +79,8 @@ def show_dashboard():
         "Rent Roll": latest_files.get("Rent Roll"),
         "Bill": latest_files.get("Bill"),
         "Guest": latest_files.get("Guest"),
-        "General Ledger": latest_files.get("General Ledger"),
+        "General Ledger1": latest_files.get("General Ledger1"),
+        "General Ledger2": latest_files.get("General Ledger2"),
         "Rent Roll 12 Months": latest_files.get("Rent Roll 12 Months")
     }
     # 🔹 2. Load DataFrames
@@ -127,23 +129,33 @@ def show_dashboard():
         col_prop,col_region, col_s= st.columns(3)
 
         with col_prop:
-            selected_property = st.selectbox("Filter by Property", ["All"] + properties)
+            selected_property = st.multiselect(
+                "Filter by Property",
+                options=properties,
+                default=[],
+                key="property_tab"
+            )
 
         with col_region:
-            selected_region = st.selectbox("Filter by Region", ["All"] + regions)
+            selected_region = st.multiselect(
+                "Filter by Region",
+                options=regions,
+                default=[],
+                key="region_tab"
+            )   
         
 
-        if selected_property != "All":
-            rent_roll = rent_roll[rent_roll["Property Name"] == selected_property]
-            rent_roll1 = rent_roll1[rent_roll1["Property Name"] == selected_property]
-            trailing_12months = trailing_12months[trailing_12months["Property Name"] == selected_property]
-            tenant_data = tenant_data[tenant_data["Property Name"] == selected_property]
+        if selected_property:
+            rent_roll = rent_roll[rent_roll["Property Name"].isin(selected_property)]
+            rent_roll1 = rent_roll1[rent_roll1["Property Name"].isin(selected_property)]
+            trailing_12months = trailing_12months[trailing_12months["Property Name"].isin(selected_property)]
+            tenant_data = tenant_data[tenant_data["Property Name"].isin(selected_property)]
 
-        if selected_region != "All":
-            rent_roll = rent_roll[rent_roll["Region"] == selected_region]
-            rent_roll1 = rent_roll1[rent_roll1["Region"] == selected_region]
-            trailing_12months = trailing_12months[trailing_12months["Region"] == selected_region]
-            tenant_data = tenant_data[tenant_data["Region"] == selected_region]
+        if selected_region:
+            rent_roll = rent_roll[rent_roll["Region"].isin(selected_region)]
+            rent_roll1 = rent_roll1[rent_roll1["Region"].isin(selected_region)]
+            trailing_12months = trailing_12months[trailing_12months["Region"].isin(selected_region)]
+            tenant_data = tenant_data[tenant_data["Region"].isin(selected_region)]
 
         # Metric calculations using filtered data
         col1,col01,col02,col2,col3, col4 = st.columns(6)
@@ -714,19 +726,28 @@ def show_dashboard():
         col_prop1, col_region1,col_s1 = st.columns(3)
 
         with col_prop1:
-            selected_property1 = st.selectbox("Filter by Property", ["All"] + properties1, key="property_tab2")
+            selected_property1 = st.multiselect(
+                "Filter by Property",
+                options=properties1,
+                default=[],
+                key="property_tab2"
+            )
 
         with col_region1:
-            selected_region1 = st.selectbox("Filter by Region", ["All"] + regions1, key="region_tab2")
-       
+            selected_region1 = st.multiselect(
+                "Filter by Region",
+                options=regions1,
+                default=[],
+                key="region_tab2"
+            )   
 
-        if selected_property1 != "All":
-            rent_roll = rent_roll[rent_roll["Property Name"] == selected_property1]
-            rent_roll2 = rent_roll2[rent_roll2["Property Name"] == selected_property1]
+        if selected_property1:
+            rent_roll = rent_roll[rent_roll["Property Name"].isin(selected_property1)]
+            rent_roll2 = rent_roll2[rent_roll2["Property Name"].isin(selected_property1)]
 
-        if selected_region1 != "All":
-            rent_roll = rent_roll[rent_roll["Region"] == selected_region1]
-            rent_roll2 = rent_roll2[rent_roll2["Region"] == selected_region1]
+        if selected_region1:
+            rent_roll = rent_roll[rent_roll["Region"].isin(selected_region1)]
+            rent_roll2 = rent_roll2[rent_roll2["Region"].isin(selected_region1)]
 
          # Metric calculations using filtered data
         col21, col22, col23, col24, col25 = st.columns(5)
@@ -867,28 +888,48 @@ def show_dashboard():
         df_guest= dfs["Guest"].copy()
         df_guest1 = dfs["Guest"].copy()
         
-        df_guest = df_guest.merge(region_df, left_on="Property", right_on="Property Name", how="left")
-        df_guest1 = df_guest1.merge(region_df, left_on="Property", right_on="Property Name", how="left")
+        df_guest = df_guest.merge(region_df, left_on="Property Name", right_on="Property Name", how="left")
+        df_guest1 = df_guest1.merge(region_df, left_on="Property Name", right_on="Property Name", how="left")
 
-        properties3 =  sorted(df_guest["Property"].dropna().unique().tolist() , key=str.lower)
+        properties3 =  sorted(df_guest["Property Name"].dropna().unique().tolist() , key=str.lower)
         regions3=  sorted(df_guest["Region"].dropna().unique().tolist(), key=str.lower)
 
-        col_prop3,col_region3,col_s3 = st.columns(3)
+        col_prop3,col_region3,col_date1, col_date2 = st.columns(4)
 
         with col_prop3:
-            selected_property3 = st.selectbox("Filter by Property", ["All"] + properties3, key="property_tab3")
+            selected_property3 = st.multiselect(
+                "Filter by Property",
+                options=properties3,
+                default=[],
+                key="property_tab3"
+            )
 
         with col_region3:
-            selected_region3 = st.selectbox("Filter by Region", ["All"] + regions3, key="region_tab3")
+            selected_region3 = st.multiselect(
+                "Filter by Region",
+                options=regions3,
+                default=[],
+                key="region_tab3"
+            ) 
+        with col_date1:
+            start_date = st.date_input("Start Date", value=datetime(2024, 1, 1), key="start_date3")
+        with col_date2:
+            end_date = st.date_input("End Date", value=datetime.now(), key="end_date3")
 
-        if selected_region3 != "All":
-            df_guest = df_guest[df_guest["Region"] == selected_region3]
-            df_guest1 = df_guest1[df_guest1["Region"] == selected_region3]
+        if selected_region3:
+            df_guest = df_guest[df_guest["Region"].isin(selected_region3)]
+            df_guest1 = df_guest1[df_guest1["Region"].isin(selected_region3)]
 
-        if selected_property3 != "All":
-            df_guest = df_guest[df_guest["Property"] == selected_property3]
-            df_guest1 = df_guest1[df_guest1["Property"] == selected_property3]
-      
+        if selected_property3:
+            df_guest = df_guest[df_guest["Property Name"].isin(selected_property3)]
+            df_guest1 = df_guest1[df_guest1["Property Name"].isin(selected_property3)]
+
+        if "Inquiry Received" in df_guest.columns:
+            df_guest["Inquiry Received"] = pd.to_datetime(df_guest["Inquiry Received"], errors="coerce")
+            df_guest = df_guest[(df_guest["Inquiry Received"] >= pd.to_datetime(start_date)) & (df_guest["Inquiry Received"] <= pd.to_datetime(end_date))]
+            df_guest1["Inquiry Received"] = pd.to_datetime(df_guest1["Inquiry Received"], errors="coerce")
+            df_guest1 = df_guest1[(df_guest1["Inquiry Received"] >= pd.to_datetime(start_date)) & (df_guest1["Inquiry Received"] <= pd.to_datetime(end_date))]
+        
         col36, col37 = st.columns(2)
 
         with col36:
@@ -1006,19 +1047,28 @@ def show_dashboard():
         col_prop4, col_region4,col_s4 = st.columns(3)
 
         with col_prop4:
-            selected_property4 = st.selectbox("Filter by Property", ["All"] + properties4, key="property_tab4")
+            selected_property4 = st.multiselect(
+                "Filter by Property",
+                options=properties4,
+                default=[],
+                key="property_tab4"
+            )
 
         with col_region4:
-            selected_region4 = st.selectbox("Filter by Region", ["All"] + region4, key="region_tab4")
+            selected_region4 = st.multiselect(
+                "Filter by Region",
+                options=region4,
+                default=[],
+                key="region_tab4"
+            )   
 
+        if selected_property4:
+            df_work = df_work[df_work["Property Name"].isin(selected_property4)]
+            df_work1 = df_work1[df_work1["Property Name"].isin(selected_property4)]
 
-        if selected_property4 != "All":
-            df_work = df_work[df_work["Property Name"] == selected_property4]
-            df_work1 = df_work1[df_work1["Property Name"] == selected_property4]
-
-        if selected_region4 != "All":
-            df_work = df_work[df_work["Region"] == selected_region4]
-            df_work1 = df_work1[df_work1["Region"] == selected_region4]
+        if selected_region4:
+            df_work = df_work[df_work["Region"].isin(selected_region4)]
+            df_work1 = df_work1[df_work1["Region"].isin(selected_region4)]
 
         col45, col46 = st.columns(2)
 
@@ -1163,22 +1213,33 @@ def show_dashboard():
         col_prop5, col_region5,col_s5 = st.columns(3)
 
         with col_prop5:
-            selected_property5 = st.selectbox("Filter by Property", ["All"] + properties5, key="property_tab5")
-        
+            selected_property5 = st.multiselect(
+                "Filter by Property",
+                options=properties5,
+                default=[],
+                key="property_tab5"
+            )
+
         with col_region5:
-            selected_region5 = st.selectbox("Filter by Region", ["All"] + region5, key="region_tab5")
+            selected_region5 = st.multiselect(
+                "Filter by Region",
+                options=region5,
+                default=[],
+                key="region_tab5"
+            )   
 
-        if selected_property5 != "All":
-            rent_roll = rent_roll[rent_roll["Property Name"] == selected_property5]
-            tenant_data = tenant_data[tenant_data["Property Name"] == selected_property5]
-            tenant_data1 = tenant_data1[tenant_data1["Property Name"] == selected_property5]
-            trailing_12months = trailing_12months[trailing_12months["Property Name"] == selected_property5]
 
-        if selected_region5 != "All":
-            rent_roll = rent_roll[rent_roll["Region"] == selected_region5]
-            tenant_data = tenant_data[tenant_data["Region"] == selected_region5]
-            tenant_data1 = tenant_data1[tenant_data1["Region"] == selected_region5]
-            trailing_12months = trailing_12months[trailing_12months["Region"] == selected_region5]
+        if selected_property5:
+            rent_roll = rent_roll[rent_roll["Property Name"].isin(selected_property5)]
+            tenant_data = tenant_data[tenant_data["Property Name"].isin(selected_property5)]
+            tenant_data1 = tenant_data1[tenant_data1["Property Name"].isin(selected_property5)]
+            trailing_12months = trailing_12months[trailing_12months["Property Name"].isin(selected_property5)]
+
+        if selected_region5:
+            rent_roll = rent_roll[rent_roll["Region"].isin(selected_region5)]
+            tenant_data = tenant_data[tenant_data["Region"].isin(selected_region5)]
+            tenant_data1 = tenant_data1[tenant_data1["Region"].isin(selected_region5)]
+            trailing_12months = trailing_12months[trailing_12months["Region"].isin(selected_region5)]
 
         col51, col52, col53, col54 = st.columns(4)
 
@@ -1354,7 +1415,9 @@ def show_dashboard():
         
         bill = dfs["Bill"].copy()
         bill1 = dfs["Bill"].copy()
-        general_ledger = dfs["General Ledger"].copy()
+        general_ledger1 = dfs["General Ledger1"].copy()
+        general_ledger2 = dfs["General Ledger2"].copy()
+        general_ledger = pd.concat([general_ledger1, general_ledger2], ignore_index=True)
 
         bill = bill.merge(region_df, on="Property Name", how="left")
         bill1 = bill1.merge(region_df, on="Property Name", how="left")
@@ -1368,13 +1431,28 @@ def show_dashboard():
         col_prop6,col_region6, col_prop06,col_gl6= st.columns(4)
 
         with col_prop6:
-            selected_property6 = st.selectbox("Filter by Property", ["All"] + properties6, key="property_tab6")
-        
+            selected_property6 = st.multiselect(
+                "Filter by Property",
+                options=properties6,
+                default=[],
+                key="property_tab6"
+            )
+
         with col_prop06:
-            selected_property06 = st.selectbox("Filter by Payee", ["All"] + properties06, key="property_tab06")
-            
+            selected_property06 = st.multiselect(
+                "Filter by Payee",
+                options=properties06,
+                default=[],
+                key="property_tab06"
+            )
+    
         with col_region6:
-            selected_region6 = st.selectbox("Filter by Region", ["All"] + region6, key="region_tab6")
+            selected_region6 = st.multiselect(
+                "Filter by Region",
+                options=region6,
+                default=[],
+                key="region_tab6"
+            )   
 
         with col_gl6:
             selected_gl6 = st.multiselect(
@@ -1384,7 +1462,6 @@ def show_dashboard():
                 key="gl_tab6"
             )
 
-<<<<<<< HEAD
         if selected_property6:
             bill = bill[bill["Property Name"].isin(selected_property6)]
             bill1 = bill1[bill1["Property Name"].isin(selected_property6)]
@@ -1399,25 +1476,11 @@ def show_dashboard():
             bill = bill[bill["Region"].isin(selected_region6)]
             bill1 = bill1[bill1["Region"].isin(selected_region6)]
             general_ledger = general_ledger[general_ledger["Region"].isin(selected_region6)]
-=======
-        if selected_property6 != "All":
-            bill = bill[bill["Property Name"] == selected_property6]
-            bill1 = bill1[bill1["Property Name"] == selected_property6]
-
-        if selected_property06 != "All":
-            bill = bill[bill["Payee Name"] == selected_property06]
-            bill1 = bill1[bill1["Payee Name"] == selected_property06]
-
-        if selected_region6 != "All":
-            bill = bill[bill["Region"] == selected_region6]
-            bill1 = bill1[bill1["Region"] == selected_region6]
->>>>>>> parent of 390e57e (changes)
 
         if selected_gl6:
             bill = bill[bill["GL Account Name"].isin(selected_gl6)]
             bill1 = bill1[bill1["GL Account Name"].isin(selected_gl6)]
 
-<<<<<<< HEAD
         
         col61,col62, col63, col64 = st.columns(4)
 
@@ -1554,8 +1617,6 @@ def show_dashboard():
             st.plotly_chart(fig, use_container_width=True)
         
 
-=======
->>>>>>> parent of 390e57e (changes)
         col65 = st.columns(1)[0]
 
         with col65:
