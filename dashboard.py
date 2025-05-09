@@ -1417,7 +1417,11 @@ def show_dashboard():
         bill1 = dfs["Bill"].copy()
         general_ledger1 = dfs["General Ledger1"].copy()
         general_ledger2 = dfs["General Ledger2"].copy()
+        trailing_12months = dfs["Rent Roll 12 Months"].copy()  
+        
+        
         general_ledger = pd.concat([general_ledger1, general_ledger2], ignore_index=True)
+        trailing_12months = trailing_12months.merge(region_df, on="Property Name", how="left")
 
         bill = bill.merge(region_df, on="Property Name", how="left")
         bill1 = bill1.merge(region_df, on="Property Name", how="left")
@@ -1617,6 +1621,48 @@ def show_dashboard():
             # Display in Streamlit
             st.plotly_chart(fig, use_container_width=True)
         
+        col651 = st.columns(1)[0]
+
+        with col651:
+            trailing_12months['date_str'] = pd.to_datetime(trailing_12months['date_str'], errors='coerce')
+            trailing_12months['Month'] = trailing_12months['date_str'].dt.to_period("M").astype(str)
+
+            # Convert financial columns to numeric
+            trailing_12months['Rent'] = trailing_12months['Rent'].astype(str).str.replace(r'[$,]', '', regex=True).astype(float).fillna(0)
+            trailing_12months['Past Due'] = trailing_12months['Past Due'].astype(str).str.replace(r'[$,]', '', regex=True).astype(float).fillna(0)
+            trailing_12months['Rent'] = trailing_12months['Rent'] - trailing_12months['Past Due']
+            # Group by Month
+            monthly_summary = trailing_12months.groupby('Month').agg({
+                'Rent': 'sum'
+            }).reset_index().sort_values('Month')
+
+            # Create the bar chart
+            fig = go.Figure()
+
+            # Rent (col65)
+            fig.add_trace(go.Bar(
+                x=monthly_summary['Month'],
+                y=monthly_summary['Rent'],
+                name='Rent ',
+                marker_color='lightgrey',
+                text=monthly_summary['Rent'].map('${:,.0f}'.format),
+                textposition='inside'
+            ))
+
+
+            # Layout settings
+            fig.update_layout(
+                barmode='stack',
+                title='💸 Monthly Economic Expense',
+                xaxis=dict(title='Month'),
+                yaxis=dict(title='Amount ($)', tickformat="$.2s"),
+                legend=dict(title='Payment Type'),
+                height=600,
+                width=1000
+            )
+
+            st.plotly_chart(fig, use_container_width=True)
+
 
         col65 = st.columns(1)[0]
 
@@ -1671,7 +1717,7 @@ def show_dashboard():
                 x=monthly_summary['Month'],
                 y=monthly_summary['Unpaid_Approved'],
                 name='Unpaid - Approved',
-                marker_color='indianred',
+                marker_color='orange',
                 text=monthly_summary['Unpaid_Approved'].map('${:,.0f}'.format),
                 textposition='inside'
             ))
@@ -1681,7 +1727,7 @@ def show_dashboard():
                 x=monthly_summary['Month'],
                 y=monthly_summary['Unpaid_Unapproved'],
                 name='Unpaid - Unapproved',
-                marker_color='orange',
+                marker_color='indianred',
                 text=monthly_summary['Unpaid_Unapproved'].map('${:,.0f}'.format),
                 textposition='inside'
             ))
@@ -1828,7 +1874,7 @@ def show_dashboard():
                 x=top_vendors['Payee Name'],
                 y=top_vendors['Unpaid_Approved'],
                 name='Unpaid - Approved',
-                marker_color='indianred',
+                marker_color='orange',
                 offsetgroup=1,
                 base=0,
                 text=top_vendors['Unpaid_Approved'].map('${:,.0f}'.format),
@@ -1840,7 +1886,7 @@ def show_dashboard():
                 x=top_vendors['Payee Name'],
                 y=top_vendors['Unpaid_Unapproved'],
                 name='Unpaid - Unapproved',
-                marker_color='orange',
+                marker_color='indianred',
                 offsetgroup=1,
                 base=top_vendors['Unpaid_Approved'],
                 text=top_vendors['Unpaid_Unapproved'].map('${:,.0f}'.format),

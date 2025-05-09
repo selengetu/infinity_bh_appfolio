@@ -48,6 +48,7 @@ LEASING_FUNNEL_FOLDER = os.path.join(BASE_DOWNLOAD_FOLDER, "leasing_funnel")
 PROSPECT_SOURCE_FOLDER = os.path.join(BASE_DOWNLOAD_FOLDER, "prospect_source")
 
 today = datetime.today()
+yesterday = datetime.today()- timedelta(days=1)
 ninety_days_ago = today - timedelta(days=90)
 first_day_of_month = today.replace(day=1)
 last_day_of_prev_month = first_day_of_month - timedelta(days=1)
@@ -56,6 +57,7 @@ one_year_ago = last_day_of_prev_month - timedelta(days=365)
 one_year_ago_first_day = first_day_of_month - timedelta(days=365)
 
 formatted_today = today.strftime("%m/%d/%Y")
+formatted_yesterday = yesterday.strftime("%m/%d/%Y")
 formatted_ninety_days_ago = ninety_days_ago.strftime("%m/%d/%Y")
 formatted_first_day_of_month = first_day_of_month.strftime("%m/%d/%Y")
 formatted_last_day_prev_month = last_day_of_prev_month.strftime("%m/%d/%Y")
@@ -282,7 +284,7 @@ def clean_csv(file_path,file_prefix, type):
         df['Property Name'] = df['Property'].apply(parse_property_name)
 
         # Remove known unwanted keywords
-        keywords_to_remove = ["Starting Balance", "Net Change", ""]
+        keywords_to_remove = ["Starting Balance", "Net Change", "Total", ""]
         df = df[~df["Property"].str.strip().isin(keywords_to_remove)].reset_index(drop=True)
 
         # Drop rows that are completely empty
@@ -296,6 +298,18 @@ def clean_csv(file_path,file_prefix, type):
 
         # Reset index for a cleaner output
         df.reset_index(drop=True, inplace=True)
+
+        general_ledger3_cleaned = pd.read_csv("data/general_ledger3_cleaned.csv")
+
+        # Assuming the existing general_ledger df is already cleaned as you described
+        general_ledger_combined = pd.concat([df, general_ledger3_cleaned], ignore_index=True)
+
+        # Reset the index for a cleaner dataframe
+        general_ledger_combined.reset_index(drop=True, inplace=True)
+
+        general_ledger_combined.drop_duplicates(inplace=True)
+
+        general_ledger_combined.to_csv("data/general_ledger3_cleaned.csv", index=False)
 
 
     else:         
@@ -390,30 +404,63 @@ def download_csv(driver, page_url, type, file_prefix, target_date=None):
         date_input.clear()
         date_from_input.send_keys(formatted_ninety_days_ago) 
         date_input.send_keys(formatted_today) 
+
+
+    if file_prefix == 'general_ledger':
+        date_from_input = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.ID, "filters_posted_on_from"))
+        )
+        date_input = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.ID, "filters_posted_on_to"))
+        )
+        date_from_input.clear()
+        date_input.clear()
+        date_from_input.send_keys(formatted_yesterday) 
+        date_input.send_keys(formatted_yesterday) 
+
+    if file_prefix == 'guest':
+
+        radio_button = WebDriverWait(driver, 10).until(
+        EC.element_to_be_clickable((By.ID, "filters_float_received_on_from_to"))
+        )
+        radio_button.click()
+        
+        date_from_input = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.ID, "filters_received_on_from"))
+        )
+        date_input = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.ID, "filters_received_on_to"))
+        )
+        date_from_input.clear()
+        date_input.clear()
+        date_from_input.send_keys(formatted_one_year_ago_first_day) 
+        date_input.send_keys(formatted_today) 
+
+
     # Click update and download CSV
     click_update_button(driver)
     time.sleep(30)
 
     if file_prefix == 'tenant_data': 
-        print('📄 Handling tenant_data columns...')
+        print('Handling tenant_data columns...')
 
         # Wait for the search box
         search_box = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.XPATH, "//input[@placeholder='Search...']"))
         )
-        print('🔍 Search input found.')
+        print('Search input found.')
 
         # Search for "Move-out"
         search_box.clear()
         search_box.send_keys("Move-out")
-        print("🔎 Typed 'Move-out' in search box.")
+        print("Typed 'Move-out' in search box.")
         time.sleep(2)
 
         # Find the "Move-out" text (span)
         moveout_element = WebDriverWait(driver, 10).until(
             EC.element_to_be_clickable((By.XPATH, "//span[@data-ref='eLabel' and text()='Move-out']"))
         )
-        print("✅ Move-out column appeared.")
+        print("Move-out column appeared.")
 
         # Scroll into view and click the text directly
         driver.execute_script("arguments[0].scrollIntoView(true);", moveout_element)
@@ -421,11 +468,200 @@ def download_csv(driver, page_url, type, file_prefix, target_date=None):
 
         try:
             moveout_element.click()
-            print("✅ Move-out clicked normally.")
+            print("Move-out clicked normally.")
         except Exception as e:
-            print(f"⚡ Normal click failed: {e}")
+            print(f"Normal click failed: {e}")
             driver.execute_script("arguments[0].click();", moveout_element)
-            print("✅ Move-out clicked using JavaScript fallback.")
+            print(" Move-out clicked using JavaScript fallback.")
+
+    if file_prefix == 'general_ledger': 
+
+        # Wait for the search box
+        search_box = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, "//input[@placeholder='Search...']"))
+        )
+        print(' Search input found.')
+
+    
+        search_box.clear()
+        search_box.send_keys("GL Account")
+        print(" Typed 'GL Account' in search box.")
+        time.sleep(2)
+
+        # Find the "Move-out" text (span)
+        glaccount_element = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.XPATH, "//span[@data-ref='eLabel' and text()='GL Account']"))
+        )
+        print("GL account column appeared.")
+
+        # Scroll into view and click the text directly
+        driver.execute_script("arguments[0].scrollIntoView(true);", glaccount_element)
+        time.sleep(1)
+
+        try:
+            glaccount_element.click()
+            print("GL account clicked normally.")
+        except Exception as e:
+            print(f" Normal click failed: {e}")
+            driver.execute_script("arguments[0].click();", glaccount_element)
+            print("GL account clicked using JavaScript fallback.")
+
+    if file_prefix == 'guest': 
+
+        # Wait for the search box
+        search_box = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, "//input[@placeholder='Search...']"))
+        )
+        print(' Search input found.')
+
+    
+        search_box.clear()
+        search_box.send_keys("Property")
+        print(" Typed 'Property' in search box.")
+        time.sleep(2)
+
+        # Find the "Move-out" text (span)
+        property_element = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.XPATH, "//span[@data-ref='eLabel' and text()='Property']"))
+        )
+        print("Property column appeared.")
+
+        # Scroll into view and click the text directly
+        driver.execute_script("arguments[0].scrollIntoView(true);", property_element)
+        time.sleep(1)
+
+        try:
+            property_element.click()
+            print("Property clicked normally.")
+        except Exception as e:
+            print(f" Normal click failed: {e}")
+            driver.execute_script("arguments[0].click();", property_element)
+            print("Property clicked using JavaScript fallback.")
+
+        search_box.clear()
+        search_box.send_keys("Inquiry ID")
+        print(" Typed 'Inquiry ID' in search box.")
+        time.sleep(2)
+
+        # Find the "Move-out" text (span)
+        inqiury_element = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.XPATH, "//span[@data-ref='eLabel' and text()='Inquiry ID']"))
+        )
+        print("Inquiry ID column appeared.")
+
+        # Scroll into view and click the text directly
+        driver.execute_script("arguments[0].scrollIntoView(true);", inqiury_element)
+        time.sleep(1)
+
+        try:
+            inqiury_element.click()
+            print("Inquiry ID clicked normally.")
+        except Exception as e:
+            print(f" Normal click failed: {e}")
+            driver.execute_script("arguments[0].click();", inqiury_element)
+            print("Inquiry ID clicked using JavaScript fallback.")
+
+        
+        search_box.clear()
+        search_box.send_keys("Showings")
+        print(" Typed 'Showings' in search box.")
+        time.sleep(2)
+
+        # Find the "Move-out" text (span)
+        showings_element = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.XPATH, "//span[@data-ref='eLabel' and text()='Showings']"))
+        )
+        print("Showings column appeared.")
+
+        # Scroll into view and click the text directly
+        driver.execute_script("arguments[0].scrollIntoView(true);", showings_element)
+        time.sleep(1)
+
+        try:
+            showings_element.click()
+            print("Showings clicked normally.")
+        except Exception as e:
+            print(f" Normal click failed: {e}")
+            driver.execute_script("arguments[0].click();", showings_element)
+            print("Showings clicked using JavaScript fallback.")
+
+        search_box.clear()
+        search_box.send_keys("Source")
+        print(" Typed 'Source' in search box.")
+        time.sleep(2)
+
+        # Find the "Move-out" text (span)
+        source_element = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.XPATH, "//span[@data-ref='eLabel' and text()='Source']"))
+        )
+        print("Source column appeared.")
+
+        # Scroll into view and click the text directly
+        driver.execute_script("arguments[0].scrollIntoView(true);", source_element)
+        time.sleep(1)
+
+        try:
+            source_element.click()
+            print("Source clicked normally.")
+        except Exception as e:
+            print(f" Normal click failed: {e}")
+            driver.execute_script("arguments[0].click();", source_element)
+            print("Source clicked using JavaScript fallback.")
+
+        search_box.clear()
+        search_box.send_keys("Rental Application ID")
+        print(" Typed 'Rental Application ID' in search box.")
+        time.sleep(2)
+
+        # Find the "Move-out" text (span)
+        rental_element = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.XPATH, "//span[@data-ref='eLabel' and text()='Rental Application ID']"))
+        )
+        print("Rental Application ID column appeared.")
+
+        # Scroll into view and click the text directly
+        driver.execute_script("arguments[0].scrollIntoView(true);", rental_element)
+        time.sleep(1)
+
+        try:
+            rental_element.click()
+            print("Rental Application ID clicked normally.")
+        except Exception as e:
+            print(f" Normal click failed: {e}")
+            driver.execute_script("arguments[0].click();", rental_element)
+            print("Rental Application ID clicked using JavaScript fallback.")
+    
+    if file_prefix == 'bill': 
+
+        # Wait for the search box
+        search_box = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, "//input[@placeholder='Search...']"))
+        )
+        print(' Search input found.')
+
+    
+        search_box.clear()
+        search_box.send_keys("Approval Status")
+        print(" Typed 'Approval Status' in search box.")
+        time.sleep(2)
+
+        # Find the "Move-out" text (span)
+        approval_element = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.XPATH, "//span[@data-ref='eLabel' and text()='Approval Status']"))
+        )
+        print("Approval Status column appeared.")
+
+        # Scroll into view and click the text directly
+        driver.execute_script("arguments[0].scrollIntoView(true);", approval_element)
+        time.sleep(1)
+
+        try:
+            approval_element.click()
+            print("Approval Status clicked normally.")
+        except Exception as e:
+            print(f" Normal click failed: {e}")
+            driver.execute_script("arguments[0].click();", approval_element)
+            print("Approval Status clicked using JavaScript fallback.")
 
     open_dropdown_and_click_csv(driver)
     time.sleep(30)
@@ -555,30 +791,31 @@ def get_data_from_appfolio():
         
         time.sleep(3)  # Allow page to load
 
-        rentroll = download_csv(driver, LOGIN_URL, 1, 'rentroll', None)
-        tenant = download_csv(driver, TENANT_URL, 1, 'tenant_data',None)
-        work_order = download_csv(driver, WORK_ORDER_URL, 1, 'work_order',None)
-        leasing = download_csv(driver, LEASING_FUNNEL_URL, 1, 'leasing',None) 
-        prospect = download_csv(driver, PROSPECT_SOURCE_URL,1, 'prospect',None)
+        # rentroll = download_csv(driver, LOGIN_URL, 1, 'rentroll', None)
+        # tenant = download_csv(driver, TENANT_URL, 1, 'tenant_data',None)
+        # work_order = download_csv(driver, WORK_ORDER_URL, 1, 'work_order',None)
+        # leasing = download_csv(driver, LEASING_FUNNEL_URL, 1, 'leasing',None) 
+        # prospect = download_csv(driver, PROSPECT_SOURCE_URL,1, 'prospect',None)
         bill = download_csv(driver, BILL_URL, 1,'bill',None)
-        guest = download_csv(driver, GUEST_CARD_URL, 1,'guest',None)
-        general_ledger = download_csv(driver, LEDGER_URL, 1,'general_ledger',None)
-        month_end_dates = get_trailing_month_end_dates(today)
+        # guest = download_csv(driver, GUEST_CARD_URL, 1,'guest',None)
+        # general_ledger = download_csv(driver, LEDGER_URL, 1,'general_ledger',None)
+        # month_end_dates = get_trailing_month_end_dates(today)
+       
 
-        for date_str in month_end_dates:
-            prefix = f"rentroll_{date_str.replace('/', '-')}_cleaned_"
-            if any(fname.startswith(prefix) for fname in os.listdir(BASE_DOWNLOAD_FOLDER)):
-                print(f"[SKIPPED] Found existing file for {date_str}")
-                continue
+        # for date_str in month_end_dates:
+        #     prefix = f"rentroll_{date_str.replace('/', '-')}_cleaned_"
+        #     if any(fname.startswith(prefix) for fname in os.listdir(BASE_DOWNLOAD_FOLDER)):
+        #         print(f"[SKIPPED] Found existing file for {date_str}")
+        #         continue
 
-            success = download_csv(driver, LOGIN_URL, 2,  f"rentroll_{date_str.replace('/', '-')}", target_date=date_str)
-            if not success:
-                logging.warning(f"Download failed for {date_str}")
+        #     success = download_csv(driver, LOGIN_URL, 2,  f"rentroll_{date_str.replace('/', '-')}", target_date=date_str)
+        #     if not success:
+        #         logging.warning(f"Download failed for {date_str}")
 
-        df_all_rentrolls = union_rentrolls()
-        output_path = os.path.join(BASE_DOWNLOAD_FOLDER, f"rentroll_12_months_combined_{datetime.today().strftime('%Y%m%d')}.csv")
-        df_all_rentrolls.to_csv(output_path, index=False, encoding='utf-8-sig')
-        print(f"[DONE] Saved combined file to: {output_path}")
+        # df_all_rentrolls = union_rentrolls()
+        # output_path = os.path.join(BASE_DOWNLOAD_FOLDER, f"rentroll_12_months_combined_{datetime.today().strftime('%Y%m%d')}.csv")
+        # df_all_rentrolls.to_csv(output_path, index=False, encoding='utf-8-sig')
+        # print(f"[DONE] Saved combined file to: {output_path}")
         success = True  # Mark as successful
     except Exception as e:
         print(f" An error occurred: {e}")
@@ -596,7 +833,7 @@ def get_data_from_appfolio():
 
 
 if __name__ == "__main__":
-    filepath = r"C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\general_ledger-20250508.csv"
-    clean_csv(filepath, 'general_ledger',1)
-    # get_data_from_appfolio()
+    # filepath = r"C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\rent_roll-20250509_april.csv"
+    # clean_csv(filepath, 'rentroll',2)
+    get_data_from_appfolio()
 
