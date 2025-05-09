@@ -1490,9 +1490,10 @@ def show_dashboard():
         total_rent_df = general_ledger[(general_ledger['GL Account Code'] >= 4100) & (general_ledger['GL Account Code'] <= 4104)]
         total_operating_income_df = general_ledger[(general_ledger['GL Account Code'] >= 4100) & (general_ledger['GL Account Code'] <= 5721)]
         total_operating_expense_df = general_ledger[
-                ((general_ledger['GL Account Code'] >= 6210) & (general_ledger['GL Account Code'] < 6511)) |
+                ((general_ledger['GL Account Code'] >= 6210) & (general_ledger['GL Account Code'] < 6521)) |
                 (general_ledger['GL Account Code'].isin([6561, 6565, 6567, 6564])) |
-                ((general_ledger['GL Account Code'] >= 6730) & (general_ledger['GL Account Code'] < 7628))
+                ((general_ledger['GL Account Code'] >= 6730) & (general_ledger['GL Account Code'] < 7611)) |
+                (general_ledger['GL Account Code'].isin([7626,7627, 6563]))
         ]
 
             # Include 'Liability to Landlord Insurance' even without a GL Account Code
