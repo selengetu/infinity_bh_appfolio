@@ -4,6 +4,7 @@ import numpy as np
 import plotly.express as px
 import plotly.io as pio
 import plotly.graph_objects as go
+
 import json
 import os
 from datetime import datetime, timedelta
@@ -1650,13 +1651,21 @@ def show_dashboard():
             )   
 
         with col_gl6:
-            selected_gl6 = st.multiselect(
-                "Filter by GL Account",
-                options=gl_accounts6,
-                default=[],
-                key="gl_tab6"
-            )
+            # Add a styled label for better alignment
+            st.markdown("""
+            <div style=" margin-bottom: 0px;">
+                Filter by GL Account
+            </div>
+            """, unsafe_allow_html=True)
 
+            # Use expander for compact view
+            with st.expander("Select GL Accounts (Select All)", expanded=False):
+                selected_gl6 = st.multiselect(
+                    "Select GL Accounts",
+                    options=gl_accounts6,
+                    default=gl_accounts6,
+                    key="gl_tab6"
+                )
         if selected_property6:
             bill = bill[bill["Property Name"].isin(selected_property6)]
             bill1 = bill1[bill1["Property Name"].isin(selected_property6)]
