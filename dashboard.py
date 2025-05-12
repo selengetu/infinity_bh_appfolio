@@ -28,6 +28,7 @@ def show_dashboard():
         "Guest": "guest_cleaned",
         "General Ledger1": "general_ledger1_cleaned",
         "General Ledger2": "general_ledger2_cleaned",
+        "General Ledger3": "general_ledger3_cleaned",
         "Rent Roll 12 Months": "rentroll_12_months_combined",
     }
     today = datetime.today()
@@ -81,6 +82,7 @@ def show_dashboard():
         "Guest": latest_files.get("Guest"),
         "General Ledger1": latest_files.get("General Ledger1"),
         "General Ledger2": latest_files.get("General Ledger2"),
+        "General Ledger3": latest_files.get("General Ledger3"),
         "Rent Roll 12 Months": latest_files.get("Rent Roll 12 Months")
     }
     # 🔹 2. Load DataFrames
@@ -210,7 +212,7 @@ def show_dashboard():
 
         # Display metrics
         col1.metric(label="🏘️ Total Units", value=f"{all_units:,.0f}")
-        col01.metric(label="✅ Total Occupied", value=f"{occupied}")
+        col01.metric(label="✅ Total Occupied", value=f"{occupied:,.0f}")
         col02.metric(label="🌀 Total Vacant", value=f"{total_vacant}")
         col2.metric(label="📈 Future Occupancy Rate", value=f"{future_rate:,.2f}%")
         col3.metric(label="📥 Move-ins (Next 90 days)", value=f"{total_move_ins}")
@@ -716,14 +718,24 @@ def show_dashboard():
          # Filter data
         rent_roll = dfs["Rent Roll"].copy()
         rent_roll2 = dfs["Rent Roll"].copy()
+        general_ledger1 = dfs["General Ledger1"].copy()
+        general_ledger2 = dfs["General Ledger2"].copy()
+        general_ledger3 = dfs["General Ledger3"].copy()
+        trailing_12months = dfs["Rent Roll 12 Months"].copy()  
+        general_ledger = pd.concat([general_ledger1, general_ledger2], ignore_index=True)
+        general_ledger = pd.concat([general_ledger, general_ledger3], ignore_index=True)
+
 
         rent_roll = rent_roll.merge(region_df, on="Property Name", how="left")
         rent_roll2 = rent_roll2.merge(region_df, on="Property Name", how="left")
+        general_ledger = pd.concat([general_ledger1, general_ledger2], ignore_index=True)
+        trailing_12months = trailing_12months.merge(region_df, on="Property Name", how="left")
 
         properties1 =  sorted(rent_roll["Property Name"].dropna().unique().tolist() , key=str.lower)
         regions1=  sorted(rent_roll["Region"].dropna().unique().tolist(), key=str.lower)
+        gl_accounts1 =  sorted(general_ledger1["GL Account"].dropna().unique().tolist(), key=str.lower)
 
-        col_prop1, col_region1,col_s1 = st.columns(3)
+        col_prop1, col_region1,col_gl1 = st.columns(3)
 
         with col_prop1:
             selected_property1 = st.multiselect(
@@ -741,6 +753,8 @@ def show_dashboard():
                 key="region_tab2"
             )   
 
+        
+
         if selected_property1:
             rent_roll = rent_roll[rent_roll["Property Name"].isin(selected_property1)]
             rent_roll2 = rent_roll2[rent_roll2["Property Name"].isin(selected_property1)]
@@ -749,16 +763,194 @@ def show_dashboard():
             rent_roll = rent_roll[rent_roll["Region"].isin(selected_region1)]
             rent_roll2 = rent_roll2[rent_roll2["Region"].isin(selected_region1)]
 
+   
+
          # Metric calculations using filtered data
-        col21, col22, col23, col24, col25 = st.columns(5)
+        col21, col22, col23, col24, col251 = st.columns(5)
 
         
         # Convert rent columns
         rent_roll["Rent"] = rent_roll["Rent"].replace("[\$,]", "", regex=True)
         rent_roll["Rent"] = pd.to_numeric(rent_roll["Rent"], errors="coerce")
         total_rent = rent_roll["Rent"].sum()
+        total_rent_count = rent_roll.shape[0]
+        general_ledger['GL Account Code'] = general_ledger['GL Account'].str.extract(r'(\d{4})')
+        general_ledger['GL Account Code'] = pd.to_numeric(general_ledger['GL Account Code'], errors='coerce')
 
-        col21.metric(label="💵 Total Rent", value=f"${total_rent:,.0f}")
+        total_rent_df = general_ledger[(general_ledger['GL Account Code'] >= 4100) & (general_ledger['GL Account Code'] <= 4104)]
+        total_operating_income_df = general_ledger[(general_ledger['GL Account Code'] >= 4100) & (general_ledger['GL Account Code'] <= 5721)]
+        total_operating_expense_df = general_ledger[
+                ((general_ledger['GL Account Code'] >= 6210) & (general_ledger['GL Account Code'] < 6521)) |
+                (general_ledger['GL Account Code'].isin([6561, 6565, 6567, 6564])) |
+                ((general_ledger['GL Account Code'] >= 6730) & (general_ledger['GL Account Code'] < 7611)) |
+                (general_ledger['GL Account Code'].isin([7626,7627, 6563]))
+        ]
+
+            # Include 'Liability to Landlord Insurance' even without a GL Account Code
+        insurance_df = general_ledger[general_ledger['GL Account'] == 'Liability to Landlord Insurance']
+
+            # Combine operating income and insurance
+        total_operating_income_df = pd.concat([total_operating_income_df, insurance_df], ignore_index=True)
+
+            # Convert the 'Date' column to datetime to extract the month
+        total_rent_df['Date'] = pd.to_datetime(total_rent_df['Date'])
+        total_rent_df['Month'] = total_rent_df['Date'].dt.strftime('%Y-%m')
+        total_operating_income_df['Date'] = pd.to_datetime(total_operating_income_df['Date'])
+        total_operating_income_df['Month'] = total_operating_income_df['Date'].dt.strftime('%Y-%m')
+        total_operating_expense_df['Date'] = pd.to_datetime(total_operating_expense_df['Date'])
+        total_operating_expense_df['Month'] = total_operating_expense_df['Date'].dt.strftime('%Y-%m')
+            
+
+            # Clean Credit and Debit columns
+        def clean_amount(df, column):
+            df[column] = df[column].replace("[\,]", "", regex=True).replace("", "0").astype(float).round(2)
+            df[column] = pd.to_numeric(df[column], errors="coerce").fillna(0).round(2)
+
+        clean_amount(total_rent_df, "Credit")
+        clean_amount(total_rent_df, "Debit")
+        clean_amount(total_operating_income_df, "Credit")
+        clean_amount(total_operating_income_df, "Debit")
+        clean_amount(total_operating_expense_df, "Credit")
+        clean_amount(total_operating_expense_df, "Debit")
+
+            # Calculate Net Income before grouping
+        total_rent_df["Net Income"] = total_rent_df["Credit"] - total_rent_df["Debit"]
+        total_operating_income_df["Net Income"] = total_operating_income_df["Credit"] - total_operating_income_df["Debit"]
+        total_operating_expense_df["Expense"] = total_operating_expense_df["Debit"]  -  total_operating_expense_df["Credit"]
+
+        col025 = st.columns(1)[0]
+
+        with col025:    
+
+            total_units = rent_roll['Property Name'].count()
+            # Group by month
+            monthly_rent_income = total_rent_df.groupby('Month')["Net Income"].sum().reset_index()
+            monthly_rent_income.columns = ['Month', 'Total Rent Income']
+
+            monthly_operating_income = total_operating_income_df.groupby('Month')["Net Income"].sum().reset_index()
+            monthly_operating_income.columns = ['Month', 'Total Operating Income']
+
+            monthly_operating_expense = total_operating_expense_df.groupby('Month')["Expense"].sum().reset_index()
+            monthly_operating_expense.columns = ['Month', 'Total Operating Expense']
+
+            # Merge the two dataframes
+            # Merge rent income and operating income
+            monthly_summary = pd.merge(monthly_rent_income, monthly_operating_income, on="Month", how="outer").fillna(0)
+
+            # Merge with operating expenses
+            monthly_summary = pd.merge(monthly_summary, monthly_operating_expense, on="Month", how="outer").fillna(0)
+
+            monthly_summary['NOI'] = monthly_summary['Total Operating Income'] - monthly_summary['Total Operating Expense']
+            monthly_summary['Expense Ratio'] = (monthly_summary['Total Operating Expense'] / monthly_summary['Total Operating Income']) * 100
+            monthly_summary['Income per unit'] = monthly_summary['Total Operating Income'] / total_units
+            monthly_summary['Expense per unit'] = monthly_summary['Total Operating Expense'] / total_units
+            monthly_summary['NOI per unit'] = monthly_summary['NOI'] / total_units
+        
+            # Format currency columns
+            monthly_summary['Total Rent Income'] = monthly_summary['Total Rent Income'].map('${:,.0f}'.format)
+            monthly_summary['Total Operating Income'] = monthly_summary['Total Operating Income'].map('${:,.0f}'.format)
+            monthly_summary['Total Operating Expense'] = monthly_summary['Total Operating Expense'].map('${:,.0f}'.format)
+            monthly_summary['NOI'] = monthly_summary['NOI'].map('${:,.0f}'.format)
+            monthly_summary['Expense Ratio'] = monthly_summary['Expense Ratio'].map('${:.0f}'.format)
+            monthly_summary['Income per unit'] = monthly_summary['Income per unit'].map('${:.0f}'.format)
+            monthly_summary['Expense per unit'] = monthly_summary['Expense per unit'].map('${:.0f}'.format)
+            monthly_summary['NOI per unit'] = monthly_summary['NOI per unit'].map('${:.0f}'.format)
+            
+               # Display metrics
+            last_month_summary = monthly_summary.iloc[-1]
+
+            # Extract the values directly
+            last_month_total_rent = last_month_summary['Total Rent Income']
+            last_month_total_operating_income = last_month_summary['Total Operating Income']
+            last_month_total_operating_expenses = last_month_summary['Total Operating Expense']
+            last_month_noi = last_month_summary['NOI']
+
+           
+            
+            # Display metrics
+            col21.metric(label="💰 Total Rent", value=f"{last_month_total_rent}")
+            col22.metric(label="📈 Total Operating Income", value=f"{last_month_total_operating_income}")
+            col23.metric(label="💸 Total Operating Expenses", value=f"{last_month_total_operating_expenses}")
+            col24.metric(label="🏦 Net Operating Income (NOI)", value=f"{last_month_noi}")
+            col251.metric(label="💵 Rent per unit", value=f"${total_rent/total_rent_count:.0f}")
+
+            fig = go.Figure(data=[go.Table(
+                header=dict(values=list(monthly_summary.columns),
+                            fill_color='steelblue',
+                            align='center',
+                            font=dict(color='white', size=14)),
+                cells=dict(
+                    values=[monthly_summary[col] for col in monthly_summary.columns],
+                    align='center',
+                    font=dict(size=12),
+                    fill_color=[
+                        ['rgba(0,0,0,0)']* len(monthly_summary['Month']),  # Total Rent Income
+                        ['rgba(0,0,0,0)'] * len(monthly_summary['Month']),
+                        ['rgba(0,0,0,0)'] * len(monthly_summary['Month']),
+                        ['rgba(0,0,0,0)'] * len(monthly_summary['Month']), 
+                        [
+                            'red' if float(noi.replace("$", "").replace(",", "")) < 0 else 'green' 
+                            for noi in monthly_summary['NOI']
+                        ],
+                        ['rgba(0,0,0,0)'] * len(monthly_summary['Month'])
+                    ]
+                )
+            )])
+        
+            # Set table layout
+            fig.update_layout(
+                title='💸 Monthly Total Rent Income and Net Income Table',
+                height=600,
+                width=1000
+            )
+
+            # Display in Streamlit
+            st.plotly_chart(fig, use_container_width=True)
+
+        col251 = st.columns(1)[0]
+
+        with col251:
+            trailing_12months['date_str'] = pd.to_datetime(trailing_12months['date_str'], errors='coerce')
+            trailing_12months['Month'] = trailing_12months['date_str'].dt.to_period("M").astype(str)
+
+            # Convert financial columns to numeric
+            trailing_12months['Rent'] = trailing_12months['Rent'].astype(str).str.replace(r'[$,]', '', regex=True).astype(float).fillna(0)
+            trailing_12months['Past Due'] = trailing_12months['Past Due'].astype(str).str.replace(r'[$,]', '', regex=True).astype(float).fillna(0)
+            trailing_12months['Rent'] = trailing_12months['Rent'] - trailing_12months['Past Due']
+            # Group by Month
+            monthly_summary = trailing_12months.groupby('Month').agg({
+                'Rent': 'sum'
+            }).reset_index().sort_values('Month')
+
+            # Create the bar chart
+            fig = go.Figure()
+
+            # Rent (col65)
+            fig.add_trace(go.Bar(
+                x=monthly_summary['Month'],
+                y=monthly_summary['Rent'],
+                name='Rent ',
+                marker_color='lightgrey',
+                text=monthly_summary['Rent'].map('${:,.0f}'.format),
+                textposition='inside'
+            ))
+
+
+            # Layout settings
+            fig.update_layout(
+                barmode='stack',
+                title='💸 Monthly Economic Expense',
+                xaxis=dict(title='Month'),
+                yaxis=dict(title='Amount ($)', tickformat="$.2s"),
+                legend=dict(title='Payment Type'),
+                height=600,
+                width=1000
+            )
+
+            st.plotly_chart(fig, use_container_width=True)
+
+
+        
 
         col26, col27= st.columns(2)
 
@@ -1419,7 +1611,6 @@ def show_dashboard():
         general_ledger2 = dfs["General Ledger2"].copy()
         trailing_12months = dfs["Rent Roll 12 Months"].copy()  
         
-        
         general_ledger = pd.concat([general_ledger1, general_ledger2], ignore_index=True)
         trailing_12months = trailing_12months.merge(region_df, on="Property Name", how="left")
 
@@ -1485,183 +1676,6 @@ def show_dashboard():
             bill = bill[bill["GL Account Name"].isin(selected_gl6)]
             bill1 = bill1[bill1["GL Account Name"].isin(selected_gl6)]
 
-        
-        col61,col62, col63, col64 = st.columns(4)
-
-        general_ledger['GL Account Code'] = general_ledger['GL Account'].str.extract(r'(\d{4})')
-        general_ledger['GL Account Code'] = pd.to_numeric(general_ledger['GL Account Code'], errors='coerce')
-       
-        total_rent_df = general_ledger[(general_ledger['GL Account Code'] >= 4100) & (general_ledger['GL Account Code'] <= 4104)]
-        total_operating_income_df = general_ledger[(general_ledger['GL Account Code'] >= 4100) & (general_ledger['GL Account Code'] <= 5721)]
-        total_operating_expense_df = general_ledger[
-                ((general_ledger['GL Account Code'] >= 6210) & (general_ledger['GL Account Code'] < 6521)) |
-                (general_ledger['GL Account Code'].isin([6561, 6565, 6567, 6564])) |
-                ((general_ledger['GL Account Code'] >= 6730) & (general_ledger['GL Account Code'] < 7611)) |
-                (general_ledger['GL Account Code'].isin([7626,7627, 6563]))
-        ]
-
-            # Include 'Liability to Landlord Insurance' even without a GL Account Code
-        insurance_df = general_ledger[general_ledger['GL Account'] == 'Liability to Landlord Insurance']
-
-            # Combine operating income and insurance
-        total_operating_income_df = pd.concat([total_operating_income_df, insurance_df], ignore_index=True)
-
-            # Convert the 'Date' column to datetime to extract the month
-        total_rent_df['Date'] = pd.to_datetime(total_rent_df['Date'])
-        total_rent_df['Month'] = total_rent_df['Date'].dt.strftime('%Y-%m')
-        total_operating_income_df['Date'] = pd.to_datetime(total_operating_income_df['Date'])
-        total_operating_income_df['Month'] = total_operating_income_df['Date'].dt.strftime('%Y-%m')
-        total_operating_expense_df['Date'] = pd.to_datetime(total_operating_expense_df['Date'])
-        total_operating_expense_df['Month'] = total_operating_expense_df['Date'].dt.strftime('%Y-%m')
-            
-
-            # Clean Credit and Debit columns
-        def clean_amount(df, column):
-            df[column] = df[column].replace("[\,]", "", regex=True).replace("", "0").astype(float).round(2)
-            df[column] = pd.to_numeric(df[column], errors="coerce").fillna(0).round(2)
-
-        clean_amount(total_rent_df, "Credit")
-        clean_amount(total_rent_df, "Debit")
-        clean_amount(total_operating_income_df, "Credit")
-        clean_amount(total_operating_income_df, "Debit")
-        clean_amount(total_operating_expense_df, "Credit")
-        clean_amount(total_operating_expense_df, "Debit")
-
-            # Calculate Net Income before grouping
-        total_rent_df["Net Income"] = total_rent_df["Credit"] - total_rent_df["Debit"]
-        total_operating_income_df["Net Income"] = total_operating_income_df["Credit"] - total_operating_income_df["Debit"]
-        total_operating_expense_df["Expense"] = total_operating_expense_df["Debit"]  -  total_operating_expense_df["Credit"]
-
-    
-        col065 = st.columns(1)[0]
-
-        with col065:    
-
-            total_units = rent_roll['Property Name'].count()
-            # Group by month
-            monthly_rent_income = total_rent_df.groupby('Month')["Net Income"].sum().reset_index()
-            monthly_rent_income.columns = ['Month', 'Total Rent Income']
-
-            monthly_operating_income = total_operating_income_df.groupby('Month')["Net Income"].sum().reset_index()
-            monthly_operating_income.columns = ['Month', 'Total Operating Income']
-
-            monthly_operating_expense = total_operating_expense_df.groupby('Month')["Expense"].sum().reset_index()
-            monthly_operating_expense.columns = ['Month', 'Total Operating Expense']
-
-            # Merge the two dataframes
-            # Merge rent income and operating income
-            monthly_summary = pd.merge(monthly_rent_income, monthly_operating_income, on="Month", how="outer").fillna(0)
-
-            # Merge with operating expenses
-            monthly_summary = pd.merge(monthly_summary, monthly_operating_expense, on="Month", how="outer").fillna(0)
-
-            monthly_summary['NOI'] = monthly_summary['Total Operating Income'] - monthly_summary['Total Operating Expense']
-            monthly_summary['Expense Ratio'] = (monthly_summary['Total Operating Expense'] / monthly_summary['Total Operating Income']) * 100
-            monthly_summary['Income per unit'] = monthly_summary['Total Operating Income'] / total_units
-            monthly_summary['Expense per unit'] = monthly_summary['Total Operating Expense'] / total_units
-            monthly_summary['NOI per unit'] = monthly_summary['NOI'] / total_units
-        
-            # Format currency columns
-            monthly_summary['Total Rent Income'] = monthly_summary['Total Rent Income'].map('${:,.2f}'.format)
-            monthly_summary['Total Operating Income'] = monthly_summary['Total Operating Income'].map('${:,.2f}'.format)
-            monthly_summary['Total Operating Expense'] = monthly_summary['Total Operating Expense'].map('${:,.2f}'.format)
-            monthly_summary['NOI'] = monthly_summary['NOI'].map('${:,.2f}'.format)
-            monthly_summary['Expense Ratio'] = monthly_summary['Expense Ratio'].map('${:.2f}'.format)
-            monthly_summary['Income per unit'] = monthly_summary['Income per unit'].map('${:.2f}'.format)
-            monthly_summary['Expense per unit'] = monthly_summary['Expense per unit'].map('${:.2f}'.format)
-            monthly_summary['NOI per unit'] = monthly_summary['NOI per unit'].map('${:.2f}'.format)
-
-               # Display metrics
-            last_month_summary = monthly_summary.iloc[-1]
-
-            # Extract the values directly
-            last_month_total_rent = last_month_summary['Total Rent Income']
-            last_month_total_operating_income = last_month_summary['Total Operating Income']
-            last_month_total_operating_expenses = last_month_summary['Total Operating Expense']
-            last_month_noi = last_month_summary['NOI']
-
-           
-            
-            # Display metrics
-            col61.metric(label="💰 Total Rent", value=f"{last_month_total_rent}")
-            col62.metric(label="📈 Total Operating Income", value=f"{last_month_total_operating_income}")
-            col63.metric(label="💸 Total Operating Expenses", value=f"{last_month_total_operating_expenses}")
-            col64.metric(label="🏦 Net Operating Income (NOI)", value=f"{last_month_noi}")
-
-            fig = go.Figure(data=[go.Table(
-                header=dict(values=list(monthly_summary.columns),
-                            fill_color='steelblue',
-                            align='center',
-                            font=dict(color='white', size=14)),
-                cells=dict(
-                    values=[monthly_summary[col] for col in monthly_summary.columns],
-                    align='center',
-                    font=dict(size=12),
-                    fill_color=[
-                        ['rgba(0,0,0,0)']* len(monthly_summary['Month']),  # Total Rent Income
-                        ['rgba(0,0,0,0)'] * len(monthly_summary['Month']),
-                        ['rgba(0,0,0,0)'] * len(monthly_summary['Month']),
-                        ['rgba(0,0,0,0)'] * len(monthly_summary['Month']), 
-                        [
-                            'red' if float(noi.replace("$", "").replace(",", "")) < 0 else 'green' 
-                            for noi in monthly_summary['NOI']
-                        ],
-                        ['rgba(0,0,0,0)'] * len(monthly_summary['Month'])
-                    ]
-                )
-            )])
-        
-            # Set table layout
-            fig.update_layout(
-                title='💸 Monthly Total Rent Income and Net Income Table',
-                height=600,
-                width=1000
-            )
-
-            # Display in Streamlit
-            st.plotly_chart(fig, use_container_width=True)
-        
-        col651 = st.columns(1)[0]
-
-        with col651:
-            trailing_12months['date_str'] = pd.to_datetime(trailing_12months['date_str'], errors='coerce')
-            trailing_12months['Month'] = trailing_12months['date_str'].dt.to_period("M").astype(str)
-
-            # Convert financial columns to numeric
-            trailing_12months['Rent'] = trailing_12months['Rent'].astype(str).str.replace(r'[$,]', '', regex=True).astype(float).fillna(0)
-            trailing_12months['Past Due'] = trailing_12months['Past Due'].astype(str).str.replace(r'[$,]', '', regex=True).astype(float).fillna(0)
-            trailing_12months['Rent'] = trailing_12months['Rent'] - trailing_12months['Past Due']
-            # Group by Month
-            monthly_summary = trailing_12months.groupby('Month').agg({
-                'Rent': 'sum'
-            }).reset_index().sort_values('Month')
-
-            # Create the bar chart
-            fig = go.Figure()
-
-            # Rent (col65)
-            fig.add_trace(go.Bar(
-                x=monthly_summary['Month'],
-                y=monthly_summary['Rent'],
-                name='Rent ',
-                marker_color='lightgrey',
-                text=monthly_summary['Rent'].map('${:,.0f}'.format),
-                textposition='inside'
-            ))
-
-
-            # Layout settings
-            fig.update_layout(
-                barmode='stack',
-                title='💸 Monthly Economic Expense',
-                xaxis=dict(title='Month'),
-                yaxis=dict(title='Amount ($)', tickformat="$.2s"),
-                legend=dict(title='Payment Type'),
-                height=600,
-                width=1000
-            )
-
-            st.plotly_chart(fig, use_container_width=True)
 
 
         col65 = st.columns(1)[0]
@@ -1936,7 +1950,7 @@ def show_dashboard():
             st.write(rent_roll1)
 
         with tab2:
-            st.subheader("💰 Rent")
+            st.subheader("💰 Financials")
             st.write(rent_roll2)
 
         with tab3:
