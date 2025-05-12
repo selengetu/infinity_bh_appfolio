@@ -214,7 +214,7 @@ def show_dashboard():
         col1.metric(label="🏘️ Total Units", value=f"{all_units:,.0f}")
         col01.metric(label="✅ Total Occupied", value=f"{occupied:,.0f}")
         col02.metric(label="🌀 Total Vacant", value=f"{total_vacant}")
-        col2.metric(label="📈 Future Occupancy Rate", value=f"{future_rate:,.2f}%")
+        col2.metric(label="📈 Future Occupancy Rate (Next 90 days)", value=f"{future_rate:,.2f}%")
         col3.metric(label="📥 Move-ins (Next 90 days)", value=f"{total_move_ins}")
         col4.metric(label="📤 Move-outs (Next 90 days)", value=f"{total_move_out}")
 
