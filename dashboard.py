@@ -483,19 +483,17 @@ def show_dashboard():
             year_later = today + timedelta(days=365)
             tenant_data1 = tenant_data1[(tenant_data1['Move-in'] >= today)]
             tenant_data1 = tenant_data1[(tenant_data1['Move-in'] <= year_later)]
-            tenant_data1 = tenant_data1[(tenant_data1['Status'] == 'Future')]
             tenant_data1 = tenant_data1.drop_duplicates(subset=['Property Name', 'Unit'])
             tenant_data1['Move-in Month'] = tenant_data1['Move-in'].dt.to_period("M").astype(str)
-            
 
             # Group by Month
             movein_counts1 = tenant_data1.groupby('Move-in Month').size().reset_index(name='Count')
-            movein_counts1.rename(columns={'Move-in Month': 'Month1'}, inplace=True)
- 
+            movein_counts1.rename(columns={'Move-in Month': 'Month'}, inplace=True)
+
             # Plot Lease Tos
             fig1 = px.bar(
                 movein_counts1,
-                x='Month1',
+                x='Month',
                 y='Count',
                 text='Count',
                 title="📊 Monthly Move-in",
@@ -503,11 +501,15 @@ def show_dashboard():
             )
 
             fig1.update_layout(
-                xaxis_title="Month1",
+                xaxis_title="Month",
                 yaxis_title="Number of Units",
-                yaxis=dict(range=[0, 40]),
+                yaxis=dict(range=[0, movein_counts1['Count'].max() + 20]), # Adjust y-axis range dynamically
                 width=1000,
-                height=600
+                height=600,
+                xaxis=dict(
+                    tickmode='linear',
+                    dtick='M1' # Set the interval to one month
+                )
             )
 
             fig1.update_traces(
