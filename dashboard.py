@@ -160,7 +160,7 @@ def show_dashboard():
             tenant_data = tenant_data[tenant_data["Region"].isin(selected_region)]
 
         # Metric calculations using filtered data
-        col1,col01,col02,col2,col3, col4 = st.columns(6)
+        col1,col01,col02,col002, col2,col3, col4 = st.columns(7)
         tenant_data['Lease To'] = pd.to_datetime(tenant_data['Lease To'], errors='coerce')
         all_units = rent_roll.shape[0]
         current_resident = rent_roll[rent_roll["Status"] == "Current"].shape[0]
@@ -214,6 +214,7 @@ def show_dashboard():
         col1.metric(label="🏘️ Total Units", value=f"{all_units:,.0f}")
         col01.metric(label="✅ Total Occupied", value=f"{occupied:,.0f}")
         col02.metric(label="🌀 Total Vacant", value=f"{total_vacant}")
+        col002.metric(label="✅ Current Occupancy Rate", value=f"{occupied_rate:,.2f}%")
         col2.metric(label="📈 Future Occupancy Rate (Next 90 days)", value=f"{future_rate:,.2f}%")
         col3.metric(label="📥 Move-ins (Next 90 days)", value=f"{total_move_ins}")
         col4.metric(label="📤 Move-outs (Next 90 days)", value=f"{total_move_out}")
@@ -557,81 +558,6 @@ def show_dashboard():
             )
 
             st.plotly_chart(fig2, use_container_width=True)
-        
-        
-        col11 = st.columns(1)[0]
-        with col11:
-
-            # Clean the 'Past Due' column: remove $ and commas, convert to float
-            rent_roll['Past Due'] = (
-                rent_roll['Past Due']
-                .astype(str)  # Convert to string in case of mixed types
-                .str.replace(r'[$,]', '', regex=True)  # Remove $ and commas
-            )
-
-            # Convert to numeric, coercing any invalid entries to NaN, then fill NaN with 0
-            rent_roll['Past Due'] = pd.to_numeric(rent_roll['Past Due'], errors='coerce').fillna(0)
-
-            # Filter for tenants who have any amount past due
-            df_delinquent = rent_roll[rent_roll['Past Due'] > 500]
-
-            summary = df_delinquent.groupby('BD/BA').agg(
-                Delinquent_Units=('Unit', 'count'),
-                Delinquent_Amount=('Past Due', 'sum')
-            ).reset_index()
-
-            summary = summary.sort_values(by='Delinquent_Units', ascending=False)
-
-            fig = go.Figure()
-
-            # Bar chart for $ amount (use y2 - right side)
-            fig.add_trace(go.Bar(
-                x=summary['BD/BA'],
-                y=summary['Delinquent_Amount'],
-                name='Delinquent $',
-                yaxis='y2',
-                marker_color='blue',
-                opacity=0.4,
-                text=summary['Delinquent_Amount'].map('${:,.0f}'.format),  # <- Add this
-                textposition='auto'
-            ))
-
-            # Line chart for unit count (use y - left side)
-            fig.add_trace(go.Scatter(
-                x=summary['BD/BA'],
-                y=summary['Delinquent_Units'],
-                mode='lines+markers+text',
-                text=summary['Delinquent_Units'],
-                textposition='top center',
-                name='Delinquent Units',
-                line=dict(color='green'),
-                marker=dict(size=10)
-            ))
-
-            fig.update_layout(
-                title="💰 Delinquency by Unit Type (BD/BA)",
-                xaxis=dict(title="BD/BA"),
-                
-                yaxis=dict(  # LEFT: Delinquent Units
-                    title=dict(text="Delinquent Units"),
-                    tickformat=","
-                ),
-                
-                yaxis2=dict(  # RIGHT: Delinquent Amount $
-                    title=dict(text="Delinquent Amount ($)"),
-                    tickformat="$.2s",
-                    overlaying="y",
-                    side="right",
-                    showgrid=False
-                ),
-
-                legend=dict(title="Metric"),
-                width=1000,
-                height=600,
-                margin=dict(t=60, b=60, l=50, r=50)
-            )
-
-            st.plotly_chart(fig, use_container_width=True)
 
 
     with tab2:
@@ -772,7 +698,7 @@ def show_dashboard():
             monthly_summary['Total Operating Income'] = monthly_summary['Total Operating Income'].map('${:,.0f}'.format)
             monthly_summary['Total Operating Expense'] = monthly_summary['Total Operating Expense'].map('${:,.0f}'.format)
             monthly_summary['NOI'] = monthly_summary['NOI'].map('${:,.0f}'.format)
-            monthly_summary['Expense Ratio'] = monthly_summary['Expense Ratio'].map('${:.0f}'.format)
+            monthly_summary['Expense Ratio'] = monthly_summary['Expense Ratio'].map('{:.0f}%'.format)
             monthly_summary['Income per unit'] = monthly_summary['Income per unit'].map('${:.0f}'.format)
             monthly_summary['Expense per unit'] = monthly_summary['Expense per unit'].map('${:.0f}'.format)
             monthly_summary['NOI per unit'] = monthly_summary['NOI per unit'].map('${:.0f}'.format)
@@ -793,7 +719,7 @@ def show_dashboard():
             col22.metric(label="📈 Total Operating Income", value=f"{last_month_total_operating_income}")
             col23.metric(label="💸 Total Operating Expenses", value=f"{last_month_total_operating_expenses}")
             col24.metric(label="🏦 Net Operating Income (NOI)", value=f"{last_month_noi}")
-            col251.metric(label="💵 Rent per unit", value=f"${total_rent/total_rent_count:.0f}")
+            col251.metric(label="💵 Rent per unit", value=f"${total_rent/total_rent_count:,.0f}")
 
             fig = go.Figure(data=[go.Table(
                 header=dict(values=list(monthly_summary.columns),
@@ -831,7 +757,7 @@ def show_dashboard():
         col251 = st.columns(1)[0]
 
         with col251:
-      # Convert to datetime and extract months
+            # Convert to datetime and extract months
             trailing_12months['date_str'] = pd.to_datetime(trailing_12months['date_str'], errors='coerce')
             trailing_12months['Month'] = trailing_12months['date_str'].dt.to_period("M").dt.to_timestamp()
 
@@ -839,22 +765,35 @@ def show_dashboard():
             trailing_12months['Rent'] = trailing_12months['Rent'].astype(str).str.replace(r'[$,]', '', regex=True).astype(float).fillna(0)
             trailing_12months['Market Rent'] = trailing_12months['Market Rent'].astype(str).str.replace(r'[$,]', '', regex=True).astype(float).fillna(0)
 
-            # Group by Month
+            # Group by Month for Economic Occupancy
             monthly_summary = trailing_12months.groupby('Month').agg({
                 'Rent': 'sum',
-                'Market Rent': 'sum'
+                'Market Rent': 'sum',
             }).reset_index()
 
-            # Calculate Economic Occupancy (Sum of Rent / Sum of Market Rent)
+            # Calculate Economic Occupancy
             monthly_summary['Economic Occupancy'] = monthly_summary['Rent'] / monthly_summary['Market Rent']
-
-            # Replace NaN and infinite values with 0
             monthly_summary['Economic Occupancy'].replace([float('inf'), float('nan')], 0, inplace=True)
 
-            # Create the bar chart
+            # --- NEW: Vacancy logic ---
+            # Define boolean flags
+            trailing_12months['is_unrented'] = trailing_12months['Status'].isin(['Vacant-Unrented', 'Vacant-Rented'])
+            trailing_12months['is_vacant'] = trailing_12months['Status'].str.startswith('Vacant')
+
+            # Group by month
+            vacancy_summary = trailing_12months.groupby('Month').agg({
+                'is_unrented': 'sum',
+                'is_vacant': 'sum'
+            }).reset_index()
+
+            # Calculate percentage
+            vacancy_summary['Unrented %'] = vacancy_summary['is_unrented'] / vacancy_summary['is_vacant']
+            vacancy_summary['Unrented %'] = vacancy_summary['Unrented %'].fillna(0)
+
+            # --- Plotly Chart ---
             fig = go.Figure()
 
-            # Economic Occupancy
+            # Economic Occupancy Bar
             fig.add_trace(go.Bar(
                 x=monthly_summary['Month'],
                 y=monthly_summary['Economic Occupancy'],
@@ -864,18 +803,29 @@ def show_dashboard():
                 textposition='inside'
             ))
 
-            # Layout settings
+            # Vacant-Unrented % of Vacant Bar
+            fig.add_trace(go.Bar(
+                x=vacancy_summary['Month'],
+                y=vacancy_summary['Unrented %'],
+                name='Physical Occupancy',
+                marker_color='indianred',
+                text=(vacancy_summary['Unrented %'] * 100).map('{:.1f}%'.format),
+                textposition='inside'
+            ))
+
+            # Layout
             fig.update_layout(
-                barmode='stack',
-                title='💸 Monthly Economic Occupancy',
+                barmode='group',
+                title='💸 Monthly Economic Occupancy & Vacant Breakdown',
                 xaxis=dict(title='Month', tickformat="%b %Y"),
-                yaxis=dict(title='Economic Occupancy (%)', tickformat=".0%"),
-                legend=dict(title='Payment Type'),
+                yaxis=dict(title='Percentage (%)', tickformat=".0%"),
+                legend=dict(title='Metric'),
                 height=600,
                 width=1000
             )
 
-        st.plotly_chart(fig, use_container_width=True)
+            # Show in Streamlit
+            st.plotly_chart(fig, use_container_width=True)
 
 
 
@@ -1364,19 +1314,27 @@ def show_dashboard():
             tenant_data1 = tenant_data1[tenant_data1["Region"].isin(selected_region5)]
             trailing_12months = trailing_12months[trailing_12months["Region"].isin(selected_region5)]
 
-        col51, col52, col53, col54 = st.columns(4)
+        col51, col52, col53, col54, col054 = st.columns(5)
 
         total_residents = rent_roll[rent_roll['Status'] == 'Current'].shape[0] # or df.shape[0] if 1 row per resident
         eviction_filings = rent_roll[rent_roll['Status'] == 'Evict'].shape[0]
         notice = tenant_data[tenant_data['Status'] == 'Notice'].shape[0]
         future = tenant_data[tenant_data['Status'] == 'Future'].shape[0]
-
+        rent_roll['Past Due'] = (
+                rent_roll['Past Due']
+                .astype(str)  # ensure it is string first
+                .str.replace(r'[\$,]', '', regex=True)  # remove $ and commas
+            )
+        rent_roll['Past Due'] = pd.to_numeric(rent_roll['Past Due'], errors='coerce').fillna(0)
+        total_del = rent_roll.loc[rent_roll['Past Due'] > 500, 'Past Due'].sum()
+        
         # Display the metric card
         col51.metric(label="🏠Current Occupied Units", value=f"{total_residents:,.0f}")
         col52.metric(label="📊Notice Residents",  value=f"{notice}")
         col53.metric(label="🚪Future tenants", value=f"{future}")
         col54.metric(label="⚖️ Evictions", value=f"{eviction_filings}")
-        
+        col054.metric(label="💵 Total Delinquency", value=f"${total_del:,.0f}")
+
         col55= st.columns(1)[0]
 
         with col55:
@@ -1532,7 +1490,79 @@ def show_dashboard():
 
             st.plotly_chart(fig, use_container_width=True)
 
+        col58 = st.columns(1)[0]
+        with col58:
 
+            # Clean the 'Past Due' column: remove $ and commas, convert to float
+            rent_roll['Past Due'] = (
+                rent_roll['Past Due']
+                .astype(str)  # Convert to string in case of mixed types
+                .str.replace(r'[$,]', '', regex=True)  # Remove $ and commas
+            )
+
+            # Convert to numeric, coercing any invalid entries to NaN, then fill NaN with 0
+            rent_roll['Past Due'] = pd.to_numeric(rent_roll['Past Due'], errors='coerce').fillna(0)
+
+            # Filter for tenants who have any amount past due
+            df_delinquent = rent_roll[rent_roll['Past Due'] > 500]
+
+            summary = df_delinquent.groupby('BD/BA').agg(
+                Delinquent_Units=('Unit', 'count'),
+                Delinquent_Amount=('Past Due', 'sum')
+            ).reset_index()
+
+            summary = summary.sort_values(by='Delinquent_Units', ascending=False)
+
+            fig = go.Figure()
+
+            # Bar chart for $ amount (use y2 - right side)
+            fig.add_trace(go.Bar(
+                x=summary['BD/BA'],
+                y=summary['Delinquent_Amount'],
+                name='Delinquent $',
+                yaxis='y2',
+                marker_color='blue',
+                opacity=0.4,
+                text=summary['Delinquent_Amount'].map('${:,.0f}'.format),  # <- Add this
+                textposition='auto'
+            ))
+
+            # Line chart for unit count (use y - left side)
+            fig.add_trace(go.Scatter(
+                x=summary['BD/BA'],
+                y=summary['Delinquent_Units'],
+                mode='lines+markers+text',
+                text=summary['Delinquent_Units'],
+                textposition='top center',
+                name='Delinquent Units',
+                line=dict(color='green'),
+                marker=dict(size=10)
+            ))
+
+            fig.update_layout(
+                title="💰 Delinquency by Unit Type (BD/BA)",
+                xaxis=dict(title="BD/BA"),
+                
+                yaxis=dict(  # LEFT: Delinquent Units
+                    title=dict(text="Delinquent Units"),
+                    tickformat=","
+                ),
+                
+                yaxis2=dict(  # RIGHT: Delinquent Amount $
+                    title=dict(text="Delinquent Amount ($)"),
+                    tickformat="$.2s",
+                    overlaying="y",
+                    side="right",
+                    showgrid=False
+                ),
+
+                legend=dict(title="Metric"),
+                width=1000,
+                height=600,
+                margin=dict(t=60, b=60, l=50, r=50)
+            )
+
+            st.plotly_chart(fig, use_container_width=True)
 
     with tab6:
         
