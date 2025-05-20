@@ -190,10 +190,10 @@ def show_dashboard():
         
         tenant_data['Move-out'] = pd.to_datetime(tenant_data['Move-out'], errors='coerce')
         ninety_days_before = today - timedelta(days=90)
-
+        ninety_days_after = today + timedelta(days=90)
         # Filter rows where Move-out is after ninety_days_before
         filtered_move_outs = tenant_data[tenant_data['Lease To'] >= today]
-        filtered_move_outs = tenant_data[tenant_data['Lease To'] <= (ninety_days_before)]
+        filtered_move_outs = tenant_data[tenant_data['Lease To'] <= (ninety_days_after)]
 
         distinct_units = filtered_move_outs[['Property Name', 'Unit']].drop_duplicates()
 
