@@ -192,8 +192,10 @@ def show_dashboard():
         ninety_days_before = today - timedelta(days=90)
         ninety_days_after = today + timedelta(days=90)
         # Filter rows where Move-out is after ninety_days_before
-        filtered_move_outs = tenant_data[tenant_data['Lease To'] >= today]
-        filtered_move_outs = tenant_data[tenant_data['Lease To'] <= (ninety_days_after)]
+        filtered_move_outs = tenant_data[
+            (tenant_data['Lease To'] >= today) & 
+            (tenant_data['Lease To'] <= ninety_days_after)
+        ]
 
         distinct_units = filtered_move_outs[['Property Name', 'Unit']].drop_duplicates()
 
