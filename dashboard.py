@@ -780,17 +780,19 @@ def show_dashboard():
 
             # --- NEW: Vacancy logic ---
             # Define boolean flags
-            trailing_12months['is_unrented'] = trailing_12months['Status'].isin(['Vacant-Unrented', 'Vacant-Rented'])
-            trailing_12months['is_vacant'] = trailing_12months['Status'].str.startswith('Vacant')
+            trailing_12months['is_unrented'] = trailing_12months['Status'].isin(['Current', 'Evict', 'Notice-Unrented'])
 
             # Group by month
             vacancy_summary = trailing_12months.groupby('Month').agg({
                 'is_unrented': 'sum',
-                'is_vacant': 'sum'
+                'Status': 'count'
             }).reset_index()
 
             # Calculate percentage
-            vacancy_summary['Unrented %'] = vacancy_summary['is_unrented'] / vacancy_summary['is_vacant']
+            vacancy_summary.rename(columns={'Status': 'total_units'}, inplace=True)
+
+            # Calculate % of unrented out of all units
+            vacancy_summary['Unrented %'] = vacancy_summary['is_unrented'] / vacancy_summary['total_units']
             vacancy_summary['Unrented %'] = vacancy_summary['Unrented %'].fillna(0)
 
             # --- Plotly Chart ---
