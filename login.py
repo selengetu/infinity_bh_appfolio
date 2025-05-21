@@ -12,7 +12,7 @@ def load_users():
 def check_login(email, password):
     users = load_users()
     hashed = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
-    # print("Paste this into users.yaml:", hashed)
+    print("Paste this into users.yaml:", hashed)
 
     for user in users:
 
