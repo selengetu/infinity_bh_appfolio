@@ -1,16 +1,29 @@
 import streamlit as st
 import dashboard  # Import the dashboard module
+import yaml
+import bcrypt
 # Set page layout
 st.set_page_config(page_title="Appfolio Dashboards", layout="wide", page_icon="logo.png")
 
+def load_users():
+    with open("users.yaml", "r") as f:
+        return yaml.safe_load(f)["users"]
+
 def check_login(email, password):
-    users = [
-        {"email": "aaron@zuckermanautomationgroup.com", "password": "Pass12345", "name": "Aaron"},
-        {"email": "justin@infinitybh.com", "password": "Infinity1", "name": "Justin"},
-    ]
+    users = load_users()
+    hashed = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
+    # print("Paste this into users.yaml:", hashed)
 
     for user in users:
-        if email == user["email"] and password == user["password"]:
+
+        try:
+            match = bcrypt.checkpw(password.encode(), user["password"].encode())
+            print("Password match:", match)
+        except Exception as e:
+            print("❌ bcrypt error:", e)
+            continue
+
+        if user["email"] == email and match:
             return {"name": user["name"], "email": user["email"]}
 
     return None

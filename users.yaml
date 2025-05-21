@@ -1,0 +1,8 @@
+users:
+  - email: aaron@zuckermanautomationgroup.com
+    password: "$2b$12$MjtpZIMhkExB0ZPoSg5F0ussF399qnmjUrL/aa1a8p9GZSPqbX.di"
+    name: Aaron
+
+  - email: justin@infinitybh.com
+    password: "$2b$12$tehNH42lygBDpmv1KCTGqeve/zdmylAvTLrOvrTPPwAGyCkpOqUnG"
+    name: Justin
