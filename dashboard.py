@@ -571,13 +571,11 @@ def show_dashboard():
         general_ledger2 = dfs["General Ledger2"].copy()
         general_ledger3 = dfs["General Ledger3"].copy()
         trailing_12months = dfs["Rent Roll 12 Months"].copy()  
-        general_ledger = pd.concat([general_ledger1, general_ledger2], ignore_index=True)
-        general_ledger = pd.concat([general_ledger, general_ledger3], ignore_index=True)
-
-
+        general_ledger = pd.concat([general_ledger1, general_ledger2, general_ledger3], ignore_index=True)
+        
         rent_roll = rent_roll.merge(region_df, on="Property Name", how="left")
         rent_roll2 = rent_roll2.merge(region_df, on="Property Name", how="left")
-        general_ledger = pd.concat([general_ledger1, general_ledger2], ignore_index=True)
+        general_ledger = general_ledger.merge(region_df, on="Property Name", how="left")
         trailing_12months = trailing_12months.merge(region_df, on="Property Name", how="left")
 
         properties1 =  sorted(rent_roll["Property Name"].dropna().unique().tolist() , key=str.lower)
@@ -608,17 +606,19 @@ def show_dashboard():
             rent_roll = rent_roll[rent_roll["Property Name"].isin(selected_property1)]
             rent_roll2 = rent_roll2[rent_roll2["Property Name"].isin(selected_property1)]
             trailing_12months = trailing_12months[trailing_12months["Property Name"].isin(selected_property1)]
+            general_ledger = general_ledger[general_ledger["Property Name"].isin(selected_property1)]
 
         if selected_region1:
             rent_roll = rent_roll[rent_roll["Region"].isin(selected_region1)]
             rent_roll2 = rent_roll2[rent_roll2["Region"].isin(selected_region1)]
             trailing_12months = trailing_12months[trailing_12months["Region"].isin(selected_region1)]
+            general_ledger = general_ledger[general_ledger["Region"].isin(selected_region1)]
 
 
          # Metric calculations using filtered data
         col21, col22, col23, col24, col251 = st.columns(5)
 
-        
+
         # Convert rent columns
         rent_roll["Rent"] = rent_roll["Rent"].replace("[\$,]", "", regex=True)
         rent_roll["Rent"] = pd.to_numeric(rent_roll["Rent"], errors="coerce")
@@ -702,9 +702,9 @@ def show_dashboard():
             monthly_summary['Total Operating Expense'] = monthly_summary['Total Operating Expense'].map('${:,.0f}'.format)
             monthly_summary['NOI'] = monthly_summary['NOI'].map('${:,.0f}'.format)
             monthly_summary['Expense Ratio'] = monthly_summary['Expense Ratio'].map('{:.0f}%'.format)
-            monthly_summary['Income per unit'] = monthly_summary['Income per unit'].map('${:.0f}'.format)
-            monthly_summary['Expense per unit'] = monthly_summary['Expense per unit'].map('${:.0f}'.format)
-            monthly_summary['NOI per unit'] = monthly_summary['NOI per unit'].map('${:.0f}'.format)
+            monthly_summary['Income per unit'] = monthly_summary['Income per unit'].map('${:,.0f}'.format)
+            monthly_summary['Expense per unit'] = monthly_summary['Expense per unit'].map('${:,.0f}'.format)
+            monthly_summary['NOI per unit'] = monthly_summary['NOI per unit'].map('${:,.0f}'.format)
             
                # Display metrics
             last_month_summary = monthly_summary.iloc[-1]
@@ -1579,7 +1579,9 @@ def show_dashboard():
         trailing_12months = trailing_12months.merge(region_df, on="Property Name", how="left")
 
         bill = bill.merge(region_df, on="Property Name", how="left")
+        bill['GL Account Code'] = bill['GL Account'].str.extract(r'(\d{4})')
         bill1 = bill1.merge(region_df, on="Property Name", how="left")
+        bill1['GL Account Code'] = bill1['GL Account'].str.extract(r'(\d{4})')
         general_ledger = general_ledger.merge(region_df, on="Property Name", how="left")
 
         properties6 =  sorted(dfs["Bill"]["Property Name"].dropna().unique().tolist() , key=str.lower)
@@ -1665,7 +1667,12 @@ def show_dashboard():
             # Normalize Approval Status
             bill['Approval Status'] = bill['Approval Status'].fillna("Unapproved")
             bill['Approval Status'] = bill['Approval Status'].str.strip().str.lower()
-
+            bill = bill[~bill['GL Account Code'].isin([ 
+                0, 4100, 4201, 6150, 6151, 6270, 6271, 6281, 6282, 6300,
+                6320, 6321, 6340, 6345, 6346, 6350, 6351, 6352, 6355, 6360,
+                6361, 6560, 6561, 6562, 6563, 6565, 6567, 6650, 6660, 67201,
+                6725, 7410, 7411, 7452, 7453, 7454, 7455, 7456, 7483
+            ])]
             # Create flags
             bill['Is_Approved'] = bill['Approval Status'].str.contains("approved", case=False, na=False)
 
@@ -1923,7 +1930,7 @@ def show_dashboard():
 
         with tab2:
             st.subheader("💰 Financials")
-            st.write(rent_roll2)
+            st.write(general_ledger)
 
         with tab3:
             st.subheader("📝 Leasing")
