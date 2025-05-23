@@ -1,24 +1,20 @@
 users:
-  - email: aaron@zuckermanautomationgroup.com
-    password: "$2b$12$MjtpZIMhkExB0ZPoSg5F0ussF399qnmjUrL/aa1a8p9GZSPqbX.di"
-    name: Aaron
+- email: aaron@zuckermanautomationgroup.com
+  name: Aaron
+  password: $2b$12$MjtpZIMhkExB0ZPoSg5F0ussF399qnmjUrL/aa1a8p9GZSPqbX.di
+- email: justin@infinitybh.com
+  name: Justin
+  password: $2b$12$tehNH42lygBDpmv1KCTGqeve/zdmylAvTLrOvrTPPwAGyCkpOqUnG
+- email: joe@infinitybh.com
+  name: Joe
+  password: $2b$12$yk3/FWtwqVyfncT4C38Dge7JuLQzRbLYTF6DXfOkUa4wj6xvHOwem
+- email: morde@infinitybh.com
+  name: Morde
+  password: $2b$12$DMDs.8qF47O8ibMW.Oc5gOp37n5mgVgFXJds5xG07s7lqbnbUv0lS
+- email: mordechai@infinitybh.com
+  name: Morde
+  password: $2b$12$LJKRg7WwStI5nEuBUbBEzOaRgnaKez6oro6SXYhE5gFCnTkedGnxC
+- email: lina@infinitybh.com
+  name: Lina
+  password: $2b$12$X0ENUHbBv4HnJTop3HzMRunKYi0GUrwmtoii4G4CXHCukxZMYydl2
 
-  - email: justin@infinitybh.com
-    password: "$2b$12$tehNH42lygBDpmv1KCTGqeve/zdmylAvTLrOvrTPPwAGyCkpOqUnG"
-    name: Justin
-
-  - email: joe@infinitybh.com
-    password: "$2b$12$yk3/FWtwqVyfncT4C38Dge7JuLQzRbLYTF6DXfOkUa4wj6xvHOwem"
-    name: Joe
-
-  - email: morde@infinitybh.com
-    password: "$2b$12$DMDs.8qF47O8ibMW.Oc5gOp37n5mgVgFXJds5xG07s7lqbnbUv0lS"
-    name: Morde
-
-  - email: mordechai@infinitybh.com
-    password: "$2b$12$LJKRg7WwStI5nEuBUbBEzOaRgnaKez6oro6SXYhE5gFCnTkedGnxC"
-    name: Morde
-
-  - email: lina@infinitybh.com
-    password: "$2b$12$X0ENUHbBv4HnJTop3HzMRunKYi0GUrwmtoii4G4CXHCukxZMYydl2"
-    name: Lina

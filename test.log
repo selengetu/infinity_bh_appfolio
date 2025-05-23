@@ -5939,3 +5939,50 @@ Stacktrace:
 2025-05-09 15:19:57,339 - INFO - [SUCCESS] CSV URL: file://C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_detail-20250509.csv
 2025-05-09 15:19:57,804 - INFO - Deleted original file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_detail-20250509.csv
 2025-05-09 15:20:00,064 - INFO - [SUCCESS] The entire process completed successfully.
+2025-05-22 07:58:21,673 - INFO - Started Appfolio data process
+2025-05-22 07:58:22,990 - INFO - [INFO] Opening login page...
+2025-05-22 07:58:25,189 - INFO - [INFO] Entered username
+2025-05-22 07:58:25,348 - INFO - [INFO] Entered password
+2025-05-22 07:58:25,414 - INFO - [INFO] Clicked login button
+2025-05-22 07:58:28,424 - INFO - [INFO] 2-Step Verification detected. Retrieving verification code...
+2025-05-22 07:58:28,827 - INFO - [INFO] Requested verification code.
+2025-05-22 07:58:34,678 - INFO - Entered verification code: 805888
+2025-05-22 07:58:36,743 - INFO - Successfully submitted the verification code!
+2025-05-22 07:58:39,744 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/bill_detail?customize=true and downloading CSV...
+2025-05-22 07:58:54,150 - INFO - Update button clicked successfully.
+2025-05-22 07:59:27,554 - INFO - Export CSV button clicked successfully.
+2025-05-22 07:59:27,554 - INFO - CSV export process initiated.
+2025-05-22 07:59:57,555 - INFO -  Waiting for CSV file to be downloaded...
+2025-05-22 07:59:57,565 - INFO -  Latest downloaded file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_detail-20250522.csv
+2025-05-22 07:59:57,565 - INFO - [SUCCESS] CSV file ready: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_detail-20250522.csv
+2025-05-22 07:59:57,565 - INFO - [SUCCESS] CSV URL: file://C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_detail-20250522.csv
+2025-05-22 07:59:58,166 - INFO - Deleted original file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\bill_detail-20250522.csv
+2025-05-22 08:00:00,395 - INFO - [SUCCESS] The entire process completed successfully.
+2025-05-22 08:00:16,846 - INFO - Started Appfolio data process
+2025-05-22 08:00:17,894 - INFO - [INFO] Opening login page...
+2025-05-22 08:00:19,861 - INFO - [INFO] Entered username
+2025-05-22 08:00:19,934 - INFO - [INFO] Entered password
+2025-05-22 08:00:20,932 - INFO - [INFO] Clicked login button
+2025-05-22 08:00:23,939 - INFO - [INFO] 2-Step Verification detected. Retrieving verification code...
+2025-05-22 08:00:24,272 - INFO - [INFO] Requested verification code.
+2025-05-22 08:00:30,112 - INFO - Entered verification code: 290854
+2025-05-22 08:00:31,958 - INFO - Successfully submitted the verification code!
+2025-05-22 08:00:34,958 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/guest_card_inquiries?customize=true and downloading CSV...
+2025-05-22 08:00:39,132 - INFO - Update button clicked successfully.
+2025-05-22 08:01:25,365 - INFO - Export CSV button clicked successfully.
+2025-05-22 08:01:25,365 - INFO - CSV export process initiated.
+2025-05-22 08:01:55,365 - INFO -  Waiting for CSV file to be downloaded...
+2025-05-22 08:01:55,368 - INFO -  Latest downloaded file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\guest_card_inquiries-20250522.csv
+2025-05-22 08:01:55,368 - INFO - [SUCCESS] CSV file ready: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\guest_card_inquiries-20250522.csv
+2025-05-22 08:01:55,368 - INFO - [SUCCESS] CSV URL: file://C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\guest_card_inquiries-20250522.csv
+2025-05-22 08:01:55,501 - INFO - Deleted original file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\guest_card_inquiries-20250522.csv
+2025-05-22 08:01:55,501 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/general_ledger?customize=true and downloading CSV...
+2025-05-22 08:02:02,212 - INFO - Update button clicked successfully.
+2025-05-22 08:02:35,623 - INFO - Export CSV button clicked successfully.
+2025-05-22 08:02:35,623 - INFO - CSV export process initiated.
+2025-05-22 08:03:05,625 - INFO -  Waiting for CSV file to be downloaded...
+2025-05-22 08:03:05,628 - INFO -  Latest downloaded file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\general_ledger-20250522.csv
+2025-05-22 08:03:05,629 - INFO - [SUCCESS] CSV file ready: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\general_ledger-20250522.csv
+2025-05-22 08:03:05,629 - INFO - [SUCCESS] CSV URL: file://C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\general_ledger-20250522.csv
+2025-05-22 08:03:05,703 - INFO - Deleted original file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\general_ledger-20250522.csv
+2025-05-22 08:03:07,906 - INFO - [SUCCESS] The entire process completed successfully.
