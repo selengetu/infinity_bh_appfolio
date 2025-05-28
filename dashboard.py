@@ -10,7 +10,7 @@ from datetime import datetime, timedelta
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud, STOPWORDS
 
-# st.set_page_config(page_title="Infinity BH Dashboards", layout="wide")
+st.set_page_config(page_title="Infinity BH Dashboards", layout="wide")
 
 def show_dashboard():
     
@@ -220,7 +220,7 @@ def show_dashboard():
         col002.metric(label="✅ Current Occupancy Rate", value=f"{occupied_rate:,.2f}%")
         col2.metric(label="📈 Future Occupancy Rate (Next 90 days)", value=f"{future_rate:,.2f}%")
         col3.metric(label="📥 Move-ins (Next 90 days)", value=f"{total_move_ins}")
-        col4.metric(label="📤 Move-outs (Next 90 days)", value=f"{total_move_out}")
+        col4.metric(label="📤 Lease Expirations  (Next 90 days)", value=f"{total_move_out}")
 
         col5, col6 = st.columns(2)
         
@@ -478,6 +478,81 @@ def show_dashboard():
             else:
                 st.warning("⚠️ 'Status' column not found in dataset.")
 
+        col252 = st.columns(1)[0]
+
+        with col252:
+            # Convert to datetime and extract months
+            trailing_12months['date_str'] = pd.to_datetime(trailing_12months['date_str'], errors='coerce')
+            trailing_12months['Month'] = trailing_12months['date_str'].dt.to_period("M").dt.to_timestamp()
+
+            # Convert financial columns to numeric
+            trailing_12months['Rent'] = trailing_12months['Rent'].astype(str).str.replace(r'[$,]', '', regex=True).astype(float).fillna(0)
+            trailing_12months['Market Rent'] = trailing_12months['Market Rent'].astype(str).str.replace(r'[$,]', '', regex=True).astype(float).fillna(0)
+
+            # Group by Month for Economic Occupancy
+            monthly_summary = trailing_12months.groupby('Month').agg({
+                'Rent': 'sum',
+                'Market Rent': 'sum',
+            }).reset_index()
+
+            # Calculate Economic Occupancy
+            monthly_summary['Economic Occupancy'] = monthly_summary['Rent'] / monthly_summary['Market Rent']
+            monthly_summary['Economic Occupancy'].replace([float('inf'), float('nan')], 0, inplace=True)
+
+            # --- NEW: Vacancy logic ---
+            # Define boolean flags
+            trailing_12months['is_unrented'] = trailing_12months['Status'].isin(['Current', 'Evict', 'Notice-Unrented', 'Notice-Rented'])
+
+            # Group by month
+            vacancy_summary = trailing_12months.groupby('Month').agg({
+                'is_unrented': 'sum',
+                'Status': 'count'
+            }).reset_index()
+
+            # Calculate percentage
+            vacancy_summary.rename(columns={'Status': 'total_units'}, inplace=True)
+
+            # Calculate % of unrented out of all units
+            vacancy_summary['Unrented %'] = vacancy_summary['is_unrented'] / vacancy_summary['total_units']
+            vacancy_summary['Unrented %'] = vacancy_summary['Unrented %'].fillna(0)
+
+            # --- Plotly Chart ---
+            fig = go.Figure()
+
+            # Economic Occupancy Bar
+            fig.add_trace(go.Bar(
+                x=monthly_summary['Month'],
+                y=monthly_summary['Economic Occupancy'],
+                name='Economic Occupancy',
+                marker_color='lightgrey',
+                text=(monthly_summary['Economic Occupancy'] * 100).map('{:.1f}%'.format),
+                textposition='inside'
+            ))
+
+            # Vacant-Unrented % of Vacant Bar
+            fig.add_trace(go.Bar(
+                x=vacancy_summary['Month'],
+                y=vacancy_summary['Unrented %'],
+                name='Physical Occupancy',
+                marker_color='indianred',
+                text=(vacancy_summary['Unrented %'] * 100).map('{:.1f}%'.format),
+                textposition='inside'
+            ))
+
+            # Layout
+            fig.update_layout(
+                barmode='group',
+                title='💸 Monthly Economic Occupancy & Vacant Breakdown',
+                xaxis=dict(title='Month', tickformat="%b %Y"),
+                yaxis=dict(title='Percentage (%)', tickformat=".0%"),
+                legend=dict(title='Metric'),
+                height=600,
+                width=1000
+            )
+
+            # Show in Streamlit
+            st.plotly_chart(fig, use_container_width=True)
+
         col9, col10 = st.columns(2)
 
         with col9:
@@ -494,7 +569,6 @@ def show_dashboard():
             movein_counts1 = tenant_data1.groupby('Move-in Month').size().reset_index(name='Count')
             movein_counts1.rename(columns={'Move-in Month': 'Month'}, inplace=True)
 
-            # Plot Lease Tos
             fig1 = px.bar(
                 movein_counts1,
                 x='Month',
@@ -543,7 +617,7 @@ def show_dashboard():
                 x='Month',
                 y='Count',
                 text='Count',
-                title="📊 Monthly Lease To",
+                title="📊 Monthly Lease Expirations",
                 color_discrete_sequence=["red"]
             )
 
@@ -700,11 +774,15 @@ def show_dashboard():
             monthly_summary['Total Rent Income'] = monthly_summary['Total Rent Income'].map('${:,.0f}'.format)
             monthly_summary['Total Operating Income'] = monthly_summary['Total Operating Income'].map('${:,.0f}'.format)
             monthly_summary['Total Operating Expense'] = monthly_summary['Total Operating Expense'].map('${:,.0f}'.format)
-            monthly_summary['NOI'] = monthly_summary['NOI'].map('${:,.0f}'.format)
+            monthly_summary['NOI'] = monthly_summary['NOI'].apply(
+                lambda x: f"-${abs(x):,.0f}" if x < 0 else f"${x:,.0f}"
+            )
             monthly_summary['Expense Ratio'] = monthly_summary['Expense Ratio'].map('{:.0f}%'.format)
             monthly_summary['Income per unit'] = monthly_summary['Income per unit'].map('${:,.0f}'.format)
             monthly_summary['Expense per unit'] = monthly_summary['Expense per unit'].map('${:,.0f}'.format)
-            monthly_summary['NOI per unit'] = monthly_summary['NOI per unit'].map('${:,.0f}'.format)
+            monthly_summary['NOI per unit'] = monthly_summary['NOI per unit'].apply(
+                lambda x: f"-${abs(x):,.0f}" if x < 0 else f"${x:,.0f}"
+            )
             
                # Display metrics
             last_month_summary = monthly_summary.iloc[-1]
@@ -757,83 +835,7 @@ def show_dashboard():
             # Display in Streamlit
             st.plotly_chart(fig, use_container_width=True)
 
-        col251 = st.columns(1)[0]
-
-        with col251:
-            # Convert to datetime and extract months
-            trailing_12months['date_str'] = pd.to_datetime(trailing_12months['date_str'], errors='coerce')
-            trailing_12months['Month'] = trailing_12months['date_str'].dt.to_period("M").dt.to_timestamp()
-
-            # Convert financial columns to numeric
-            trailing_12months['Rent'] = trailing_12months['Rent'].astype(str).str.replace(r'[$,]', '', regex=True).astype(float).fillna(0)
-            trailing_12months['Market Rent'] = trailing_12months['Market Rent'].astype(str).str.replace(r'[$,]', '', regex=True).astype(float).fillna(0)
-
-            # Group by Month for Economic Occupancy
-            monthly_summary = trailing_12months.groupby('Month').agg({
-                'Rent': 'sum',
-                'Market Rent': 'sum',
-            }).reset_index()
-
-            # Calculate Economic Occupancy
-            monthly_summary['Economic Occupancy'] = monthly_summary['Rent'] / monthly_summary['Market Rent']
-            monthly_summary['Economic Occupancy'].replace([float('inf'), float('nan')], 0, inplace=True)
-
-            # --- NEW: Vacancy logic ---
-            # Define boolean flags
-            trailing_12months['is_unrented'] = trailing_12months['Status'].isin(['Current', 'Evict', 'Notice-Unrented'])
-
-            # Group by month
-            vacancy_summary = trailing_12months.groupby('Month').agg({
-                'is_unrented': 'sum',
-                'Status': 'count'
-            }).reset_index()
-
-            # Calculate percentage
-            vacancy_summary.rename(columns={'Status': 'total_units'}, inplace=True)
-
-            # Calculate % of unrented out of all units
-            vacancy_summary['Unrented %'] = vacancy_summary['is_unrented'] / vacancy_summary['total_units']
-            vacancy_summary['Unrented %'] = vacancy_summary['Unrented %'].fillna(0)
-
-            # --- Plotly Chart ---
-            fig = go.Figure()
-
-            # Economic Occupancy Bar
-            fig.add_trace(go.Bar(
-                x=monthly_summary['Month'],
-                y=monthly_summary['Economic Occupancy'],
-                name='Economic Occupancy',
-                marker_color='lightgrey',
-                text=(monthly_summary['Economic Occupancy'] * 100).map('{:.1f}%'.format),
-                textposition='inside'
-            ))
-
-            # Vacant-Unrented % of Vacant Bar
-            fig.add_trace(go.Bar(
-                x=vacancy_summary['Month'],
-                y=vacancy_summary['Unrented %'],
-                name='Physical Occupancy',
-                marker_color='indianred',
-                text=(vacancy_summary['Unrented %'] * 100).map('{:.1f}%'.format),
-                textposition='inside'
-            ))
-
-            # Layout
-            fig.update_layout(
-                barmode='group',
-                title='💸 Monthly Economic Occupancy & Vacant Breakdown',
-                xaxis=dict(title='Month', tickformat="%b %Y"),
-                yaxis=dict(title='Percentage (%)', tickformat=".0%"),
-                legend=dict(title='Metric'),
-                height=600,
-                width=1000
-            )
-
-            # Show in Streamlit
-            st.plotly_chart(fig, use_container_width=True)
-
-
-
+        
         col26, col27= st.columns(2)
 
         with col26:
@@ -1960,5 +1962,5 @@ def show_dashboard():
         unsafe_allow_html=True
     )    
 
-# if __name__ == "__main__":
-#     show_dashboard()
+if __name__ == "__main__":
+    show_dashboard()
