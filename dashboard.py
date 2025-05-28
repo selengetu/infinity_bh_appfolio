@@ -1321,27 +1321,39 @@ def show_dashboard():
             tenant_data1 = tenant_data1[tenant_data1["Region"].isin(selected_region5)]
             trailing_12months = trailing_12months[trailing_12months["Region"].isin(selected_region5)]
 
-        col51, col52, col53, col54, col054 = st.columns(5)
+        col51, col52, col53, col54, col054,col0544 = st.columns(6)
 
         total_residents = rent_roll[rent_roll['Status'] == 'Current'].shape[0] # or df.shape[0] if 1 row per resident
         eviction_filings = rent_roll[rent_roll['Status'] == 'Evict'].shape[0]
         notice = tenant_data[tenant_data['Status'] == 'Notice'].shape[0]
         future = tenant_data[tenant_data['Status'] == 'Future'].shape[0]
-        rent_roll['Past Due'] = (
-                rent_roll['Past Due']
-                .astype(str)  # ensure it is string first
-                .str.replace(r'[\$,]', '', regex=True)  # remove $ and commas
-            )
-        rent_roll['Past Due'] = pd.to_numeric(rent_roll['Past Due'], errors='coerce').fillna(0)
-        total_del = rent_roll.loc[rent_roll['Past Due'] > 500, 'Past Due'].sum()
-        
+  
+        first_day_this_month = today.replace(day=1)
+        last_day_prev_month = first_day_this_month - timedelta(days=1)
+        formatted_date = last_day_prev_month.strftime('%m-%d-%Y')
+
+        total_del_data = trailing_12months[
+            trailing_12months['date_str'] == formatted_date
+        ]
+
+        # Clean Past Due column in the filtered DataFrame
+        total_del_data['Past Due'] = (
+            total_del_data['Past Due']
+            .astype(str)
+            .str.replace(r'[\$,]', '', regex=True)
+        )
+        total_del_data['Past Due'] = pd.to_numeric(total_del_data['Past Due'], errors='coerce').fillna(0)
+
+        # Calculate total
+        total_del = total_del_data.loc[total_del_data['Past Due'] > 500, 'Past Due'].sum()
+        total_del_count = total_del_data.loc[total_del_data['Past Due'] > 500, 'Past Due'].count()
         # Display the metric card
         col51.metric(label="🏠Current Occupied Units", value=f"{total_residents:,.0f}")
         col52.metric(label="📊Notice Residents",  value=f"{notice}")
         col53.metric(label="🚪Future tenants", value=f"{future}")
         col54.metric(label="⚖️ Evictions", value=f"{eviction_filings}")
         col054.metric(label="💵 Total Delinquency", value=f"${total_del:,.0f}")
-
+        col0544.metric(label="🏠 Total Delinquency Count", value=f"{total_del_count}")
         col55= st.columns(1)[0]
 
         with col55:
@@ -1587,7 +1599,19 @@ def show_dashboard():
         bill1 = bill1.merge(region_df, on="Property Name", how="left")
         bill1['GL Account Code'] = bill1['GL Account'].str.extract(r'(\d{4})')
         general_ledger = general_ledger.merge(region_df, on="Property Name", how="left")
-
+        bill['GL Account Code'] = bill['GL Account Code'].astype(int)
+        bill1['GL Account Code'] = bill1['GL Account Code'].astype(int)
+        exclude_codes = [ 
+            "0","1760","1801","1802", "1805","1817","1823","1829","1846","1848","1850","1851","1854","1859","1864","2201", "2202", "2203", "2218"
+            ,"2230","2231","2233","2243","2244","2246","2253","2256",
+            "2244","2248", "2249", "2252", "2255", "2258","2259","2260", "6050", "4100", "4201", "2261", "6050", "6150",
+            "6151", "6270", "6271", "6281", "6282", "6300", "6320", "6321", "6340", "6345", "6346",
+            "6350", "6351", "6352", "6355", "6360", "6361", "6560", "6561", "6562", "6563", "6565",
+            "6567", "6650", "6660", "67201", "6725", "7410", "7411", "7452", "7453", "7454", "7455",
+            "7456", "7480", "7483"
+        ]
+        bill = bill[~bill['GL Account Code'].astype(str).isin(exclude_codes)]   
+        bill1 = bill1[~bill1['GL Account Code'].astype(str).isin(exclude_codes)]  
         properties6 =  sorted(dfs["Bill"]["Property Name"].dropna().unique().tolist() , key=str.lower)
         properties06 = sorted(dfs["Bill"]["Payee Name"].dropna().unique().tolist(), key=str.lower)
         region6 =  sorted(bill["Region"].dropna().unique().tolist(), key=str.lower)
@@ -1671,12 +1695,7 @@ def show_dashboard():
             # Normalize Approval Status
             bill['Approval Status'] = bill['Approval Status'].fillna("Unapproved")
             bill['Approval Status'] = bill['Approval Status'].str.strip().str.lower()
-            bill = bill[~bill['GL Account Code'].isin([ 
-                0, 4100, 4201, 6150, 6151, 6270, 6271, 6281, 6282, 6300,
-                6320, 6321, 6340, 6345, 6346, 6350, 6351, 6352, 6355, 6360,
-                6361, 6560, 6561, 6562, 6563, 6565, 6567, 6650, 6660, 67201,
-                6725, 7410, 7411, 7452, 7453, 7454, 7455, 7456, 7483
-            ])]
+            
             # Create flags
             bill['Is_Approved'] = bill['Approval Status'].str.contains("approved", case=False, na=False)
 
