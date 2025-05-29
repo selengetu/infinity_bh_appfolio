@@ -231,7 +231,8 @@ def clean_csv(file_path,file_prefix, type):
          
         rows_to_drop = set(header_indices).union(summary_indices)
         df = df.drop(index=rows_to_drop).reset_index(drop=True)
-        
+        if type == 1:
+            df['date_str'] = today.strftime("%m-%d-%Y")
         df = df.iloc[:-2]
 
     elif file_prefix == 'bill':
@@ -833,7 +834,7 @@ def get_data_from_appfolio():
 
 
 if __name__ == "__main__":
-    # filepath = r"C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\rent_roll-20250509_april.csv"
-    # clean_csv(filepath, 'rentroll',2)
-    get_data_from_appfolio()
+    filepath = r"C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\rent_roll-20250509_april.csv"
+    clean_csv(filepath, 'rentroll',1)
+    # get_data_from_appfolio()
 

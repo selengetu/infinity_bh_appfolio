@@ -488,15 +488,18 @@ def show_dashboard():
             # Convert financial columns to numeric
             trailing_12months['Rent'] = trailing_12months['Rent'].astype(str).str.replace(r'[$,]', '', regex=True).astype(float).fillna(0)
             trailing_12months['Market Rent'] = trailing_12months['Market Rent'].astype(str).str.replace(r'[$,]', '', regex=True).astype(float).fillna(0)
+            trailing_12months['Past Due'] = trailing_12months['Past Due'].astype(str).str.replace(r'[$,]', '', regex=True).astype(float).fillna(0)
+            trailing_12months['New_Rent'] = (trailing_12months['Rent'] + np.where(trailing_12months['Past Due'] < 0, trailing_12months['Past Due'], 0)).clip(lower=0)
 
             # Group by Month for Economic Occupancy
             monthly_summary = trailing_12months.groupby('Month').agg({
                 'Rent': 'sum',
+                'New_Rent': 'sum',
                 'Market Rent': 'sum',
             }).reset_index()
 
             # Calculate Economic Occupancy
-            monthly_summary['Economic Occupancy'] = monthly_summary['Rent'] / monthly_summary['Market Rent']
+            monthly_summary['Economic Occupancy'] = monthly_summary['New_Rent'] / monthly_summary['Market Rent']
             monthly_summary['Economic Occupancy'].replace([float('inf'), float('nan')], 0, inplace=True)
 
             # --- NEW: Vacancy logic ---
@@ -1327,33 +1330,22 @@ def show_dashboard():
         eviction_filings = rent_roll[rent_roll['Status'] == 'Evict'].shape[0]
         notice = tenant_data[tenant_data['Status'] == 'Notice'].shape[0]
         future = tenant_data[tenant_data['Status'] == 'Future'].shape[0]
-  
-        first_day_this_month = today.replace(day=1)
-        last_day_prev_month = first_day_this_month - timedelta(days=1)
-        formatted_date = last_day_prev_month.strftime('%m-%d-%Y')
 
-        total_del_data = trailing_12months[
-            trailing_12months['date_str'] == formatted_date
-        ]
-
-        # Clean Past Due column in the filtered DataFrame
-        total_del_data['Past Due'] = (
-            total_del_data['Past Due']
-            .astype(str)
-            .str.replace(r'[\$,]', '', regex=True)
-        )
-        total_del_data['Past Due'] = pd.to_numeric(total_del_data['Past Due'], errors='coerce').fillna(0)
-
-        # Calculate total
-        total_del = total_del_data.loc[total_del_data['Past Due'] > 500, 'Past Due'].sum()
-        total_del_count = total_del_data.loc[total_del_data['Past Due'] > 500, 'Past Due'].count()
+        rent_roll['Past Due'] = (
+                rent_roll['Past Due']
+                .astype(str)  # ensure it is string first
+                .str.replace(r'[\$,]', '', regex=True)  # remove $ and commas
+            )
+        rent_roll['Past Due'] = pd.to_numeric(rent_roll['Past Due'], errors='coerce').fillna(0)
+        total_del = rent_roll.loc[rent_roll['Past Due'] > 500, 'Past Due'].sum()
+        total_del_count = rent_roll.loc[rent_roll['Past Due'] > 500, 'Past Due'].count()
         # Display the metric card
         col51.metric(label="🏠Current Occupied Units", value=f"{total_residents:,.0f}")
         col52.metric(label="📊Notice Residents",  value=f"{notice}")
         col53.metric(label="🚪Future tenants", value=f"{future}")
         col54.metric(label="⚖️ Evictions", value=f"{eviction_filings}")
-        col054.metric(label="💵 Total Delinquency", value=f"${total_del:,.0f}")
-        col0544.metric(label="🏠 Total Delinquency Count", value=f"{total_del_count}")
+        col054.metric(label="💵 Current Total Delinquency", value=f"${total_del:,.0f}")
+        col0544.metric(label="🏠 Current Total Delinquency Count", value=f"{total_del_count}")
         col55= st.columns(1)[0]
 
         with col55:
@@ -1459,21 +1451,21 @@ def show_dashboard():
             st.plotly_chart(fig, use_container_width=True)
 
         with col57:
-            
+            total_trailing_12months = pd.concat([trailing_12months, rent_roll], ignore_index=True)
                     # Convert date string to datetime
-            trailing_12months['date_str'] = pd.to_datetime(trailing_12months['date_str'], format='%m-%d-%Y')
+            total_trailing_12months['date_str'] = pd.to_datetime(total_trailing_12months['date_str'], format='%m-%d-%Y')
 
             # Clean 'Past Due' column: remove symbols, convert to float
-            trailing_12months['Past Due'] = (
-                trailing_12months['Past Due']
+            total_trailing_12months['Past Due'] = (
+                total_trailing_12months['Past Due']
                 .astype(str)
                 .str.replace(r'[\$,]', '', regex=True)
             )
-            trailing_12months['Past Due'] = pd.to_numeric(trailing_12months['Past Due'], errors='coerce').fillna(0)
+            total_trailing_12months['Past Due'] = pd.to_numeric(total_trailing_12months['Past Due'], errors='coerce').fillna(0)
 
             # Extract Year-Month from date
-            trailing_12months['Month'] = trailing_12months['date_str'].dt.to_period('M').dt.to_timestamp()
-            df_late = trailing_12months[trailing_12months['Past Due'] >500]
+            total_trailing_12months['Month'] = total_trailing_12months['date_str'].dt.to_period('M').dt.to_timestamp()
+            df_late = total_trailing_12months[total_trailing_12months['Past Due'] >500]
 
             # Group by month and sum delinquency
             df_delinquency = (
