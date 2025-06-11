@@ -83,34 +83,3 @@ def update_password(email, new_password):
 # Streamlit UI
 
 
-st.title("🔐 Forgot or Reset Password")
-
-view = st.sidebar.radio("View", ["Request Reset Link", "Reset Form"])
-
-if view == "Request Reset Link":
-    email = st.text_input("Enter your email")
-    if st.button("Send Reset Link"):
-        users = load_users()
-        if any(u["email"] == email for u in users):
-            token = str(uuid.uuid4())
-            save_token(email, token)
-            send_reset_email(email, token)
-            st.success("✅ Reset link sent to your email.")
-        else:
-            st.error("Email not found.")
-
-elif view == "Reset Form":
-    token = st.text_input("Enter reset token from your email")
-    new_pw = st.text_input("New Password", type="password")
-    confirm_pw = st.text_input("Confirm Password", type="password")
-
-    if st.button("Reset Password"):
-        if new_pw != confirm_pw:
-            st.error("Passwords do not match.")
-        else:
-            email = verify_token(token)
-            if email:
-                update_password(email, new_pw)
-                st.success(f"✅ Password updated for {email}.")
-            else:
-                st.error("Invalid or expired token.")

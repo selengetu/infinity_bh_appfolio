@@ -26,7 +26,7 @@ logging.basicConfig(
 
 
 # Define paths and credentials
-CHROMEDRIVER_PATH = r"C:\Users\SelengeTulga\Documents\chromedriver64\chromedriver.exe"
+CHROMEDRIVER_PATH = r"C:\Users\SelengeTulga\Downloads\chromedriver-win64\chromedriver-win64\chromedriver.exe"
 LOGIN_URL = os.getenv('APPFOLIO_LOGIN_URL')
 WORK_ORDER_URL = os.getenv('WORK_ORDER_URL')
 LEASING_FUNNEL_URL = os.getenv('LEASING_FUNNEL_URL')
@@ -295,7 +295,7 @@ def clean_csv(file_path,file_prefix, type):
         df = df[df["Property"].str.strip() != ""].reset_index(drop=True)
         df = df[df["Date"].str.strip() != ""].reset_index(drop=True)
         df = df[df["Property Name"].str.strip() != ""].reset_index(drop=True)
-
+        df = df[["Date", "GL Account", "Credit", "Debit", "Property Name"]]
 
         # Reset index for a cleaner output
         df.reset_index(drop=True, inplace=True)
@@ -797,9 +797,9 @@ def get_data_from_appfolio():
         # work_order = download_csv(driver, WORK_ORDER_URL, 1, 'work_order',None)
         # leasing = download_csv(driver, LEASING_FUNNEL_URL, 1, 'leasing',None) 
         # prospect = download_csv(driver, PROSPECT_SOURCE_URL,1, 'prospect',None)
-        # bill = download_csv(driver, BILL_URL, 1,'bill',None)
-        guest = download_csv(driver, GUEST_CARD_URL, 1,'guest',None)
-        general_ledger = download_csv(driver, LEDGER_URL, 1,'general_ledger',None)
+        bill = download_csv(driver, BILL_URL, 1,'bill',None)
+        # guest = download_csv(driver, GUEST_CARD_URL, 1,'guest',None)
+        # general_ledger = download_csv(driver, LEDGER_URL, 1,'general_ledger',None)
         # month_end_dates = get_trailing_month_end_dates(today)
        
 
@@ -834,7 +834,7 @@ def get_data_from_appfolio():
 
 
 if __name__ == "__main__":
-    filepath = r"C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\rent_roll-20250509_april.csv"
-    clean_csv(filepath, 'rentroll',1)
-    # get_data_from_appfolio()
+    # filepath = r"C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\rent_roll-20250509_april.csv"
+    # clean_csv(filepath, 'rentroll',1)
+    get_data_from_appfolio()
 

@@ -9,14 +9,48 @@ import os
 from datetime import datetime, timedelta
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud, STOPWORDS
+import time
 
 st.set_page_config(page_title="Infinity BH Dashboards", layout="wide")
 
 def show_dashboard():
     
+    @st.cache_data
+    def load_all_latest_csvs(BASE_DIR, file_prefixes):
+        def extract_timestamp_from_filename(filename):
+            try:
+                parts = filename.rsplit("_", 2)
+                if len(parts) < 3:
+                    return datetime.min
+                date_str, time_str = parts[-2], parts[-1].split(".")[0]
+                return datetime.strptime(f"{date_str}_{time_str}", "%Y%m%d_%H%M%S")
+            except Exception as e:
+                print(f"Failed to parse timestamp: {filename} - {e}")
+                return datetime.min
+
+        files_in_directory = os.listdir(BASE_DIR)
+        latest_files = {}
+
+        for category, prefix in file_prefixes.items():
+            relevant_files = [f for f in files_in_directory if f.startswith(prefix) and f.endswith(".csv")]
+            if relevant_files:
+                latest_file = max(relevant_files, key=extract_timestamp_from_filename)
+                latest_files[category] = os.path.join(BASE_DIR, latest_file)
+
+        dfs = {}
+        for name, path in latest_files.items():
+            try:
+                dfs[name] = pd.read_csv(path)
+            except Exception as e:
+                st.warning(f"⚠️ Failed to read {path}: {e}")
+        FILES = {
+        key: latest_files.get(key) for key in file_prefixes.keys()
+        }
+        return dfs
+
     BASE_DIR = os.path.join(os.getcwd(), "data")  # Use relative path
-    IMG_DIR = "plotly_pdf_images"
-    st.title("📊 Infinity BH Dashboards")
+
+    st.title("📊 Appfolio Dashboard")
     # Define file prefixes
     file_prefixes = {
         "Tenant Data": "tenant_data_cleaned",
@@ -32,75 +66,17 @@ def show_dashboard():
         "Rent Roll 12 Months": "rentroll_12_months_combined",
     }
     today = datetime.today()
-    # Initialize a dictionary to store the latest file for each category
-    latest_files = {}
+    ninety_days_before = today - timedelta(days=90)
+    ninety_days_after = today + timedelta(days=90)
+    dfs = load_all_latest_csvs(BASE_DIR, file_prefixes)
+   
+    @st.cache_data
+    
+    def load_region_df():
+        return pd.read_csv("region_list.csv")
 
-    # List all files in the BASE_DIR
-    files_in_directory = os.listdir(BASE_DIR)
+    region_df = load_region_df()
 
-    # Function to extract date from the filename
-    def extract_timestamp_from_filename(filename):
-        """
-        Extracts datetime object from filenames like 'tenant_data_cleaned_20250321_115751.csv'
-        """
-        try:
-            # Extract the last two underscore-separated parts before .csv
-            parts = filename.rsplit("_", 2)  # ['tenant_data_cleaned', '20250321', '115751.csv']
-            if len(parts) < 3:
-                raise ValueError("Invalid filename format")
-            
-            date_str, time_str = parts[-2], parts[-1].split(".")[0]  # Get YYYYMMDD and HHMMSS
-
-            # Convert to datetime object
-            return datetime.strptime(f"{date_str}_{time_str}", "%Y%m%d_%H%M%S")
-        except ValueError as e:
-            print(f"Error parsing date from {filename}: {e}")
-            return datetime.min  # Return a minimal datetime to avoid crashing
-
-    # Iterate through each category and find the latest file
-    for category, prefix in file_prefixes.items():
-        # Filter files based on the prefix
-        relevant_files = [f for f in files_in_directory if f.startswith(prefix) and f.endswith(".csv")]
-        
-        if relevant_files:
-            # Sort the files by timestamp extracted from their filenames in descending order (latest first)
-            latest_file = max(relevant_files, key=extract_timestamp_from_filename)
-            latest_files[category] = os.path.join(BASE_DIR, latest_file)
-
-    # Print the latest files for each category
-    for category, file_path in latest_files.items():
-        print(f"Latest {category}: {file_path}")
-
-    # Store latest files in a dictionary
-    FILES = {
-        "Tenant Data": latest_files.get("Tenant Data"),
-        "Work Orders": latest_files.get("Work Orders"),
-        "Prospect": latest_files.get("Prospect"),
-        "Leasing": latest_files.get("Leasing"),
-        "Rent Roll": latest_files.get("Rent Roll"),
-        "Bill": latest_files.get("Bill"),
-        "Guest": latest_files.get("Guest"),
-        "General Ledger1": latest_files.get("General Ledger1"),
-        "General Ledger2": latest_files.get("General Ledger2"),
-        "General Ledger3": latest_files.get("General Ledger3"),
-        "Rent Roll 12 Months": latest_files.get("Rent Roll 12 Months")
-    }
-    # 🔹 2. Load DataFrames
-    dfs = {}
-    for name, path in FILES.items():
-        if os.path.exists(path):  # Check if file exists
-            dfs[name] = pd.read_csv(path)
-        else:
-            st.warning(f"⚠️ File not found: {path}")
-    # Create folder for images
-    IMG_DIR = "plotly_images"
-    os.makedirs(IMG_DIR, exist_ok=True)
-
-    region_df = pd.read_csv("region_list.csv")
-
-    # 🔹 Generate and Save Plotly Charts as Images
-    image_paths = []
-    # 🔹 3. Display DataFrames in Tabs
     if dfs:
         tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
             "🏠 Property Performance", 
@@ -114,13 +90,11 @@ def show_dashboard():
     with tab1:
 
        # Filter data
-        rent_roll = dfs["Rent Roll"].copy()
-        rent_roll1 = dfs["Rent Roll"].copy()
-        trailing_12months = dfs["Rent Roll 12 Months"].copy()  
-        tenant_data = dfs["Tenant Data"].copy()
+        rent_roll = dfs["Rent Roll"]
+        trailing_12months = dfs["Rent Roll 12 Months"]
+        tenant_data = dfs["Tenant Data"]
 
         rent_roll = rent_roll.merge(region_df, on="Property Name", how="left")
-        rent_roll1 = rent_roll1.merge(region_df, on="Property Name", how="left")
         trailing_12months = trailing_12months.merge(region_df, on="Property Name", how="left")
         tenant_data = tenant_data.merge(region_df, on="Property Name", how="left")
 
@@ -149,19 +123,18 @@ def show_dashboard():
 
         if selected_property:
             rent_roll = rent_roll[rent_roll["Property Name"].isin(selected_property)]
-            rent_roll1 = rent_roll1[rent_roll1["Property Name"].isin(selected_property)]
             trailing_12months = trailing_12months[trailing_12months["Property Name"].isin(selected_property)]
             tenant_data = tenant_data[tenant_data["Property Name"].isin(selected_property)]
 
         if selected_region:
             rent_roll = rent_roll[rent_roll["Region"].isin(selected_region)]
-            rent_roll1 = rent_roll1[rent_roll1["Region"].isin(selected_region)]
             trailing_12months = trailing_12months[trailing_12months["Region"].isin(selected_region)]
             tenant_data = tenant_data[tenant_data["Region"].isin(selected_region)]
 
         # Metric calculations using filtered data
         col1,col01,col02,col002, col2,col3, col4 = st.columns(7)
         tenant_data['Lease To'] = pd.to_datetime(tenant_data['Lease To'], errors='coerce')
+        tenant_data['Move-in'] = pd.to_datetime(tenant_data['Move-in'], errors='coerce')
         all_units = rent_roll.shape[0]
         current_resident = rent_roll[rent_roll["Status"] == "Current"].shape[0]
         notice = rent_roll[rent_roll["Status"] == "Notice-Unrented"].shape[0]
@@ -170,6 +143,11 @@ def show_dashboard():
         vacant_rented = rent_roll[rent_roll["Status"] == "Vacant-Rented"].shape[0]
         vacant_unrented = rent_roll[rent_roll["Status"] == "Vacant-Unrented"].shape[0]
         future = tenant_data[tenant_data["Status"] == "Future"].shape[0]
+        future_ten = tenant_data[
+            (tenant_data["Status"] == "Future") &
+            (tenant_data["Move-in"] > today) &
+            (tenant_data["Move-in"] <= ninety_days_after)
+        ]["Unit"].nunique()
         current_nonrenew = tenant_data[
             (tenant_data["Status"] == "Current") &
             (tenant_data["Lease To"] >= today) &
@@ -178,7 +156,7 @@ def show_dashboard():
         
         total_vacant = vacant_rented+vacant_unrented
         occupied = current_resident + evict + notice + notice_re
-        future_rate = ((current_resident + evict + notice + notice_re + future- current_nonrenew)/ all_units) * 100 if all_units > 0 else 0
+        future_rate = ((current_resident + evict + notice + notice_re + future_ten)/ all_units) * 100 if all_units > 0 else 0
         occupied_rate = ((current_resident + evict + notice + notice_re) / all_units) * 100 if all_units > 0 else 0
 
         # Convert rent columns
@@ -189,8 +167,7 @@ def show_dashboard():
         
         
         tenant_data['Move-out'] = pd.to_datetime(tenant_data['Move-out'], errors='coerce')
-        ninety_days_before = today - timedelta(days=90)
-        ninety_days_after = today + timedelta(days=90)
+        
         # Filter rows where Move-out is after ninety_days_before
         filtered_move_outs = tenant_data[
             (tenant_data['Lease To'] >= today) & 
@@ -220,7 +197,7 @@ def show_dashboard():
         col002.metric(label="✅ Current Occupancy Rate", value=f"{occupied_rate:,.2f}%")
         col2.metric(label="📈 Future Occupancy Rate (Next 90 days)", value=f"{future_rate:,.2f}%")
         col3.metric(label="📥 Move-ins (Next 90 days)", value=f"{total_move_ins}")
-        col4.metric(label="📤 Lease Expirations  (Next 90 days)", value=f"{total_move_out}")
+        col4.metric(label="📤 Lease Expirations (Next 90 days)", value=f"{total_move_out}")
 
         col5, col6 = st.columns(2)
         
@@ -473,8 +450,7 @@ def show_dashboard():
                 )
 
                 st.plotly_chart(fig4, use_container_width=True)
-                img_path4 = os.path.join(IMG_DIR, "status.png")
-                fig4.write_image(img_path4)
+
             else:
                 st.warning("⚠️ 'Status' column not found in dataset.")
 
@@ -644,9 +620,9 @@ def show_dashboard():
          # Filter data
         rent_roll = dfs["Rent Roll"].copy()
         rent_roll2 = dfs["Rent Roll"].copy()
-        general_ledger1 = dfs["General Ledger1"].copy()
-        general_ledger2 = dfs["General Ledger2"].copy()
-        general_ledger3 = dfs["General Ledger3"].copy()
+        general_ledger1 = dfs["General Ledger1"]
+        general_ledger2 = dfs["General Ledger2"]
+        general_ledger3 = dfs["General Ledger3"]
         trailing_12months = dfs["Rent Roll 12 Months"].copy()  
         general_ledger = pd.concat([general_ledger1, general_ledger2, general_ledger3], ignore_index=True)
         
@@ -964,11 +940,9 @@ def show_dashboard():
 
 
     with tab3:
-        df_guest= dfs["Guest"].copy()
-        df_guest1 = dfs["Guest"].copy()
+        df_guest= dfs["Guest"]
         
         df_guest = df_guest.merge(region_df, left_on="Property Name", right_on="Property Name", how="left")
-        df_guest1 = df_guest1.merge(region_df, left_on="Property Name", right_on="Property Name", how="left")
 
         properties3 =  sorted(df_guest["Property Name"].dropna().unique().tolist() , key=str.lower)
         regions3=  sorted(df_guest["Region"].dropna().unique().tolist(), key=str.lower)
@@ -1001,18 +975,14 @@ def show_dashboard():
 
         if selected_region3:
             df_guest = df_guest[df_guest["Region"].isin(selected_region3)]
-            df_guest1 = df_guest1[df_guest1["Region"].isin(selected_region3)]
 
         if selected_property3:
             df_guest = df_guest[df_guest["Property Name"].isin(selected_property3)]
-            df_guest1 = df_guest1[df_guest1["Property Name"].isin(selected_property3)]
 
         if "Inquiry Received" in df_guest.columns:
             df_guest["Inquiry Received"] = pd.to_datetime(df_guest["Inquiry Received"], errors="coerce")
             df_guest = df_guest[(df_guest["Inquiry Received"] >= pd.to_datetime(start_date)) & (df_guest["Inquiry Received"] <= pd.to_datetime(end_date))]
-            df_guest1["Inquiry Received"] = pd.to_datetime(df_guest1["Inquiry Received"], errors="coerce")
-            df_guest1 = df_guest1[(df_guest1["Inquiry Received"] >= pd.to_datetime(start_date)) & (df_guest1["Inquiry Received"] <= pd.to_datetime(end_date))]
-        
+
         col36, col37 = st.columns(2)
 
         with col36:
@@ -1060,8 +1030,6 @@ def show_dashboard():
 
         with col37:
         
-            df_guest = dfs["Guest"].copy()
-
             # Clean data
             df_guest['Source'] = df_guest['Source'].fillna("Unknown")
 
@@ -1118,11 +1086,9 @@ def show_dashboard():
 
     with tab4:
         
-        df_work = dfs["Work Orders"].copy()
-        df_work1 = dfs["Work Orders"].copy()
+        df_work = dfs["Work Orders"]
 
         df_work = df_work.merge(region_df, on="Property Name", how="left")
-        df_work1 = df_work1.merge(region_df, on="Property Name", how="left")
         
         properties4 =  sorted(df_work["Property Name"].dropna().unique().tolist() , key=str.lower)
         region4=  sorted(df_work["Region"].dropna().unique().tolist(), key=str.lower)
@@ -1147,11 +1113,9 @@ def show_dashboard():
 
         if selected_property4:
             df_work = df_work[df_work["Property Name"].isin(selected_property4)]
-            df_work1 = df_work1[df_work1["Property Name"].isin(selected_property4)]
 
         if selected_region4:
             df_work = df_work[df_work["Region"].isin(selected_region4)]
-            df_work1 = df_work1[df_work1["Region"].isin(selected_region4)]
 
         col45, col46 = st.columns(2)
 
@@ -1551,7 +1515,7 @@ def show_dashboard():
             ))
 
             fig.update_layout(
-                title="💰 Delinquency by Unit Type (BD/BA)",
+                title="💰 Current Delinquency by Unit Type (BD/BA)",
                 xaxis=dict(title="BD/BA"),
                 
                 yaxis=dict(  # LEFT: Delinquent Units
@@ -1577,22 +1541,14 @@ def show_dashboard():
 
     with tab6:
         
-        bill = dfs["Bill"].copy()
-        bill1 = dfs["Bill"].copy()
-        general_ledger1 = dfs["General Ledger1"].copy()
-        general_ledger2 = dfs["General Ledger2"].copy()
+        bill = dfs["Bill"]
         trailing_12months = dfs["Rent Roll 12 Months"].copy()  
         
-        general_ledger = pd.concat([general_ledger1, general_ledger2], ignore_index=True)
         trailing_12months = trailing_12months.merge(region_df, on="Property Name", how="left")
 
         bill = bill.merge(region_df, on="Property Name", how="left")
         bill['GL Account Code'] = bill['GL Account'].str.extract(r'(\d{4})')
-        bill1 = bill1.merge(region_df, on="Property Name", how="left")
-        bill1['GL Account Code'] = bill1['GL Account'].str.extract(r'(\d{4})')
-        general_ledger = general_ledger.merge(region_df, on="Property Name", how="left")
         bill['GL Account Code'] = bill['GL Account Code'].astype(int)
-        bill1['GL Account Code'] = bill1['GL Account Code'].astype(int)
         exclude_codes = [ 
             "0","1760","1801","1802", "1805","1817","1823","1829","1846","1848","1850","1851","1854","1859","1864","2201", "2202", "2203", "2218"
             ,"2230","2231","2233","2243","2244","2246","2253","2256",
@@ -1603,7 +1559,6 @@ def show_dashboard():
             "7456", "7480", "7483"
         ]
         bill = bill[~bill['GL Account Code'].astype(str).isin(exclude_codes)]   
-        bill1 = bill1[~bill1['GL Account Code'].astype(str).isin(exclude_codes)]  
         properties6 =  sorted(dfs["Bill"]["Property Name"].dropna().unique().tolist() , key=str.lower)
         properties06 = sorted(dfs["Bill"]["Payee Name"].dropna().unique().tolist(), key=str.lower)
         region6 =  sorted(bill["Region"].dropna().unique().tolist(), key=str.lower)
@@ -1653,22 +1608,16 @@ def show_dashboard():
                 )
         if selected_property6:
             bill = bill[bill["Property Name"].isin(selected_property6)]
-            bill1 = bill1[bill1["Property Name"].isin(selected_property6)]
-            general_ledger = general_ledger[general_ledger["Property Name"].isin(selected_property6)]
 
         if selected_property06:
             bill = bill[bill["Payee Name"].isin(selected_property06)]
-            bill1 = bill1[bill1["Payee Name"].isin(selected_property06)]
           
 
         if selected_region6:
             bill = bill[bill["Region"].isin(selected_region6)]
-            bill1 = bill1[bill1["Region"].isin(selected_region6)]
-            general_ledger = general_ledger[general_ledger["Region"].isin(selected_region6)]
 
         if selected_gl6:
             bill = bill[bill["GL Account Name"].isin(selected_gl6)]
-            bill1 = bill1[bill1["GL Account Name"].isin(selected_gl6)]
 
 
 
@@ -1941,7 +1890,7 @@ def show_dashboard():
 
         with tab1:
             st.subheader("🏠 Property Performance")
-            st.write(rent_roll1)
+            st.write(rent_roll)
 
         with tab2:
             st.subheader("💰 Financials")
@@ -1949,11 +1898,11 @@ def show_dashboard():
 
         with tab3:
             st.subheader("📝 Leasing")
-            st.write(df_guest1)
+            st.write(df_guest)
          
         with tab4:
             st.subheader("🔧 Maintenance")
-            st.write(df_work1)
+            st.write(df_work)
         
         with tab5:
             st.subheader("🏢 Tenants")
@@ -1961,7 +1910,7 @@ def show_dashboard():
 
         with tab6:
             st.subheader("📄 Billings")
-            st.write(bill1)
+            st.write(bill)
 
     st.markdown(
         """

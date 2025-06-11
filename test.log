@@ -5986,3 +5986,179 @@ Stacktrace:
 2025-05-22 08:03:05,629 - INFO - [SUCCESS] CSV URL: file://C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\general_ledger-20250522.csv
 2025-05-22 08:03:05,703 - INFO - Deleted original file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\general_ledger-20250522.csv
 2025-05-22 08:03:07,906 - INFO - [SUCCESS] The entire process completed successfully.
+2025-06-05 12:07:12,691 - INFO - Started Appfolio data process
+2025-06-05 12:07:13,882 - INFO - [INFO] Opening login page...
+2025-06-05 12:07:16,625 - INFO - [INFO] Entered username
+2025-06-05 12:07:16,694 - INFO - [INFO] Entered password
+2025-06-05 12:07:16,762 - INFO - [INFO] Clicked login button
+2025-06-05 12:07:19,769 - INFO - [INFO] 2-Step Verification detected. Retrieving verification code...
+2025-06-05 12:07:20,322 - INFO - [INFO] Requested verification code.
+2025-06-05 12:07:26,268 - INFO - Entered verification code: 910866
+2025-06-05 12:07:26,376 - INFO - Successfully submitted the verification code!
+2025-06-05 12:07:29,376 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/rent_roll?customize=true and downloading CSV...
+2025-06-05 12:07:33,473 - INFO - Update button clicked successfully.
+2025-06-05 12:08:03,751 - INFO - Export CSV button clicked successfully.
+2025-06-05 12:08:03,751 - INFO - CSV export process initiated.
+2025-06-05 12:08:33,751 - INFO -  Waiting for CSV file to be downloaded...
+2025-06-05 12:08:33,753 - INFO -  Latest downloaded file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\rent_roll-20250605.csv
+2025-06-05 12:08:33,753 - INFO - [SUCCESS] CSV file ready: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\rent_roll-20250605.csv
+2025-06-05 12:08:33,753 - INFO - [SUCCESS] CSV URL: file://C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\rent_roll-20250605.csv
+2025-06-05 12:08:33,823 - INFO - Deleted original file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\rent_roll-20250605.csv
+2025-06-05 12:08:33,824 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/tenant_directory?customize=true and downloading CSV...
+2025-06-05 12:08:37,695 - INFO - Update button clicked successfully.
+2025-06-05 12:09:11,226 - INFO - Export CSV button clicked successfully.
+2025-06-05 12:09:11,227 - INFO - CSV export process initiated.
+2025-06-05 12:09:41,228 - INFO -  Waiting for CSV file to be downloaded...
+2025-06-05 12:09:41,230 - INFO -  Latest downloaded file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\tenant_directory-20250605.csv
+2025-06-05 12:09:41,231 - INFO - [SUCCESS] CSV file ready: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\tenant_directory-20250605.csv
+2025-06-05 12:09:41,231 - INFO - [SUCCESS] CSV URL: file://C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\tenant_directory-20250605.csv
+2025-06-05 12:09:41,446 - INFO - Deleted original file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\tenant_directory-20250605.csv
+2025-06-05 12:09:41,446 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/work_order?customize=true and downloading CSV...
+2025-06-05 12:09:46,153 - INFO - Update button clicked successfully.
+2025-06-05 12:10:16,415 - INFO - Export CSV button clicked successfully.
+2025-06-05 12:10:16,415 - INFO - CSV export process initiated.
+2025-06-05 12:10:46,417 - INFO -  Waiting for CSV file to be downloaded...
+2025-06-05 12:10:46,419 - INFO -  Latest downloaded file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\work_order-20250605.csv
+2025-06-05 12:10:46,419 - INFO - [SUCCESS] CSV file ready: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\work_order-20250605.csv
+2025-06-05 12:10:46,419 - INFO - [SUCCESS] CSV URL: file://C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\work_order-20250605.csv
+2025-06-05 12:10:46,495 - INFO - Deleted original file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\work_order-20250605.csv
+2025-06-05 12:10:46,495 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/leasing_funnel_performance?customize=true and downloading CSV...
+2025-06-05 12:10:50,375 - INFO - Update button clicked successfully.
+2025-06-05 12:11:20,559 - INFO - Export CSV button clicked successfully.
+2025-06-05 12:11:20,559 - INFO - CSV export process initiated.
+2025-06-05 12:11:50,560 - INFO -  Waiting for CSV file to be downloaded...
+2025-06-05 12:11:50,566 - INFO -  Latest downloaded file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\leasing_funnel_performance-20250605.csv
+2025-06-05 12:11:50,567 - INFO - [SUCCESS] CSV file ready: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\leasing_funnel_performance-20250605.csv
+2025-06-05 12:11:50,567 - INFO - [SUCCESS] CSV URL: file://C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\leasing_funnel_performance-20250605.csv
+2025-06-05 12:11:50,593 - INFO - Deleted original file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\leasing_funnel_performance-20250605.csv
+2025-06-05 12:11:50,593 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/prospect_source_tracking?customize=true and downloading CSV...
+2025-06-05 12:11:54,253 - INFO - Update button clicked successfully.
+2025-06-05 12:12:24,494 - INFO - Export CSV button clicked successfully.
+2025-06-05 12:12:24,494 - INFO - CSV export process initiated.
+2025-06-05 12:12:54,495 - INFO -  Waiting for CSV file to be downloaded...
+2025-06-05 12:12:54,497 - INFO -  Latest downloaded file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\prospect_source_tracking-20250605.csv
+2025-06-05 12:12:54,497 - INFO - [SUCCESS] CSV file ready: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\prospect_source_tracking-20250605.csv
+2025-06-05 12:12:54,497 - INFO - [SUCCESS] CSV URL: file://C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\prospect_source_tracking-20250605.csv
+2025-06-05 12:12:54,516 - INFO - Deleted original file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\prospect_source_tracking-20250605.csv
+2025-06-05 12:12:54,516 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/bill_detail?customize=true and downloading CSV...
+2025-06-05 12:13:09,222 - INFO - Update button clicked successfully.
+2025-06-05 12:13:44,601 - INFO - An error occurred: Message: element click intercepted: Element <button type="button" aria-haspopup="true" aria-expanded="false" class="dropdown-div__button js-dropdown btn btn-secondary dropdown-toggle btn btn-secondary">...</button> is not clickable at point (1397, 27). Other element would receive the click: <div class="modal show" aria-modal="true" role="dialog" tabindex="-1" style="display: block;">...</div>
+  (Session info: chrome=137.0.7151.68)
+Stacktrace:
+	GetHandleVerifier [0x0x7ff67024fea5+79173]
+	GetHandleVerifier [0x0x7ff67024ff00+79264]
+	(No symbol) [0x0x7ff670009e5a]
+	(No symbol) [0x0x7ff670068599]
+	(No symbol) [0x0x7ff670065f32]
+	(No symbol) [0x0x7ff670062f71]
+	(No symbol) [0x0x7ff670061e61]
+	(No symbol) [0x0x7ff670053464]
+	(No symbol) [0x0x7ff67008896a]
+	(No symbol) [0x0x7ff670052d16]
+	(No symbol) [0x0x7ff670088b80]
+	(No symbol) [0x0x7ff6700b100d]
+	(No symbol) [0x0x7ff670088743]
+	(No symbol) [0x0x7ff6700514c1]
+	(No symbol) [0x0x7ff670052253]
+	GetHandleVerifier [0x0x7ff67051a2dd+3004797]
+	GetHandleVerifier [0x0x7ff67051472d+2981325]
+	GetHandleVerifier [0x0x7ff670533380+3107360]
+	GetHandleVerifier [0x0x7ff67026aa2e+188622]
+	GetHandleVerifier [0x0x7ff6702722bf+219487]
+	GetHandleVerifier [0x0x7ff670258df4+115860]
+	GetHandleVerifier [0x0x7ff670258fa9+116297]
+	GetHandleVerifier [0x0x7ff67023f558+11256]
+	BaseThreadInitThunk [0x0x7ff96db6e8d7+23]
+	RtlUserThreadStart [0x0x7ff96fb5bf6c+44]
+
+2025-06-05 12:14:14,602 - INFO -  Waiting for CSV file to be downloaded...
+2025-06-05 12:14:14,604 - INFO -  Latest downloaded file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\prospect_cleaned_20250605_121254.csv
+2025-06-05 12:14:14,604 - INFO - [SUCCESS] CSV file ready: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\prospect_cleaned_20250605_121254.csv
+2025-06-05 12:14:14,604 - INFO - [SUCCESS] CSV URL: file://C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\prospect_cleaned_20250605_121254.csv
+2025-06-05 12:14:14,630 - INFO -  An error occurred: 'Reference'
+2025-06-05 12:14:16,902 - INFO - [ERROR] The process encountered an error.
+2025-06-05 12:15:59,270 - INFO - Started Appfolio data process
+2025-06-05 12:16:00,339 - INFO - [INFO] Opening login page...
+2025-06-05 12:16:02,318 - INFO - [INFO] Entered username
+2025-06-05 12:16:02,395 - INFO - [INFO] Entered password
+2025-06-05 12:16:02,516 - INFO - [INFO] Clicked login button
+2025-06-05 12:16:05,522 - INFO - [INFO] 2-Step Verification detected. Retrieving verification code...
+2025-06-05 12:16:05,883 - INFO - [INFO] Requested verification code.
+2025-06-05 12:16:09,423 - INFO - Entered verification code: 084035
+2025-06-05 12:16:09,506 - INFO - Successfully submitted the verification code!
+2025-06-05 12:16:12,507 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/guest_card_inquiries?customize=true and downloading CSV...
+2025-06-05 12:16:16,547 - INFO - Update button clicked successfully.
+2025-06-05 12:17:03,127 - INFO - Export CSV button clicked successfully.
+2025-06-05 12:17:03,127 - INFO - CSV export process initiated.
+2025-06-05 12:17:33,128 - INFO -  Waiting for CSV file to be downloaded...
+2025-06-05 12:17:33,130 - INFO -  Latest downloaded file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\guest_card_inquiries-20250605.csv
+2025-06-05 12:17:33,131 - INFO - [SUCCESS] CSV file ready: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\guest_card_inquiries-20250605.csv
+2025-06-05 12:17:33,131 - INFO - [SUCCESS] CSV URL: file://C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\guest_card_inquiries-20250605.csv
+2025-06-05 12:17:33,275 - INFO - Deleted original file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\guest_card_inquiries-20250605.csv
+2025-06-05 12:17:33,275 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/general_ledger?customize=true and downloading CSV...
+2025-06-05 12:17:37,694 - INFO - Update button clicked successfully.
+2025-06-05 12:18:11,097 - INFO - Export CSV button clicked successfully.
+2025-06-05 12:18:11,097 - INFO - CSV export process initiated.
+2025-06-05 12:18:41,098 - INFO -  Waiting for CSV file to be downloaded...
+2025-06-05 12:18:41,101 - INFO -  Latest downloaded file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\general_ledger-20250605.csv
+2025-06-05 12:18:41,101 - INFO - [SUCCESS] CSV file ready: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\general_ledger-20250605.csv
+2025-06-05 12:18:41,101 - INFO - [SUCCESS] CSV URL: file://C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\general_ledger-20250605.csv
+2025-06-05 12:18:41,194 - INFO - Deleted original file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\general_ledger-20250605.csv
+2025-06-05 12:18:41,196 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/rent_roll?customize=true and downloading CSV...
+2025-06-05 12:18:45,306 - INFO - Set date to 05-31-2025
+2025-06-05 12:18:45,396 - INFO - Update button clicked successfully.
+2025-06-05 12:19:15,696 - INFO - Export CSV button clicked successfully.
+2025-06-05 12:19:15,697 - INFO - CSV export process initiated.
+2025-06-05 12:19:45,697 - INFO -  Waiting for CSV file to be downloaded...
+2025-06-05 12:19:45,700 - INFO -  Latest downloaded file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\rent_roll-20250605.csv
+2025-06-05 12:19:45,700 - INFO - [SUCCESS] CSV file ready: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\rent_roll-20250605.csv
+2025-06-05 12:19:45,700 - INFO - [SUCCESS] CSV URL: file://C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\rent_roll-20250605.csv
+2025-06-05 12:19:45,750 - INFO - Deleted original file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\rent_roll-20250605.csv
+2025-06-05 12:19:48,487 - INFO - [SUCCESS] The entire process completed successfully.
+2025-06-10 08:24:49,511 - INFO - Started Appfolio data process
+2025-06-10 08:24:51,274 - INFO - [INFO] Opening login page...
+2025-06-10 08:24:53,205 - INFO - [INFO] Entered username
+2025-06-10 08:24:53,348 - INFO - [INFO] Entered password
+2025-06-10 08:24:54,051 - INFO - [INFO] Clicked login button
+2025-06-10 08:24:57,058 - INFO - [INFO] 2-Step Verification detected. Retrieving verification code...
+2025-06-10 08:24:57,478 - INFO - [INFO] Requested verification code.
+2025-06-10 08:24:57,697 - INFO - Too many requests. Waiting 10 seconds before retrying...
+2025-06-10 08:25:09,079 - INFO - Entered verification code: 611874
+2025-06-10 08:25:09,165 - INFO - Successfully submitted the verification code!
+2025-06-10 08:25:12,165 - INFO - Navigating to https://infinitybh.appfolio.com/buffered_reports/bill_detail?customize=true and downloading CSV...
+2025-06-10 08:25:26,631 - INFO - Update button clicked successfully.
+2025-06-10 08:26:01,969 - INFO - An error occurred: Message: element click intercepted: Element <button type="button" aria-haspopup="true" aria-expanded="false" class="dropdown-div__button js-dropdown btn btn-secondary dropdown-toggle btn btn-secondary">...</button> is not clickable at point (1397, 27). Other element would receive the click: <div class="modal show" aria-modal="true" role="dialog" tabindex="-1" style="display: block;">...</div>
+  (Session info: chrome=137.0.7151.69)
+Stacktrace:
+	GetHandleVerifier [0x0x7ff6272dfea5+79173]
+	GetHandleVerifier [0x0x7ff6272dff00+79264]
+	(No symbol) [0x0x7ff627099e5a]
+	(No symbol) [0x0x7ff6270f8599]
+	(No symbol) [0x0x7ff6270f5f32]
+	(No symbol) [0x0x7ff6270f2f71]
+	(No symbol) [0x0x7ff6270f1e61]
+	(No symbol) [0x0x7ff6270e3464]
+	(No symbol) [0x0x7ff62711896a]
+	(No symbol) [0x0x7ff6270e2d16]
+	(No symbol) [0x0x7ff627118b80]
+	(No symbol) [0x0x7ff62714100d]
+	(No symbol) [0x0x7ff627118743]
+	(No symbol) [0x0x7ff6270e14c1]
+	(No symbol) [0x0x7ff6270e2253]
+	GetHandleVerifier [0x0x7ff6275aa2dd+3004797]
+	GetHandleVerifier [0x0x7ff6275a472d+2981325]
+	GetHandleVerifier [0x0x7ff6275c3380+3107360]
+	GetHandleVerifier [0x0x7ff6272faa2e+188622]
+	GetHandleVerifier [0x0x7ff6273022bf+219487]
+	GetHandleVerifier [0x0x7ff6272e8df4+115860]
+	GetHandleVerifier [0x0x7ff6272e8fa9+116297]
+	GetHandleVerifier [0x0x7ff6272cf558+11256]
+	BaseThreadInitThunk [0x0x7ff96db6e8d7+23]
+	RtlUserThreadStart [0x0x7ff96fb5bf6c+44]
+
+2025-06-10 08:26:31,969 - INFO -  Waiting for CSV file to be downloaded...
+2025-06-10 08:26:31,976 - INFO -  Latest downloaded file: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\rentroll_12_months_combined_20250605.csv
+2025-06-10 08:26:31,978 - INFO - [SUCCESS] CSV file ready: C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\rentroll_12_months_combined_20250605.csv
+2025-06-10 08:26:31,978 - INFO - [SUCCESS] CSV URL: file://C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\rentroll_12_months_combined_20250605.csv
+2025-06-10 08:26:32,180 - INFO -  An error occurred: 'Reference'
+2025-06-10 08:26:34,452 - INFO - [ERROR] The process encountered an error.
