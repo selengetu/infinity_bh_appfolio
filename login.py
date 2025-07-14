@@ -14,6 +14,7 @@ def load_users():
 
 def check_login(email, password):
     users = load_users()
+    email = email.lower()
     hashed = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
     print("Paste this into users.yaml:", hashed)
 
@@ -26,7 +27,7 @@ def check_login(email, password):
             print("❌ bcrypt error:", e)
             continue
 
-        if user["email"] == email and match:
+        if user["email"].lower() == email and match:  
             return {"name": user["name"], "email": user["email"]}
 
     return None

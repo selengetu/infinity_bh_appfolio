@@ -10,13 +10,97 @@ from datetime import datetime, timedelta
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud, STOPWORDS
 import time
+import anthropic
+from streamlit_chat import message
+import streamlit.web.server.websocket_headers as _wh
 
-st.set_page_config(page_title="Infinity BH Dashboards", layout="wide")
+API_KEY = os.getenv('API_KEY')
+# st.set_page_config(page_title="Appfolio Dashboards", layout="wide")
+def get_claude_client():
+    """Initialize Claude client with API key"""
+    
+    if not API_KEY:
+        st.sidebar.error("⚠️ Please set ANTHROPIC_API_KEY in secrets or environment")
+        return None
+    return anthropic.Anthropic(api_key=API_KEY)
+
+# @st.cache_data(ttl=21600) 
+def get_data_context(dfs):
+    """Create comprehensive context about all loaded data for Claude"""
+    if not dfs:
+        return "No data loaded."
+    
+    context_parts = []
+    context_parts.append("=== APPFOLIO PROPERTY MANAGEMENT DASHBOARD DATA ===\n")
+    
+    for name, df in dfs.items():
+        if df is not None and not df.empty:
+            context_parts.append(f"\n--- {name.upper()} DATA ---")
+            context_parts.append(f"Shape: {df.shape[0]} rows, {df.shape[1]} columns")
+            context_parts.append(f"Columns: {', '.join(df.columns.tolist())}")
+            
+            # Add sample data for better context
+            context_parts.append("Sample data:")
+            context_parts.append(df.head(3).to_string())
+            
+            # Add basic stats for numeric columns
+            numeric_cols = df.select_dtypes(include=['number']).columns
+            if len(numeric_cols) > 0:
+                context_parts.append("Numeric column stats:")
+                context_parts.append(df[numeric_cols].describe().to_string())
+    
+    return "\n".join(context_parts)
+
+def chat_with_claude_about_data(client, user_input, dfs):
+    """Send full chat history and dashboard data context to Claude"""
+    if not client:
+        return "Claude client not available. Please check API key."
+
+    try:
+        data_context = get_data_context(dfs)
+
+        system_prompt = """
+        You are a helpful AI assistant working with Infinity BH dashboard at Zuckerman Automation Group.
+        Your are analyzing property management data from Zuckerman's Appfolio dashboard, which includes tenant information, rent rolls, bills, leasing activity, work orders, prospects, guests, and general ledger data.
+
+        Provide helpful, accurate, and data-driven answers. Be conversational and follow up on previous messages. Include calculations where possible.
+        """
+
+        # Build conversation messages
+        messages = []
+
+        # Inject dashboard data at the beginning
+        messages.append({
+            "role": "user",
+            "content": f"Here is the latest property data snapshot:\n{data_context}"
+        })
+
+        # Include past conversation
+        messages.extend(st.session_state.chat_messages)
+
+        # Append the new user input if not already there
+        if len(messages) == 0 or messages[-1]["content"] != user_input:
+            messages.append({"role": "user", "content": user_input})
+
+        # Call Claude
+        response = client.messages.create(
+            model="claude-3-5-haiku-20241022",
+            max_tokens=1500,
+            system=system_prompt,
+            messages=messages
+        )
+
+        return response.content[0].text
+
+    except Exception as e:
+        return f"Error getting response from Claude: {str(e)}"
 
 def show_dashboard():
     
-    @st.cache_data
+    start = time.time()
+     
     def load_all_latest_csvs(BASE_DIR, file_prefixes):
+        
         def extract_timestamp_from_filename(filename):
             try:
                 parts = filename.rsplit("_", 2)
@@ -51,6 +135,12 @@ def show_dashboard():
     BASE_DIR = os.path.join(os.getcwd(), "data")  # Use relative path
 
     st.title("📊 Appfolio Dashboard")
+    
+    try:
+        claude_client = anthropic.Anthropic(api_key=API_KEY)
+    except Exception as e:
+        st.error(f"Error initializing Claude: {e}")
+        claude_client = None
     # Define file prefixes
     file_prefixes = {
         "Tenant Data": "tenant_data_cleaned",
@@ -69,22 +159,24 @@ def show_dashboard():
     ninety_days_before = today - timedelta(days=90)
     ninety_days_after = today + timedelta(days=90)
     dfs = load_all_latest_csvs(BASE_DIR, file_prefixes)
-   
-    @st.cache_data
-    
+    if 'chat_messages' not in st.session_state:
+        st.session_state.chat_messages = []
+
+    # @st.cache_data
     def load_region_df():
         return pd.read_csv("region_list.csv")
-
+    
     region_df = load_region_df()
-
+    # 🔹 3. Display DataFrames in Tabs
     if dfs:
-        tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
+        tab1, tab2, tab3, tab4, tab5, tab6, tab_chat  = st.tabs([
             "🏠 Property Performance", 
             "💰 Financials", 
             "📝 Leasing", 
             "🔧 Maintenance", 
             "🏢 Tenants", 
-            "📄 Billings"
+            "📄 Billings",
+            "🤖 AI Chat (Beta)",
         ])
 
     with tab1:
@@ -167,7 +259,7 @@ def show_dashboard():
         
         
         tenant_data['Move-out'] = pd.to_datetime(tenant_data['Move-out'], errors='coerce')
-        
+
         # Filter rows where Move-out is after ninety_days_before
         filtered_move_outs = tenant_data[
             (tenant_data['Lease To'] >= today) & 
@@ -180,7 +272,6 @@ def show_dashboard():
         total_move_out = len(distinct_units)
     
         tenant_data['Move-in'] = pd.to_datetime(tenant_data['Move-in'], errors='coerce')
-        ninety_days_before = today - timedelta(days=90)
 
         # Filter rows where Move-out is after ninety_days_before
         filtered_move_ins = tenant_data[tenant_data['Move-in'] >= today]
@@ -197,7 +288,7 @@ def show_dashboard():
         col002.metric(label="✅ Current Occupancy Rate", value=f"{occupied_rate:,.2f}%")
         col2.metric(label="📈 Future Occupancy Rate (Next 90 days)", value=f"{future_rate:,.2f}%")
         col3.metric(label="📥 Move-ins (Next 90 days)", value=f"{total_move_ins}")
-        col4.metric(label="📤 Lease Expirations (Next 90 days)", value=f"{total_move_out}")
+        col4.metric(label="📤 Lease Expirations  (Next 90 days)", value=f"{total_move_out}")
 
         col5, col6 = st.columns(2)
         
@@ -450,7 +541,7 @@ def show_dashboard():
                 )
 
                 st.plotly_chart(fig4, use_container_width=True)
-
+                
             else:
                 st.warning("⚠️ 'Status' column not found in dataset.")
 
@@ -461,7 +552,7 @@ def show_dashboard():
             trailing_12months['date_str'] = pd.to_datetime(trailing_12months['date_str'], errors='coerce')
             trailing_12months['Month'] = trailing_12months['date_str'].dt.to_period("M").dt.to_timestamp()
 
-            # Convert financial columns to numeric
+           # Convert financial columns to numeric
             trailing_12months['Rent'] = trailing_12months['Rent'].astype(str).str.replace(r'[$,]', '', regex=True).astype(float).fillna(0)
             trailing_12months['Market Rent'] = trailing_12months['Market Rent'].astype(str).str.replace(r'[$,]', '', regex=True).astype(float).fillna(0)
             trailing_12months['Past Due'] = trailing_12months['Past Due'].astype(str).str.replace(r'[$,]', '', regex=True).astype(float).fillna(0)
@@ -581,9 +672,10 @@ def show_dashboard():
             tenant_data2 = tenant_data.copy()
             tenant_data2['Lease To'] = pd.to_datetime(tenant_data2['Lease To'], errors='coerce')
             year_later = today + timedelta(days=365)
+            
             tenant_data2 = tenant_data2[(tenant_data2['Lease To'] >= today)]
             tenant_data2 = tenant_data2[(tenant_data2['Lease To'] <= year_later)]
-            tenant_data2 = tenant_data2.drop_duplicates(subset=['Property Name', 'Unit'])
+            tenant_data2 = tenant_data2.drop_duplicates(subset=['Lease To','Property Name', 'Unit'])
             tenant_data2['Lease To Month'] = tenant_data2['Lease To'].dt.to_period("M").astype(str)
 
             # Group by Month
@@ -653,8 +745,6 @@ def show_dashboard():
                 key="region_tab2"
             )   
 
-        
-
         if selected_property1:
             rent_roll = rent_roll[rent_roll["Property Name"].isin(selected_property1)]
             rent_roll2 = rent_roll2[rent_roll2["Property Name"].isin(selected_property1)]
@@ -670,56 +760,51 @@ def show_dashboard():
 
          # Metric calculations using filtered data
         col21, col22, col23, col24, col251 = st.columns(5)
-
-
-        # Convert rent columns
-        rent_roll["Rent"] = rent_roll["Rent"].replace("[\$,]", "", regex=True)
-        rent_roll["Rent"] = pd.to_numeric(rent_roll["Rent"], errors="coerce")
-        total_rent = rent_roll["Rent"].sum()
-        total_rent_count = rent_roll.shape[0]
+# Convert rent columns
+        rent_roll2["Rent"] = rent_roll2["Rent"].replace("[\$,]", "", regex=True)
+        rent_roll2["Rent"] = pd.to_numeric(rent_roll2["Rent"], errors="coerce")
+        total_rent = rent_roll2["Rent"].sum()
+        total_rent_count = rent_roll2.shape[0]
         general_ledger['GL Account Code'] = general_ledger['GL Account'].str.extract(r'(\d{4})')
         general_ledger['GL Account Code'] = pd.to_numeric(general_ledger['GL Account Code'], errors='coerce')
 
-        total_rent_df = general_ledger[(general_ledger['GL Account Code'] >= 4100) & (general_ledger['GL Account Code'] <= 4104)]
-        total_operating_income_df = general_ledger[(general_ledger['GL Account Code'] >= 4100) & (general_ledger['GL Account Code'] <= 5721)]
-        total_operating_expense_df = general_ledger[
-                ((general_ledger['GL Account Code'] >= 6210) & (general_ledger['GL Account Code'] < 6521)) |
-                (general_ledger['GL Account Code'].isin([6561, 6565, 6567, 6564])) |
-                ((general_ledger['GL Account Code'] >= 6730) & (general_ledger['GL Account Code'] < 7611)) |
-                (general_ledger['GL Account Code'].isin([7626,7627, 6563]))
-        ]
+        general_ledger['Date'] = pd.to_datetime(general_ledger['Date'], errors='coerce')
+        general_ledger['Month'] = general_ledger['Date'].dt.to_period('M').astype(str)
+
+        gl_code = general_ledger['GL Account Code']
+        rent_mask = (gl_code >= 4100) & (gl_code <= 4104)
+        income_mask = (gl_code >= 4100) & (gl_code <= 5721)
+        expense_mask = (
+            ((gl_code >= 6210) & (gl_code < 6521)) |
+            (gl_code.isin([6561, 6565, 6567, 6564, 6563, 7626, 7627])) |
+            ((gl_code >= 6730) & (gl_code < 7611))
+        )
+
+        # === STEP 2: Filter and copy once ===
+        total_rent_df = general_ledger[rent_mask].copy()
+        total_operating_income_df = general_ledger[income_mask].copy()
+        total_operating_expense_df = general_ledger[expense_mask].copy()
 
             # Include 'Liability to Landlord Insurance' even without a GL Account Code
         insurance_df = general_ledger[general_ledger['GL Account'] == 'Liability to Landlord Insurance']
 
             # Combine operating income and insurance
         total_operating_income_df = pd.concat([total_operating_income_df, insurance_df], ignore_index=True)
-
-            # Convert the 'Date' column to datetime to extract the month
-        total_rent_df['Date'] = pd.to_datetime(total_rent_df['Date'])
-        total_rent_df['Month'] = total_rent_df['Date'].dt.strftime('%Y-%m')
-        total_operating_income_df['Date'] = pd.to_datetime(total_operating_income_df['Date'])
-        total_operating_income_df['Month'] = total_operating_income_df['Date'].dt.strftime('%Y-%m')
-        total_operating_expense_df['Date'] = pd.to_datetime(total_operating_expense_df['Date'])
-        total_operating_expense_df['Month'] = total_operating_expense_df['Date'].dt.strftime('%Y-%m')
-            
+        def clean_and_calc(df, is_expense=False):
+            df['Credit'] = pd.to_numeric(df['Credit'].replace('[,]', '', regex=True), errors='coerce').fillna(0)
+            df['Debit'] = pd.to_numeric(df['Debit'].replace('[,]', '', regex=True), errors='coerce').fillna(0)
+            if is_expense:
+                df['Expense'] = df['Debit'] - df['Credit']
+            else:
+                df['Net Income'] = df['Credit'] - df['Debit']
+            return df
 
             # Clean Credit and Debit columns
-        def clean_amount(df, column):
-            df[column] = df[column].replace("[\,]", "", regex=True).replace("", "0").astype(float).round(2)
-            df[column] = pd.to_numeric(df[column], errors="coerce").fillna(0).round(2)
+        total_rent_df = clean_and_calc(total_rent_df)
+        total_operating_income_df = clean_and_calc(total_operating_income_df)
+        total_operating_expense_df = clean_and_calc(total_operating_expense_df, is_expense=True)
 
-        clean_amount(total_rent_df, "Credit")
-        clean_amount(total_rent_df, "Debit")
-        clean_amount(total_operating_income_df, "Credit")
-        clean_amount(total_operating_income_df, "Debit")
-        clean_amount(total_operating_expense_df, "Credit")
-        clean_amount(total_operating_expense_df, "Debit")
-
-            # Calculate Net Income before grouping
-        total_rent_df["Net Income"] = total_rent_df["Credit"] - total_rent_df["Debit"]
-        total_operating_income_df["Net Income"] = total_operating_income_df["Credit"] - total_operating_income_df["Debit"]
-        total_operating_expense_df["Expense"] = total_operating_expense_df["Debit"]  -  total_operating_expense_df["Credit"]
+        
 
         col025 = st.columns(1)[0]
 
@@ -976,13 +1061,15 @@ def show_dashboard():
         if selected_region3:
             df_guest = df_guest[df_guest["Region"].isin(selected_region3)]
 
+
         if selected_property3:
             df_guest = df_guest[df_guest["Property Name"].isin(selected_property3)]
+
 
         if "Inquiry Received" in df_guest.columns:
             df_guest["Inquiry Received"] = pd.to_datetime(df_guest["Inquiry Received"], errors="coerce")
             df_guest = df_guest[(df_guest["Inquiry Received"] >= pd.to_datetime(start_date)) & (df_guest["Inquiry Received"] <= pd.to_datetime(end_date))]
-
+           
         col36, col37 = st.columns(2)
 
         with col36:
@@ -1030,6 +1117,8 @@ def show_dashboard():
 
         with col37:
         
+            df_guest = dfs["Guest"]
+
             # Clean data
             df_guest['Source'] = df_guest['Source'].fillna("Unknown")
 
@@ -1294,7 +1383,7 @@ def show_dashboard():
         eviction_filings = rent_roll[rent_roll['Status'] == 'Evict'].shape[0]
         notice = tenant_data[tenant_data['Status'] == 'Notice'].shape[0]
         future = tenant_data[tenant_data['Status'] == 'Future'].shape[0]
-
+  
         rent_roll['Past Due'] = (
                 rent_roll['Past Due']
                 .astype(str)  # ensure it is string first
@@ -1415,6 +1504,7 @@ def show_dashboard():
             st.plotly_chart(fig, use_container_width=True)
 
         with col57:
+            
             total_trailing_12months = pd.concat([trailing_12months, rent_roll], ignore_index=True)
                     # Convert date string to datetime
             total_trailing_12months['date_str'] = pd.to_datetime(total_trailing_12months['date_str'], format='%m-%d-%Y')
@@ -1542,6 +1632,7 @@ def show_dashboard():
     with tab6:
         
         bill = dfs["Bill"]
+
         trailing_12months = dfs["Rent Roll 12 Months"].copy()  
         
         trailing_12months = trailing_12months.merge(region_df, on="Property Name", how="left")
@@ -1618,7 +1709,6 @@ def show_dashboard():
 
         if selected_gl6:
             bill = bill[bill["GL Account Name"].isin(selected_gl6)]
-
 
 
         col65 = st.columns(1)[0]
@@ -1885,16 +1975,13 @@ def show_dashboard():
 
             st.plotly_chart(fig, use_container_width=True)
 
-
-
-
         with tab1:
             st.subheader("🏠 Property Performance")
             st.write(rent_roll)
 
         with tab2:
             st.subheader("💰 Financials")
-            st.write(general_ledger)
+            st.write(rent_roll2)
 
         with tab3:
             st.subheader("📝 Leasing")
@@ -1911,7 +1998,90 @@ def show_dashboard():
         with tab6:
             st.subheader("📄 Billings")
             st.write(bill)
-
+            # print("💡 Time taken: ", time.time() - start)
+            if st.button("🔁 Force Refresh"):
+                st.cache_data.clear()
+    with tab_chat:
+            
+            
+            if claude_client:
+                # Display data summary
+                # st.subheader("📊 Available Data")
+                # cols = st.columns(4)
+                # data_summary = []
+                
+                # for i, (name, df) in enumerate(dfs.items()):
+                #     if df is not None:
+                #         col_idx = i % 4
+                #         with cols[col_idx]:
+                #             st.metric(
+                #                 label=name,
+                #                 value=f"{df.shape[0]:,} rows",
+                #                 delta=f"{df.shape[1]} columns"
+                #             )
+                #         data_summary.append(f"• {name}: {df.shape[0]:,} records")
+                
+                # Sample questions
+                st.subheader("💡 Sample Questions")
+                sample_questions = [
+                    "What's the current occupancy rate across all properties?",
+                    "Which properties have the highest rent revenue?", 
+                    # "How many work orders are currently open?",
+                    "What are the main trends in leasing activity?",
+                    # "Which tenants are moving out in the next 90 days?",
+                    "What's the average rent per unit by property?",
+                    # "How many prospects converted to leases this month?",
+                    # "What are the top maintenance issues?"
+                ]
+                
+                cols_questions = st.columns(2)
+                for i, question in enumerate(sample_questions):
+                    col_idx = i % 2
+                    with cols_questions[col_idx]:
+                        if st.button(question, key=f"sample_q_{i}"):
+                            # Add question to chat and get response
+                            st.session_state.chat_messages.append({"role": "user", "content": question})
+                            with st.spinner("Analyzing data..."):
+                                response = chat_with_claude_about_data(claude_client, question, dfs)
+                            st.session_state.chat_messages.append({"role": "assistant", "content": response})
+                            st.rerun()
+                
+                # Chat interface
+                st.subheader("💬 Ask Questions About Your Property Data")
+                
+                # Display chat history
+                chat_container = st.container()
+                with chat_container:
+                    for message in st.session_state.chat_messages:
+                        with st.chat_message(message["role"]):
+                            st.write(message["content"])
+                
+                # Chat input
+                if user_input := st.chat_input("Ask anything about your property data..."):
+                    # Add user message
+                    st.session_state.chat_messages.append({"role": "user", "content": user_input})
+                    
+                    with st.chat_message("user"):
+                        st.write(user_input)
+                    
+                    # Get Claude response
+                    with st.chat_message("assistant"):
+                        with st.spinner("Analyzing your data..."):
+                            response = chat_with_claude_about_data(claude_client, user_input, dfs)
+                            st.write(response)
+                    
+                    # Add assistant response
+                    st.session_state.chat_messages.append({"role": "assistant", "content": response})
+                
+                # Clear chat button
+                if st.button("🗑️ Clear Chat History"):
+                    st.session_state.chat_messages = []
+                    st.rerun()
+                    
+            else:
+                st.error("⚠️ Claude AI is not available. Please check your API key configuration.")
+                st.info("Add your Anthropic API key to secrets.toml or environment variables to enable the AI chat feature.")
+        
     st.markdown(
         """
        <div style="text-align: center; font-size: 0.9rem; color: #4a4a4a;">
@@ -1922,5 +2092,5 @@ def show_dashboard():
         unsafe_allow_html=True
     )    
 
-if __name__ == "__main__":
-    show_dashboard()
+# if __name__ == "__main__":
+#     show_dashboard()

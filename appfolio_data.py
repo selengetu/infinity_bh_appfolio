@@ -797,26 +797,26 @@ def get_data_from_appfolio():
         # work_order = download_csv(driver, WORK_ORDER_URL, 1, 'work_order',None)
         # leasing = download_csv(driver, LEASING_FUNNEL_URL, 1, 'leasing',None) 
         # prospect = download_csv(driver, PROSPECT_SOURCE_URL,1, 'prospect',None)
-        bill = download_csv(driver, BILL_URL, 1,'bill',None)
+        # bill = download_csv(driver, BILL_URL, 1,'bill',None)
         # guest = download_csv(driver, GUEST_CARD_URL, 1,'guest',None)
         # general_ledger = download_csv(driver, LEDGER_URL, 1,'general_ledger',None)
-        # month_end_dates = get_trailing_month_end_dates(today)
+        month_end_dates = get_trailing_month_end_dates(today)
        
 
-        # for date_str in month_end_dates:
-        #     prefix = f"rentroll_{date_str.replace('/', '-')}_cleaned_"
-        #     if any(fname.startswith(prefix) for fname in os.listdir(BASE_DOWNLOAD_FOLDER)):
-        #         print(f"[SKIPPED] Found existing file for {date_str}")
-        #         continue
+        for date_str in month_end_dates:
+            prefix = f"rentroll_{date_str.replace('/', '-')}_cleaned_"
+            if any(fname.startswith(prefix) for fname in os.listdir(BASE_DOWNLOAD_FOLDER)):
+                print(f"[SKIPPED] Found existing file for {date_str}")
+                continue
 
-        #     success = download_csv(driver, LOGIN_URL, 2,  f"rentroll_{date_str.replace('/', '-')}", target_date=date_str)
-        #     if not success:
-        #         logging.warning(f"Download failed for {date_str}")
+            success = download_csv(driver, LOGIN_URL, 2,  f"rentroll_{date_str.replace('/', '-')}", target_date=date_str)
+            if not success:
+                logging.warning(f"Download failed for {date_str}")
 
-        # df_all_rentrolls = union_rentrolls()
-        # output_path = os.path.join(BASE_DOWNLOAD_FOLDER, f"rentroll_12_months_combined_{datetime.today().strftime('%Y%m%d')}.csv")
-        # df_all_rentrolls.to_csv(output_path, index=False, encoding='utf-8-sig')
-        # print(f"[DONE] Saved combined file to: {output_path}")
+        df_all_rentrolls = union_rentrolls()
+        output_path = os.path.join(BASE_DOWNLOAD_FOLDER, f"rentroll_12_months_combined_{datetime.today().strftime('%Y%m%d')}.csv")
+        df_all_rentrolls.to_csv(output_path, index=False, encoding='utf-8-sig')
+        print(f"[DONE] Saved combined file to: {output_path}")
         success = True  # Mark as successful
     except Exception as e:
         print(f" An error occurred: {e}")
@@ -834,7 +834,8 @@ def get_data_from_appfolio():
 
 
 if __name__ == "__main__":
-    # filepath = r"C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\rent_roll-20250509_april.csv"
-    # clean_csv(filepath, 'rentroll',1)
+    # filepath = r"C:\Users\SelengeTulga\Documents\GitHub\infinity_bh_appfolio\data\general_ledger-May.csv"
+    # clean_csv(filepath, 'general_ledger',1)
     get_data_from_appfolio()
+ 
 
